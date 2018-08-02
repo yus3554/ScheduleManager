@@ -1,0 +1,139 @@
+package schedule.model;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class NotifTable {
+
+	public NotifTable() {
+
+	}
+
+	// answerをanswersテーブルにインサート
+	// isfirstは0で再送、1で新規
+	public void insert(String[] randomURL, String notifTime, int isFirst) {
+		DataSource dataSource = null;
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			InitialContext context = new InitialContext();
+			// lookupのjdbc/以下がテーブル名 WebContent/META-INF/context.xmlと合わせる
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/notifs");
+			conn = dataSource.getConnection();
+
+			stmt = conn.createStatement();
+
+			for(String url: randomURL) {
+				String sql = "insert into notifs values (\"" +
+						url + "\",\"" +
+						notifTime + "\",\"" +
+						isFirst + "\");";
+
+				stmt.executeUpdate(sql);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(stmt != null) {
+					stmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// 現在の時間を入れてnotifリストを返す
+	public ArrayList<HashMap<String, String>> getNotifList(String nowTime) {
+		ArrayList<HashMap<String, String>> notifs = new ArrayList<>();
+		DataSource dataSource = null;
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			InitialContext context = new InitialContext();
+			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/notifs");
+			conn = dataSource.getConnection();
+
+			stmt = conn.createStatement();
+
+			// senderEmailで検索
+			String sql = "select * from notifs where notifTime = \"" +
+					nowTime + "\";";
+
+			// HashMapに入れてそれをArrayListに格納
+			// HashMapはwhileでループごとに毎回初期化する必要がある
+			ResultSet rs = stmt.executeQuery(sql);
+			HashMap<String, String> hm;
+			while (rs.next()) {
+				hm = new HashMap<>();
+				hm.put("randomURL", rs.getString("randomURL"));
+				hm.put("isFirst", rs.getString("isFirst"));
+				notifs.add(hm);
+			}
+
+			return notifs;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(stmt != null) {
+					stmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	public void delete(String randomURL) {
+		DataSource dataSource = null;
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			InitialContext context = new InitialContext();
+			// lookupのjdbc/以下がテーブル名 context.xmlと合わせる
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/notifs");
+			conn = dataSource.getConnection();
+
+			stmt = conn.createStatement();
+
+			// senderEmailで検索
+			String sql = "delete from notifs where randomURL = \"" + randomURL + "\";";
+
+			stmt.executeUpdate(sql);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(stmt != null) {
+					stmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
