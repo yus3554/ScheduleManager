@@ -84,7 +84,6 @@ public class NewScheduleSubmit extends HttpServlet {
 
 
 		//新規スケジュールで使ったsession attributeを削除
-		// 取得した要素をsessionに保存
 		session.removeAttribute("eventName");
 		session.removeAttribute("eventContent");
 		session.removeAttribute("eventStartDate");

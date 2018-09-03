@@ -18,10 +18,41 @@
 		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
 		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
 		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
+		<tr>
+			<th>全体の回答状況：<br>（○の数）</th>
+			<td>
+				<table border="2">
+					<tr>
+						<th>日付</th>
+						<th>1限</th>
+						<th>2限</th>
+						<th>3限</th>
+						<th>4限</th>
+						<th>5限</th>
+					</tr>
+					<% int[][] counts = (int[][])request.getAttribute("counts"); %>
+					<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
+					<tr>
+						<th><%= request.getAttribute("date" + i)%></th>
+						<% for(int j = 0; j < 5; j++) { %>
+						<% if((int)request.getAttribute("max") == counts[i][j] && counts[i][j] != 0) { %>
+						<td bgcolor="#FE9A2E">
+						<% } else if ((int)request.getAttribute("max_1") == counts[i][j] && counts[i][j] != 0){ %>
+						<td bgcolor="#F4FA58">
+						<% } else { %>
+						<td>
+						<% } %>
+						<%= counts[i][j] %></td>
+						<% } %>
+					</tr>
+					<% } %>
+				</table>
+			</td>
+		</tr>
 		<% int targetListLength = (int) request.getAttribute("targetListLength"); %>
 		<tr>
 			<th rowspan="<%= targetListLength %>">
-				対象者の回答状況：
+				各対象者の回答状況：
 			</th>
 			<td>
 				<a href="../ClientAnswer/<%= request.getAttribute("randomURL0") %>">

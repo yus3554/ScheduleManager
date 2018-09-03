@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class SignUp
@@ -25,26 +26,12 @@ public class SignUp extends HttpServlet {
     }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
-		request.setCharacterEncoding("utf-8");
-
-		// jspを指定
-		String view = "/WEB-INF/view/auth/signup.jsp";
-		// リクエストをviewに飛ばす
-		RequestDispatcher dispatcher = request.getRequestDispatcher(view);
-
-		dispatcher.forward(request, response);
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
+		HttpSession session = request.getSession(false);
 
 		// postされてきた情報をエンコード
 		request.setCharacterEncoding("utf-8");
@@ -53,12 +40,18 @@ public class SignUp extends HttpServlet {
 		String email = (String) request.getParameter("email");
 		String pass = (String) request.getParameter("password");
 
-		// "userName"にnameをセット
-		request.setAttribute("userName", name);
-		request.setAttribute("email", email);
-		request.setAttribute("password", pass);
+		System.out.println(pass);
 
-		doGet(request, response);
+		session.setAttribute("userName", name);
+		session.setAttribute("email", email);
+		session.setAttribute("password", pass);
+
+		// jspを指定
+		String view = "/WEB-INF/view/auth/signup.jsp";
+		// リクエストをviewに飛ばす
+		RequestDispatcher dispatcher = request.getRequestDispatcher(view);
+
+		dispatcher.forward(request, response);
 	}
 
 }

@@ -20,7 +20,9 @@ import javax.servlet.http.HttpSession;
 		urlPatterns = {
 				"/TopPage",
 				"/Login",
-				"/SignUp"})
+				"/SignUp",
+				"/SignUpSubmit"
+				})
 public class LoginFilter implements Filter {
 
     /**

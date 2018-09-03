@@ -4,19 +4,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>ユーザーページ</title>
+<title>退会確認</title>
 </head>
 <body>
 	<h1>スケジュール管理</h1>
-	<h2>ユーザーページ</h2>
-	<p>${ userName }さん、こんにちは！</p>
+	<h2>退会確認</h2>
 
-	<p><a href="./NewSchedule">新規スケジュール</a></p>
-	<p><a href="./ScheduleList">要求スケジュール一覧</a></p>
+	本当に退会してもよろしいですか？<br>
 
-	<p><a href="./Config">設定</a></p>
-
-	<p><a href="./Logout">ログアウト</a></p>
-
+	<p><a href="./WithDrawSubmit">退会する</a></p>
+	<p><a href="#" onclick="javascript:window.history.back(-1);return false;">設定ページに戻る</a></p>
 </body>
 </html>

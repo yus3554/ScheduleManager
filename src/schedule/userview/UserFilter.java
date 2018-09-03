@@ -27,7 +27,10 @@ import javax.servlet.http.HttpSession;
 				"/ScheduleDetail",
 				"/ScheduleDeleteConfirm",
 				"/ScheduleDeleteExecute",
-				"/ClientAnswer"
+				"/ClientAnswer",
+				"/Config",
+				"/WithDrawConfirm",
+				"/WithDrawSubmit"
 				})
 public class UserFilter implements Filter {
 

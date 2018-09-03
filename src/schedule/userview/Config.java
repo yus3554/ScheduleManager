@@ -1,4 +1,4 @@
-package schedule.topview;
+package schedule.userview;
 
 import java.io.IOException;
 
@@ -10,18 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * サーブレット実行クラス TopPage
- * TopPageを表示
- * @author yusuke
+ * Servlet implementation class Config
  */
-@WebServlet("/TopPage")
-public class TopPage extends HttpServlet {
+@WebServlet("/Config")
+public class Config extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public TopPage() {
+    public Config() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,17 +28,13 @@ public class TopPage extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	// TODO Auto-generated method stub
 
     	// jspを指定
-    	// なぜかviewのアドレスを "/WEB-INF/view/toppage.jsp"にすると動かないため
-    	// viewフォルダに入れずに動かすといけるのでそれでとりあえず行く
-    	String view = "/WEB-INF/toppage.jsp";
+    	String view = "/WEB-INF/view/user/config.jsp";
     	// リクエストをviewに飛ばす
     	RequestDispatcher dispatcher = request.getRequestDispatcher(view);
 
     	dispatcher.forward(request, response);
-
     }
 
 }

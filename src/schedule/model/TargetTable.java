@@ -74,8 +74,8 @@ public class TargetTable {
 
 	// urlに使うランダム文字列を出力する
 	private String createRandomURL() {
-		// common-langを使ってランダムな10文字の文字列を出力
-		String url = RandomStringUtils.randomAlphanumeric(10);
+		// common-langを使ってランダムな20文字の文字列を出力
+		String url = RandomStringUtils.randomAlphanumeric(20);
 		return url;
 	}
 

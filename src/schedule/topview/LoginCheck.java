@@ -2,6 +2,7 @@ package schedule.topview;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -82,17 +83,21 @@ public class LoginCheck extends HttpServlet {
 		/* 取りあえずユーザー名とパスワードが入力されていれば認証する */
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/users");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
+			String sql = "select * from users where email = ? and pass = ?;";
+
+			// SQLインジェクション対策
+			PreparedStatement patmt = conn.prepareStatement(sql);
+			patmt.setString(1, email);
+			patmt.setString(2, pass);
 
 			// emailとpassで一緒のを出力
-			ResultSet rs = stmt.executeQuery("select * from users where email = '" + email + "' and pass = '" + pass + "';");
+			ResultSet rs = patmt.executeQuery();
 
 			// selectで出て来たのをwhileで回す
 			// whileに入った時点でusersテーブルに存在していたことになるのでreturn trueで返す
@@ -105,9 +110,6 @@ public class LoginCheck extends HttpServlet {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}

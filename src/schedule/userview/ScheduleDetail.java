@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import schedule.model.AnswerTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 
@@ -63,13 +64,51 @@ public class ScheduleDetail extends HttpServlet {
 
 		HashMap<String, String> targetHM = new HashMap<>();
 
+		ArrayList<String> randomURLs = new ArrayList<>();
+
 		// 0番目からrequestにスケジュールを格納
 		for(int i = 0; i < targetListLength; i++) {
 			targetHM = targetList.get(i);
 			request.setAttribute("targetEmail" + i, targetHM.get("targetEmail"));
 			request.setAttribute("randomURL" + i, targetHM.get("randomURL"));
 			request.setAttribute("isInput" + i, targetHM.get("isInput"));
+			randomURLs.add(targetHM.get("randomURL"));
 		}
+
+		// 全体回答状況表のため
+		ArrayList<HashMap<String, String>> count = new AnswerTable().getCountAnswers(randomURLs);
+		int countLength = count.size();
+		request.setAttribute("countLength", countLength);
+		// 1限から5弦を配列に入れる
+		// 配列の理由として、セルの色付けが楽そうだったから
+		int[][] counts = new int[countLength][5];
+		// セルの色付けに使う、最大値と最大値引く1
+		int max = 0;
+		int max_1 = 0;
+		for(int i = 0; i < countLength; i++) {
+			request.setAttribute("date" + i, count.get(i).get("date"));
+			counts[i][0] = Integer.parseInt(count.get(i).get("first"));
+			counts[i][1] = Integer.parseInt(count.get(i).get("second"));
+			counts[i][2] = Integer.parseInt(count.get(i).get("third"));
+			counts[i][3] = Integer.parseInt(count.get(i).get("fourth"));
+			counts[i][4] = Integer.parseInt(count.get(i).get("fifth"));
+		}
+		// 最大値と最大値引く1の取得
+		for(int i = 0; i < countLength; i++) {
+			for(int j = 0; j < 5; j++) {
+				if(max <= counts[i][j]) {
+					max = counts[i][j];
+				}else if(max_1 <= counts[i][j]) {
+					max_1 = counts[i][j];
+				}
+			}
+		}
+		request.setAttribute("counts", counts);
+		request.setAttribute("max", max);
+		request.setAttribute("max_1", max_1);
+
+		// 全体のところを丸の数とか三角の数とかで変更できるようにする（セルの色をjavascriptでやらないと動的にできない）
+		// あとは、全体のところのセルを押すと日程決定のメールを自動で送れるようにする
 
 		// リストの長さをrequestに格納
 		request.setAttribute("targetListLength", targetListLength);

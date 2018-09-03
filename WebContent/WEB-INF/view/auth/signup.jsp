@@ -13,11 +13,13 @@
 	<table>
 		<tr><td>名前：</td><td>${ userName }</td></tr>
 		<tr><td>メールアドレス：</td><td>${ email }</td></tr>
-		<tr><td>パスワード：</td><td>${ pass }</td></tr>
+		<tr><td>パスワード：</td><td>${ password }</td></tr>
 	</table>
 
 	以上で登録してもよろしいですか？
-
+	<form action="./SignUpSubmit" method="post">
+		<input type="submit" value="送信"><input type="button" onClick="javascript:history.back();" value="戻る">
+	</form>
 
 	<p><a href="./TopPage">トップページに戻る</a></p>
 </body>

@@ -54,15 +54,29 @@
 
 		var form = document.forms.newschedule;
 
+		// とりあえず
+		// 今から1日後を締め切り
+		var deadline = new Date(Date.now() + 1 * 24 * 60 * 60000);
+		var start = new Date(Date.now() + 3 * 24 * 60 * 60000);
+		var end = new Date(Date.now() + 8 * 24 * 60 * 60000);
+
+		function addZero(n){
+			if(n < 10){
+				return "0" + n;
+			} else {
+				return n;
+			}
+		}
+
 		// テスト用の自動入力ボタン
 		function AutoInput(){
 			form.eventName.value = "会議の開催日程について";
 			form.eventContent.value = "会議をします。";
 			form.targetEmail1.value = "s152017@eecs.tottori-u.ac.jp";
 			form.targetEmail2.value = "yus3554@gmail.com";
-			form.eventStartDate.value = "2018-09-01";
-			form.eventEndDate.value = "2018-09-03";
-			form.eventDeadlineDate.value = "2018-08-20";
+			form.eventStartDate.value = "" + start.getFullYear() + "-" + addZero(start.getMonth() + 1) + "-" + addZero(start.getDate());
+			form.eventEndDate.value = "" + end.getFullYear() + "-" + addZero(end.getMonth() + 1) + "-" + addZero(end.getDate());
+			form.eventDeadlineDate.value = "" + deadline.getFullYear() + "-" + addZero(deadline.getMonth() + 1) + "-" + addZero(deadline.getDate());
 		}
 
 		function isSubmit(){

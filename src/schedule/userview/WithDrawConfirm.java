@@ -1,4 +1,4 @@
-package schedule.topview;
+package schedule.userview;
 
 import java.io.IOException;
 
@@ -10,37 +10,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * サーブレット実行クラス TopPage
- * TopPageを表示
- * @author yusuke
+ * Servlet implementation class WithDraw
  */
-@WebServlet("/TopPage")
-public class TopPage extends HttpServlet {
+@WebServlet("/WithDrawConfirm")
+public class WithDrawConfirm extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public TopPage() {
-        super();
-        // TODO Auto-generated constructor stub
+    public WithDrawConfirm() {
+    	super();
+    	// TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	// TODO Auto-generated method stub
-
     	// jspを指定
-    	// なぜかviewのアドレスを "/WEB-INF/view/toppage.jsp"にすると動かないため
-    	// viewフォルダに入れずに動かすといけるのでそれでとりあえず行く
-    	String view = "/WEB-INF/toppage.jsp";
+    	String view = "/WEB-INF/view/user/withdrawconfirm.jsp";
     	// リクエストをviewに飛ばす
     	RequestDispatcher dispatcher = request.getRequestDispatcher(view);
 
     	dispatcher.forward(request, response);
-
     }
+
 
 }

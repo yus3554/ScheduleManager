@@ -127,6 +127,72 @@ public class AnswerTable {
 		return null;
 	}
 
+	// 丸の数を返す
+	public ArrayList<HashMap<String, String>> getCountAnswers(ArrayList<String> randomURLs) {
+		ArrayList<HashMap<String, String>> answers = new ArrayList<>();
+		DataSource dataSource = null;
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			InitialContext context = new InitialContext();
+			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/answers");
+			conn = dataSource.getConnection();
+
+			stmt = conn.createStatement();
+
+			// 丸の数なら2、丸と三角の数なら1
+			int n = 2;
+
+			// senderEmailで検索
+			String sql = "select date, count(first >= " + n + " or null) as first, " +
+						 "count(second >= " + n + " or null) as second, " +
+						 "count(third >= " + n + " or null) as third, " +
+						 "count(fourth >= " + n + " or null) as fourth, " +
+						 "count(fifth >= " + n + " or null) as fifth " +
+						 "from answers where ";
+			for(String url: randomURLs) {
+				if (sql.endsWith("'")) {
+					sql += " or ";
+				}
+					sql += "randomURL = '" + url +"'";
+			}
+			sql += " group by date;";
+
+			// HashMapに入れてそれをArrayListに格納
+			// HashMapはwhileでループごとに毎回初期化する必要がある
+			ResultSet rs = stmt.executeQuery(sql);
+			HashMap<String, String> hm;
+			while (rs.next()) {
+				hm = new HashMap<>();
+				hm.put("date", rs.getString("date"));
+				hm.put("first", rs.getString("first"));
+				hm.put("second", rs.getString("second"));
+				hm.put("third", rs.getString("third"));
+				hm.put("fourth", rs.getString("fourth"));
+				hm.put("fifth", rs.getString("fifth"));
+				answers.add(hm);
+			}
+
+			return answers;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(stmt != null) {
+					stmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 	// idとsenderEmailを入れて削除する
 	public void delete(String randomURL) {
 		DataSource dataSource = null;

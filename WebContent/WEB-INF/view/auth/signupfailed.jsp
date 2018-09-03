@@ -4,19 +4,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>ユーザーページ</title>
+<title>登録失敗</title>
 </head>
 <body>
 	<h1>スケジュール管理</h1>
-	<h2>ユーザーページ</h2>
-	<p>${ userName }さん、こんにちは！</p>
+	<h2>登録失敗</h2>
 
-	<p><a href="./NewSchedule">新規スケジュール</a></p>
-	<p><a href="./ScheduleList">要求スケジュール一覧</a></p>
+	既に登録されているメールアドレスです。<br>
+	他のメールアドレスでの登録をお願いします。
 
-	<p><a href="./Config">設定</a></p>
-
-	<p><a href="./Logout">ログアウト</a></p>
-
+	<p><a href="./TopPage">トップページに戻る</a></p>
 </body>
 </html>
