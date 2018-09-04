@@ -23,7 +23,6 @@ public class WithDrawSubmit extends HttpServlet {
      */
     public WithDrawSubmit() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

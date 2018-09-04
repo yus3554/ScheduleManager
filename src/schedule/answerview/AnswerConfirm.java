@@ -22,7 +22,6 @@ public class AnswerConfirm extends HttpServlet {
      */
     public AnswerConfirm() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

@@ -21,7 +21,6 @@ public class WithDrawConfirm extends HttpServlet {
      */
     public WithDrawConfirm() {
     	super();
-    	// TODO Auto-generated constructor stub
     }
 
     /**

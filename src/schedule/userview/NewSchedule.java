@@ -21,7 +21,6 @@ public class NewSchedule extends HttpServlet {
 	 */
 	public NewSchedule() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

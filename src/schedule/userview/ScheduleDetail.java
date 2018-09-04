@@ -28,7 +28,6 @@ public class ScheduleDetail extends HttpServlet {
      */
 	public ScheduleDetail() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -107,8 +106,15 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("max", max);
 		request.setAttribute("max_1", max_1);
 
-		// 全体のところを丸の数とか三角の数とかで変更できるようにする（セルの色をjavascriptでやらないと動的にできない）
+		//TODO 全体の回答状況を動的に、三角とか丸とか変えられるようにする
 		// あとは、全体のところのセルを押すと日程決定のメールを自動で送れるようにする
+		// 入力をクリックしたら丸→三角→ばつでループする感じにして入力しやすいようにしたい
+		// 見た目（まずはワイヤーフレームを作る）
+		// 見た目（ワイヤーフレームで作ったものを再現）実装
+		// JQueryの勉強、CSSの勉強
+		// SSL関係の証明書とかの勉強
+		// sqlインジェクション対策のためのPreparedStatementに逐次変更
+		// 新規スケジュールの対象者アドレスのグループ化的な
 
 		// リストの長さをrequestに格納
 		request.setAttribute("targetListLength", targetListLength);

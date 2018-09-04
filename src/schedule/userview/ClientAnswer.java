@@ -28,7 +28,6 @@ public class ClientAnswer extends HttpServlet {
      */
     public ClientAnswer() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

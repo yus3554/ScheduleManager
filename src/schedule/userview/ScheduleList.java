@@ -26,7 +26,6 @@ public class ScheduleList extends HttpServlet {
      */
     public ScheduleList() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**

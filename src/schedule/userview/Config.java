@@ -21,7 +21,6 @@ public class Config extends HttpServlet {
      */
     public Config() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

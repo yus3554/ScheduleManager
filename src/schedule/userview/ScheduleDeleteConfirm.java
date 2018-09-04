@@ -27,7 +27,6 @@ public class ScheduleDeleteConfirm extends HttpServlet {
 	 */
 	public ScheduleDeleteConfirm() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

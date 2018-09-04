@@ -4,15 +4,52 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>設定</title>
+<title>Config</title>
+<style>
+<%@include file="../../css/user.css" %>
+nav #config{
+		background-color: #71DCB5;
+		-moz-box-sizing: border-box;
+   		-webkit-box-sizing: border-box;
+   		-o-box-sizing: border-box;
+   		-ms-box-sizing: border-box;
+   		box-sizing: border-box;
+		border: solid 1px #33aaaa;
+	}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<h1>スケジュール管理</h1>
-	<h2>設定</h2>
+	<header>
+		<h1><a href="./">Schedule Manager</a></h1>
+	</header>
+	<div id="name">
+		<p>${ userName }さん、こんにちは！</p>
+	</div>
+	<main>
+      <nav>
+        <div id="new">
+          <a href="./NewSchedule" class="list">New Schedule</a>
+        </div>
+        <div id="list">
+          <a href="./ScheduleList" class="list">Schedule List</a>
+        </div>
+        <div id="config">
+          <a href="./Config" class="list">Config</a>
+        </div>
+        <div id="logout">
+          <a href="./Logout" class="list">Logout</a>
+        </div>
+      </nav>
+      <div id="honbun">
 
 	<p>テンプレートの設定</p>
 	<p><a href="./WithDrawConfirm">退会（未実装）</a></p>
+	</div>
+	</main>
+	<footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
 
-	<p><a href="./UserPage">ユーザーページに戻る</a></p>
 </body>
 </html>

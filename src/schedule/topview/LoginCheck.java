@@ -32,14 +32,12 @@ public class LoginCheck extends HttpServlet {
      */
     public LoginCheck() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		String email = (String) request.getParameter("email");
 		String pass = (String) request.getParameter("password");

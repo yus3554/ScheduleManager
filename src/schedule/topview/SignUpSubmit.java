@@ -27,14 +27,12 @@ public class SignUpSubmit extends HttpServlet {
      */
     public SignUpSubmit() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 
 		HttpSession session = request.getSession(false);
@@ -52,7 +50,6 @@ public class SignUpSubmit extends HttpServlet {
 			InetAddress addr = InetAddress.getLocalHost();
 			ipAddr = addr.getHostAddress();
 		} catch (UnknownHostException e1) {
-			// TODO 自動生成された catch ブロック
 			e1.printStackTrace();
 		}
 

@@ -22,14 +22,12 @@ public class NewScheduleConfirm extends HttpServlet {
 	 */
 	public NewScheduleConfirm() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 
 		// postされて来た要素を取得

@@ -29,7 +29,6 @@ public class ScheduleDeleteExecute extends HttpServlet {
      */
     public ScheduleDeleteExecute() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**

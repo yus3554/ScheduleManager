@@ -5,18 +5,41 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>ユーザーページ</title>
+<style><%@include file="../../css/user.css" %></style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<h1>スケジュール管理</h1>
-	<h2>ユーザーページ</h2>
-	<p>${ userName }さん、こんにちは！</p>
+	<header>
+		<h1><a href="./">Schedule Manager</a></h1>
+	</header>
+	<div id="name">
+		<p>${ userName }さん、こんにちは！</p>
+	</div>
+	<main>
+      <nav>
+        <div id="new">
+          <a href="./NewSchedule" class="list">New Schedule</a>
+        </div>
+        <div id="list">
+          <a href="./ScheduleList" class="list">Schedule List</a>
+        </div>
+        <div id="config">
+          <a href="./Config" class="list">Config</a>
+        </div>
+        <div id="logout">
+          <a href="./Logout" class="list">Logout</a>
+        </div>
+      </nav>
+      <div id="honbun">
+        このウェブサイトは、スケジュールを管理するためのシステムです。<br>
+        みなさんぜひつかってくださいね！<br><br>
 
-	<p><a href="./NewSchedule">新規スケジュール</a></p>
-	<p><a href="./ScheduleList">要求スケジュール一覧</a></p>
-
-	<p><a href="./Config">設定</a></p>
-
-	<p><a href="./Logout">ログアウト</a></p>
+        今現在期間内であるスケジュールを表示しています。
+      </div>
+    </main>
+    <footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
 
 </body>
 </html>

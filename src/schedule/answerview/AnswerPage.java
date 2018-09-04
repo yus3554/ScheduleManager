@@ -28,7 +28,6 @@ public class AnswerPage extends HttpServlet {
      */
     public AnswerPage() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

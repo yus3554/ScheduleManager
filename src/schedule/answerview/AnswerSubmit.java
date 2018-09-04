@@ -25,7 +25,6 @@ public class AnswerSubmit extends HttpServlet {
      */
     public AnswerSubmit() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

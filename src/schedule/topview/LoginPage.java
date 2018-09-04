@@ -23,7 +23,6 @@ public class LoginPage extends HttpServlet {
      */
     public LoginPage() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**

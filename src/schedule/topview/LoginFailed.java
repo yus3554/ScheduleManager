@@ -21,14 +21,12 @@ public class LoginFailed extends HttpServlet {
      */
     public LoginFailed() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	// TODO Auto-generated method stub
     	// jspを指定
     	String view = "/WEB-INF/view/auth/loginfailed.jsp";
     	// リクエストをviewに飛ばす
@@ -41,7 +39,6 @@ public class LoginFailed extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
