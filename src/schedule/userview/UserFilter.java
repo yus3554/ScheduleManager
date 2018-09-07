@@ -59,13 +59,13 @@ public class UserFilter implements Filter {
 				/* まだ認証されていない */
 				session = ((HttpServletRequest) request).getSession(true);
 
-				((HttpServletResponse) response).sendRedirect("./Login");
+				((HttpServletResponse) response).sendRedirect("./TopPage");
 				return;
 			}else{
 				Object loginCheck = session.getAttribute("login");
 				if (loginCheck == null){
 					/* まだ認証されていない */
-					((HttpServletResponse) response).sendRedirect("./Login");
+					((HttpServletResponse) response).sendRedirect("./TopPage");
 					return;
 				}
 			}

@@ -48,6 +48,7 @@
         </div>
       </nav>
       <div id="honbun">
+      <p><a href="../ScheduleList">スケジュール一覧に戻る</a></p>
 	<h2>${ eventName }</h2>
 
 	<table>
@@ -73,11 +74,11 @@
 						<th><%= request.getAttribute("date" + i)%></th>
 						<% for(int j = 0; j < 5; j++) { %>
 						<% if((int)request.getAttribute("max") == counts[i][j] && counts[i][j] != 0) { %>
-						<td bgcolor="#FE9A2E">
+						<td bgcolor="#FE9A2E" align="center" valign="top">
 						<% } else if ((int)request.getAttribute("max_1") == counts[i][j] && counts[i][j] != 0){ %>
-						<td bgcolor="#F4FA58">
+						<td bgcolor="#F4FA58" align="center" valign="top">
 						<% } else { %>
-						<td>
+						<td align="center" valign="top">
 						<% } %>
 						<%= counts[i][j] %></td>
 						<% } %>

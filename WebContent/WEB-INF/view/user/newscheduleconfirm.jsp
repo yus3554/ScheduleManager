@@ -5,9 +5,40 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>新規スケジュールの確認</title>
+<style>
+<%@include file="../../css/user.css" %>
+nav #new{
+border-radius: 5px 5px 0 0 / 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
+  -moz-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
+		background-color: #71DCB5;
+	}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<h1>スケジュール管理</h1>
+	<header>
+		<h1><a href="./">Schedule Manager</a></h1>
+	</header>
+	<div id="name">
+		<p>${ userName }さん、こんにちは！</p>
+	</div>
+	<main>
+      <nav>
+        <div id="new">
+          <a href="./NewSchedule" class="list">New Schedule</a>
+        </div>
+        <div id="list">
+          <a href="./ScheduleList" class="list">Schedule List</a>
+        </div>
+        <div id="config">
+          <a href="./Config" class="list">Config</a>
+        </div>
+        <div id="logout">
+          <a href="./Logout" class="list">Logout</a>
+        </div>
+      </nav>
+      <div id="honbun">
 	<h2>新規スケジュールの確認</h2>
 
 	<table>
@@ -29,5 +60,10 @@
 	<form action="./NewScheduleSubmit" method="post">
 		<input type="submit" value="送信"><input type="button" onClick="javascript:history.back();" value="戻る">
 	</form>
+	</div>
+	</main>
+	<footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
 </body>
 </html>

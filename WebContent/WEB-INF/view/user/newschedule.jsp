@@ -12,12 +12,6 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
   -moz-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		background-color: #71DCB5;
-		-moz-box-sizing: border-box;
-   		-webkit-box-sizing: border-box;
-   		-o-box-sizing: border-box;
-   		-ms-box-sizing: border-box;
-   		box-sizing: border-box;
-		border: solid 1px #33aaaa;
 	}
 </style>
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
@@ -46,6 +40,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
         </div>
       </nav>
       <div id="honbun">
+      <p><a href="./UserPage">ユーザーページに戻る</a></p>
 	<!-- 空欄がある状態でsubmitしたら表示 -->
 	<p id="blanktext">空欄があります。<br>
 	再度、入力してください。</p>
@@ -93,10 +88,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		var form = document.forms.newschedule;
 
 		// とりあえず
-		// 今から1日後を締め切り
-		var deadline = new Date(Date.now() + 1 * 24 * 60 * 60000);
-		var start = new Date(Date.now() + 3 * 24 * 60 * 60000);
-		var end = new Date(Date.now() + 8 * 24 * 60 * 60000);
+		// 今から2日後を締め切り
+		var deadline = new Date(Date.now() + 2 * 24 * 60 * 60000);
+		var start = new Date(Date.now() + 4 * 24 * 60 * 60000);
+		var end = new Date(Date.now() + 9 * 24 * 60 * 60000);
 
 		function addZero(n){
 			if(n < 10){

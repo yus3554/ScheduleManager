@@ -5,16 +5,22 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール回答</title>
+<style><%@include file="../../css/single.css" %></style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
 
-<h1>スケジュール管理</h1>
+	<header>
+		<h1><a href="../">Schedule Manager</a></h1>
+	</header>
+	<main>
+	<div id="honbun">
 <h2>スケジュール回答</h2>
 
 	<h3>${ senderName }さんからの入力要求</h3>
 
-	<form action="../AnswerConfirm" method="post">
-	<table border="2">
+	<form action="../AnswerConfirm" method="post" id="answerForm">
+	<table id="table" border="2" cellpadding="10">
 		<tr>
 			<th>日付</th>
 			<th>1限</th>
@@ -23,52 +29,72 @@
 			<th>4限</th>
 			<th>5限</th>
 		</tr>
+		<% String[] times = {"first", "second", "third", "fourth", "fifth"}; %>
 		<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
 		<tr>
 			<th>
 				<%= request.getAttribute("date" + i) %>
 				<input type="hidden" name="date<%= i %>" value="<%= request.getAttribute("date" + i) %>">
 			</th>
-			<td>
-				<select name="first<%= i %>">
-					<option value="0" <% if( request.getAttribute("first" + i).equals("0") ){ %>selected<% } %>>×</option>
-					<option value="1" <% if( request.getAttribute("first" + i).equals("1") ){ %>selected<% } %>>△</option>
-					<option value="2" <% if( request.getAttribute("first" + i).equals("2") ){ %>selected<% } %>>○</option>
-				</select>
-			</td>
-			<td>
-				<select name="second<%= i %>">
-					<option value="0" <% if( request.getAttribute("second" + i).equals("0") ){ %>selected<% } %>>×</option>
-					<option value="1" <% if( request.getAttribute("second" + i).equals("1") ){ %>selected<% } %>>△</option>
-					<option value="2" <% if( request.getAttribute("second" + i).equals("2") ){ %>selected<% } %>>○</option>
-				</select>
-			</td>
-			<td>
-				<select name="third<%= i %>">
-					<option value="0" <% if( request.getAttribute("third" + i).equals("0") ){ %>selected<% } %>>×</option>
-					<option value="1" <% if( request.getAttribute("third" + i).equals("1") ){ %>selected<% } %>>△</option>
-					<option value="2" <% if( request.getAttribute("third" + i).equals("2") ){ %>selected<% } %>>○</option>
-				</select>
-			</td>
-			<td>
-				<select name="fourth<%= i %>">
-					<option value="0" <% if( request.getAttribute("fourth" + i).equals("0") ){ %>selected<% } %>>×</option>
-					<option value="1" <% if( request.getAttribute("fourth" + i).equals("1") ){ %>selected<% } %>>△</option>
-					<option value="2" <% if( request.getAttribute("fourth" + i).equals("2") ){ %>selected<% } %>>○</option>
-				</select>
-			</td>
-			<td>
-				<select name="fifth<%= i %>">
-					<option value="0" <% if( request.getAttribute("fifth" + i).equals("0") ){ %>selected<% } %>>×</option>
-					<option value="1" <% if( request.getAttribute("fifth" + i).equals("1") ){ %>selected<% } %>>△</option>
-					<option value="2" <% if( request.getAttribute("fifth" + i).equals("2") ){ %>selected<% } %>>○</option>
-				</select>
-			</td>
+			<% for(int j = 0; j < times.length; j++) { %>
+			<td align="center" valign="top" id="<%= times[j] %>Td<%= i %>"><%
+			if( request.getAttribute(times[j] + i).equals("0") ){ %>×<%
+			} else if( request.getAttribute(times[j] + i).equals("1") ){ %>△<%
+			} else if( request.getAttribute(times[j] + i).equals("2") ){ %>○<% } %></td>
+			<input type="hidden" name="<%= times[j] + i %>" value="">
+			<% } %>
 		</tr>
 		<% } %>
 	</table>
-	<input type="submit" value="確認">
+	<input type="button" value="確認" onclick="answerSubmit();"/>
 	</form>
+
+	</div>
+	</main>
+    <footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
+
+	<script>
+		var table = document.getElementById("table");
+		var cellclick = function(){
+			if(this.innerHTML == "×"){
+				this.innerHTML = "△";
+			} else if(this.innerHTML == "△"){
+				this.innerHTML = "○";
+			} else if(this.innerHTML == "○"){
+				this.innerHTML = "×";
+			}
+		}
+
+		var tr = table.children;
+		for(var i = 0; i < tr.length; i++){
+			var td = tr[i].children;
+			for(var j = 0; j < td.length; j++){
+				var cell = td[j].children;
+				for(var k = 0; k < cell.length; k++){
+					cell[k].onclick = cellclick;
+				}
+			}
+		}
+
+		function answerSubmit(){
+			var form = document.getElementById("answerForm");
+			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
+			<% for(int j = 0; j < times.length; j++){ %>
+				var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
+				if( <%= times[j] %>tdText == "×"){
+					document.getElementsByName("<%= times[j] + i %>")[0].value = "0";
+				} else if( <%= times[j] %>tdText == "△" ){
+					document.getElementsByName("<%= times[j] + i %>")[0].value = "1";
+				} else {
+					document.getElementsByName("<%= times[j] + i %>")[0].value = "2";
+				}
+			<% } %>
+			<% } %>
+			form.submit();
+		}
+	</script>
 
 </body>
 </html>

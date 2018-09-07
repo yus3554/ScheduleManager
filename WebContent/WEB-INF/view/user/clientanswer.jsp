@@ -15,12 +15,6 @@
 	}
 	nav #list{
 		background-color: #71DCB5;
-		-moz-box-sizing: border-box;
-   		-webkit-box-sizing: border-box;
-   		-o-box-sizing: border-box;
-   		-ms-box-sizing: border-box;
-   		box-sizing: border-box;
-		border: solid 1px #33aaaa;
 	}
 </style>
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
@@ -63,54 +57,17 @@
 			<th>4限</th>
 			<th>5限</th>
 		</tr>
+		<% String[] times = {"first", "second", "third", "fourth", "fifth"}; %>
 		<% for(int i = 0; i < (int)request.getAttribute("answersLength"); i++) { %>
 		<tr>
 			<th><%= request.getAttribute("date" + i) %></th>
-			<td>
-				<% if( request.getAttribute("first" + i).equals("0") ){  %>
-				×
-				<% } else if(request.getAttribute("first" + i).equals("1")) {%>
-				△
-				<% } else { %>
-				○
-				<% } %>
+			<% for(int j = 0; j < times.length; j++){ %>
+			<td align="center" valign="top" >
+				<% if( request.getAttribute(times[j] + i).equals("0") ){  %>×<% } %>
+				<% if(request.getAttribute(times[j] + i).equals("1")) {%>△<% } %>
+				<% if(request.getAttribute(times[j] + i).equals("2")) { %>○<% } %>
 			</td>
-			<td>
-				<% if( request.getAttribute("second" + i).equals("0") ){  %>
-				×
-				<% } else if(request.getAttribute("second" + i).equals("1")) {%>
-				△
-				<% } else { %>
-				○
-				<% } %>
-			</td>
-			<td>
-				<% if( request.getAttribute("third" + i).equals("0") ){  %>
-				×
-				<% } else if(request.getAttribute("third" + i).equals("1")) {%>
-				△
-				<% } else { %>
-				○
-				<% } %>
-			</td>
-			<td>
-				<% if( request.getAttribute("fourth" + i).equals("0") ){  %>
-				×
-				<% } else if(request.getAttribute("fourth" + i).equals("1")) {%>
-				△
-				<% } else { %>
-				○
-				<% } %>
-			</td>
-			<td>
-				<% if( request.getAttribute("fifth" + i).equals("0") ){  %>
-				×
-				<% } else if(request.getAttribute("fifth" + i).equals("1")) {%>
-				△
-				<% } else { %>
-				○
-				<% } %>
-			</td>
+			<% } %>
 		</tr>
 		<% } %>
 	</table>

@@ -5,9 +5,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>新規登録確認</title>
+<style><%@include file="../../css/single.css" %></style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<h1>スケジュール管理</h1>
+	<header>
+		<h1><a href="../">Schedule Manager</a></h1>
+	</header>
+	<main>
+	<div id="honbun">
 	<h2>新規登録確認</h2>
 
 	<table>
@@ -22,5 +28,11 @@
 	</form>
 
 	<p><a href="./TopPage">トップページに戻る</a></p>
+
+	</div>
+	</main>
+    <footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
 </body>
 </html>

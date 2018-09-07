@@ -9,12 +9,6 @@
 <%@include file="../../css/user.css" %>
 nav #config{
 		background-color: #71DCB5;
-		-moz-box-sizing: border-box;
-   		-webkit-box-sizing: border-box;
-   		-o-box-sizing: border-box;
-   		-ms-box-sizing: border-box;
-   		box-sizing: border-box;
-		border: solid 1px #33aaaa;
 	}
 </style>
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
@@ -43,8 +37,11 @@ nav #config{
       </nav>
       <div id="honbun">
 
-	<p>テンプレートの設定</p>
-	<p><a href="./WithDrawConfirm">退会（未実装）</a></p>
+	<ul>
+		<li>テンプレートの設定</li>
+		<li>登録情報の変更</li>
+		<li><a href="./WithDrawConfirm">退会（未実装）</a></li>
+	</ul>
 	</div>
 	</main>
 	<footer>

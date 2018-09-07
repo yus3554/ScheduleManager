@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.naming.InitialContext;
 import javax.servlet.ServletException;
@@ -64,7 +63,7 @@ public class LoginCheck extends HttpServlet {
 			} else {
 				/* 認証に失敗したら、ログイン画面に戻す */
 				session.setAttribute("status", "Not Auth");
-				response.sendRedirect("./Login");
+				response.sendRedirect("./TopPage");
 			}
 		}
 	}

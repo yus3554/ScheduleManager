@@ -5,9 +5,22 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>ログイン失敗</title>
+<style><%@include file="../../css/single.css" %></style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
+<header>
+		<h1><a href="../">Schedule Manager</a></h1>
+	</header>
+	<main>
+	<div id="honbun">
 	<p>不正なアクセスです。</p>
 	<p><a href="./TopPage">トップページに戻る</a></p>
+
+	</div>
+	</main>
+    <footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
 </body>
 </html>

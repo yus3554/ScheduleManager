@@ -15,12 +15,6 @@
 	}
 	nav #list{
 		background-color: #71DCB5;
-		-moz-box-sizing: border-box;
-   		-webkit-box-sizing: border-box;
-   		-o-box-sizing: border-box;
-   		-ms-box-sizing: border-box;
-   		box-sizing: border-box;
-		border: solid 1px #33aaaa;
 	}
 </style>
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
@@ -49,6 +43,7 @@
         </div>
       </nav>
       <div id="honbun">
+      <p><a href="./UserPage">ユーザーページに戻る</a></p>
 
 	<table>
 		<thead>
