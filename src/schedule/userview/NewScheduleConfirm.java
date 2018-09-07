@@ -33,6 +33,7 @@ public class NewScheduleConfirm extends HttpServlet {
 		// postされて来た要素を取得
 		String eventName = (String) request.getParameter("eventName");
 		String eventContent = (String) request.getParameter("eventContent");
+		eventContent = eventContent.replace("\n", "");
 		eventContent = eventContent.replace("\r", "<br>");
 		eventContent = eventContent.replace("\r\n", "<br>");
 		String eventStartDate = (String) request.getParameter("eventStartDate");

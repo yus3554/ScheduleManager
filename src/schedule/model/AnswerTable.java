@@ -1,6 +1,7 @@
 package schedule.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,19 +42,17 @@ public class AnswerTable {
 
 					String randomURL = new TargetTable().getRandomURL(answer.getId(), answer.getSenderEmail(), email);
 
+					String sql = "insert into answers values (?, ?, 0, 0, 0, 0, 0);";
+					PreparedStatement patmt = conn.prepareStatement(sql);
+
 					for(int i = 0; i < answer.getDateLength() + 1; i++) {
 						// answersテーブルにインサート
-						String sql = "insert into answers values (\"" +
-								randomURL + "\",\"" +
-								ld.toString() + "\",\"" +
-								"0" + "\",\"" +
-								"0" + "\",\"" +
-								"0" + "\",\"" +
-								"0" + "\",\"" +
-								"0" + "\");";
+						patmt.setString(1, randomURL);
+						patmt.setString(2, ld.toString());
+
 						ld = ld.plusDays(1);
 
-						stmt.executeUpdate(sql);
+						patmt.executeUpdate();
 					}
 				}
 			}

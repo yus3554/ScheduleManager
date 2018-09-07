@@ -1,6 +1,7 @@
 package schedule.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,27 +18,25 @@ public class UserTable {
 	public void insert(String name, String email, String pass) {
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/users");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
+			String sql = "insert into users (name, email, pass) values (?, ?, ?);";
 
-			String sql = "insert into users (name, email, pass) values (\"" +
-							name + "\", \"" + email + "\", \"" + pass + "\");";
+			PreparedStatement patmt = conn.prepareStatement(sql);
+			patmt.setString(1, name);
+			patmt.setString(2, email);
+			patmt.setString(3, pass);
 
-			stmt.executeUpdate(sql);
+			patmt.executeUpdate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}

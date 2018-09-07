@@ -1,6 +1,7 @@
 package schedule.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,7 +29,6 @@ public class TargetTable {
 
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 
 		try {
 			InitialContext context = new InitialContext();
@@ -36,23 +36,20 @@ public class TargetTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targets");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
+			String sql = "insert into targets value (?, ?, ?, ?, 0);";
 
-			String sql = "insert into targets value (\"" +
-							id + "\", \"" +
-							senderEmail + "\", \"" +
-							targetEmail + "\", \"" +
-							randomURL + "\", \"" +
-							"0" + "\");";
-			stmt.executeUpdate(sql);
+			PreparedStatement patmt = conn.prepareStatement(sql);
+			patmt.setString(1, id);
+			patmt.setString(2, senderEmail);
+			patmt.setString(3, targetEmail);
+			patmt.setString(4, randomURL);
+
+			patmt.executeUpdate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}

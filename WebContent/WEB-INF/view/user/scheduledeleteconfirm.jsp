@@ -5,9 +5,43 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュールの削除</title>
+<style>
+	<%@include file="../../css/user.css" %>
+	table th{
+		padding: 10px;
+	}
+	table td{
+		padding: 10px;
+	}
+	nav #list{
+		background-color: #71DCB5;
+	}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<h1>スケジュール管理</h1>
+	<header>
+		<h1><a href="../">Schedule Manager</a></h1>
+	</header>
+	<div id="name">
+		<p>${ userName }さん、こんにちは！</p>
+	</div>
+	<main>
+      <nav>
+        <div id="new">
+          <a href="../NewSchedule" class="list">New Schedule</a>
+        </div>
+        <div id="list">
+          <a href="../ScheduleList" class="list">Schedule List</a>
+        </div>
+        <div id="config">
+          <a href="../Config" class="list">Config</a>
+        </div>
+        <div id="logout">
+          <a href="../Logout" class="list">Logout</a>
+        </div>
+      </nav>
+      <div id="honbun">
 	<h2>スケジュールの削除</h2>
 
 	<table>
@@ -31,6 +65,11 @@
 
 	<p><a href="../Delete/<%= request.getAttribute("id") %>" onclick="deleteConfirm();">削除する</a></p>
 	<p><a href="/ScheduleManager/ScheduleList">スケジュール一覧に戻る</a></p>
+	</div>
+    </main>
+    <footer>
+      Copyright &#169; Yusuke Ota
+    </footer>
 
 <script>
 	function deleteConfirm(){

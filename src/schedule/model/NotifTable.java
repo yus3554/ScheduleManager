@@ -1,6 +1,7 @@
 package schedule.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,31 +22,27 @@ public class NotifTable {
 	public void insert(String[] randomURL, String notifTime, int isFirst) {
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 WebContent/META-INF/context.xmlと合わせる
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/notifs");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
+			String sql = "insert into notifs values (?, ?, ?);";
+			PreparedStatement patmt = conn.prepareStatement(sql);
 
 			for(String url: randomURL) {
-				String sql = "insert into notifs values (\"" +
-						url + "\",\"" +
-						notifTime + "\",\"" +
-						isFirst + "\");";
+				patmt.setString(1, url);
+				patmt.setString(2, notifTime);
+				patmt.setInt(3, isFirst);
 
-				stmt.executeUpdate(sql);
+				patmt.executeUpdate();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}

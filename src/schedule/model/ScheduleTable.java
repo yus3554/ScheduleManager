@@ -1,6 +1,7 @@
 package schedule.model;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,16 +30,17 @@ public class ScheduleTable {
 			stmt = conn.createStatement();
 
 			// 新規スケジュールをschedulesテーブルにインサート
-			String sql = "insert into schedules values (\"" +
-					schedule.getId() + "\",\"" +
-					schedule.getEventName() + "\",\"" +
-					schedule.getEventContent() + "\",\"" +
-					schedule.getEventStartDate() + "\",\"" +
-					schedule.getEventEndDate() + "\",\"" +
-					schedule.getEventDeadlineDate() + "\",\"" +
-					schedule.getSenderEmail() + "\");";
+			String sql = "insert into schedules values (?, ?, ?, ?, ?, ?, ?);";
+			PreparedStatement patmt = conn.prepareStatement(sql);
+			patmt.setString(1, schedule.getId());
+			patmt.setString(2, schedule.getEventName());
+			patmt.setString(3, schedule.getEventContent());
+			patmt.setString(4, schedule.getEventStartDate());
+			patmt.setString(5, schedule.getEventEndDate());
+			patmt.setString(6, schedule.getEventDeadlineDate());
+			patmt.setString(7, schedule.getSenderEmail());
 
-			stmt.executeUpdate(sql);
+			patmt.executeUpdate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
