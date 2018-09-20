@@ -19,7 +19,7 @@ import schedule.model.TargetTable;
 /**
  * Servlet implementation class ScheduleDetail
  */
-@WebServlet("/ScheduleList/*")
+@WebServlet("/RequestSchedules/*")
 public class ScheduleDetail extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -107,11 +107,16 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("max_1", max_1);
 
 		//TODO 全体の回答状況を動的に、三角とか丸とか変えられるようにする
-		// あとは、全体のところのセルを押すと日程決定のメールを自動で送れるようにする
+		// あとは、全体のところのセルを押すと日程決定のメールを送れるようにする
+		// 回答ページに文章で何か書けるように、備考欄を追加
+		// 本文のフォントの統一（環境によって表示がバラバラになってしまう）
+		// 不正なIDやrandamURLに対するエラーページ
 		// SSL関係の証明書とかの勉強
-		// sqlインジェクション対策のためのPreparedStatementに逐次変更
+		// 退会ページ
+		// 登録状況変更
 		// 新規スケジュールの対象者アドレスのグループ化的な
 		// 中間発表のアブストラクトを作る
+		// リマインダー（再送）の日時をそれぞれ変えられるようにする
 
 		// リストの長さをrequestに格納
 		request.setAttribute("targetListLength", targetListLength);

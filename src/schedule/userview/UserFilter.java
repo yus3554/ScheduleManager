@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 				"/NewSchedule",
 				"/NewScheduleConfirm",
 				"/NewScheduleSubmit",
-				"/ScheduleList",
+				"/RequestSchedules",
 				"/ScheduleDetail",
 				"/ScheduleDeleteConfirm",
 				"/ScheduleDeleteExecute",

@@ -15,16 +15,16 @@ import javax.servlet.http.HttpSession;
 import schedule.model.ScheduleTable;
 
 /**
- * Servlet implementation class ScheduleList
+ * Servlet implementation class RequestSchedules
  */
-@WebServlet("/ScheduleList")
-public class ScheduleList extends HttpServlet {
+@WebServlet("/RequestSchedules")
+public class RequestSchedules extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ScheduleList() {
+    public RequestSchedules() {
         super();
     }
 

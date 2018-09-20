@@ -8,7 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class SignUp
@@ -25,22 +24,9 @@ public class SignUp extends HttpServlet {
     }
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		HttpSession session = request.getSession(false);
-
-		// postされてきた情報をエンコード
-		request.setCharacterEncoding("utf-8");
-		// requestの"name"パラメータを取得
-		String name = (String) request.getParameter("userName");
-		String email = (String) request.getParameter("email");
-		String pass = (String) request.getParameter("password");
-
-		session.setAttribute("userName", name);
-		session.setAttribute("email", email);
-		session.setAttribute("password", pass);
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		// jspを指定
 		String view = "/WEB-INF/view/auth/signup.jsp";

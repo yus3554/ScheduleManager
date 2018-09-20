@@ -18,7 +18,7 @@ import schedule.model.TargetTable;
 /**
  * Servlet implementation class ScheduleDeleteConfirm
  */
-@WebServlet("/ScheduleList/DeleteConfirm/*")
+@WebServlet("/RequestSchedules/DeleteConfirm/*")
 public class ScheduleDeleteConfirm extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

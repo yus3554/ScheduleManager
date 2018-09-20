@@ -14,28 +14,11 @@ nav #config{
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<header>
-		<h1><a href="./">Schedule Manager</a></h1>
-	</header>
-	<div id="name">
-		<p>${ userName }さん、こんにちは！</p>
-	</div>
+	<%@include file="../include/header.jsp" %>
+	<%@include file="./include/name.jsp" %>
 	<main>
-      <nav>
-        <div id="new">
-          <a href="./NewSchedule" class="list">New Schedule</a>
-        </div>
-        <div id="list">
-          <a href="./ScheduleList" class="list">Schedule List</a>
-        </div>
-        <div id="config">
-          <a href="./Config" class="list">Config</a>
-        </div>
-        <div id="logout">
-          <a href="./Logout" class="list">Logout</a>
-        </div>
-      </nav>
-      <div id="honbun">
+	<%@include file="./include/nav.jsp" %>
+	<div id="honbun">
 
 	<ul>
 		<li>テンプレートの設定</li>
@@ -44,9 +27,7 @@ nav #config{
 	</ul>
 	</div>
 	</main>
-	<footer>
-      Copyright &#169; Yusuke Ota
-    </footer>
+<%@include file="../include/footer.jsp" %>
 
 </body>
 </html>

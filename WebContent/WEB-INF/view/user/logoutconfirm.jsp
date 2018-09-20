@@ -4,13 +4,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>新規スケジュールの送信完了</title>
+<title>Logout</title>
 <style>
 <%@include file="../../css/user.css" %>
-nav #new{
-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
-  -webkit-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
-  -moz-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
+nav #logout{
 		background-color: #71DCB5;
 	}
 </style>
@@ -22,13 +19,16 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
-	<h2>新規スケジュールの送信完了</h2>
 
-	スケジュール入力要求を各対象者に送信しました。
+	<h2>ログアウト確認</h2>
+	ログアウトしますか？
+	<p><a href="./Logout">ログアウト</a></p>
+	<p><a href="javascript:history.back()">前のページに戻る</a></p>
 
-	<p><a href="./UserPage">ユーザーページに戻る</a></p>
+
 	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
+
 </body>
 </html>

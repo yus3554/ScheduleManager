@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>登録失敗</title>
+<title>新規登録確認</title>
 <style><%@include file="../../css/single.css" %></style>
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
@@ -12,12 +12,19 @@
 	<%@include file="../include/header.jsp" %>
 	<main>
 	<div id="honbun">
-	<h2>登録失敗</h2>
+	<h2>新規登録確認</h2>
 
-	既に登録されているメールアドレスです。<br>
-	他のメールアドレスでの登録をお願いします。
+	<table>
+		<tr><td>名前：</td><td>${ userName }</td></tr>
+		<tr><td>メールアドレス：</td><td>${ email }</td></tr>
+		<tr><td>パスワード：</td><td>${ password }</td></tr>
+	</table>
 
-	<p><a href="./TopPage">トップページに戻る</a></p>
+	以上で登録してもよろしいですか？
+	<form action="./SignUpSubmit" method="post">
+		<input type="submit" value="送信"><input type="button" onClick="javascript:history.back();" value="戻る">
+	</form>
+
 	</div>
 	</main>
     <%@include file="../include/footer.jsp" %>

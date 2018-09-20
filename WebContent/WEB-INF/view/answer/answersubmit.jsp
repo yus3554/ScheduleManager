@@ -10,9 +10,7 @@
 </head>
 <body>
 
-<header>
-		<h1><a href="../">Schedule Manager</a></h1>
-	</header>
+<%@include file="../include/header.jsp" %>
 	<main>
 	<div id="honbun">
 <h2>スケジュール回答送信完了</h2>
@@ -22,9 +20,7 @@
 </div>
 </main>
 
-    <footer>
-      Copyright &#169; Yusuke Ota
-    </footer>
+    <%@include file="../include/footer.jsp" %>
 
 </body>
 </html>

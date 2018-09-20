@@ -9,9 +9,7 @@
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-	<header>
-		<h1><a href="../">Schedule Manager</a></h1>
-	</header>
+	<%@include file="../include/header.jsp" %>
 	<main>
 	<div id="honbun">
 	<h2>登録完了</h2>
@@ -22,8 +20,6 @@
 	<p><a href="./TopPage">トップページに戻る</a></p>
 	</div>
 	</main>
-    <footer>
-      Copyright &#169; Yusuke Ota
-    </footer>
+    <%@include file="../include/footer.jsp" %>
 </body>
 </html>

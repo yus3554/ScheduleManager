@@ -9,9 +9,7 @@
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-<header>
-		<h1><a href="../">Schedule Manager</a></h1>
-	</header>
+<%@include file="../include/header.jsp" %>
 	<main>
 	<div id="honbun">
 	<p>不正なアクセスです。</p>
@@ -19,8 +17,6 @@
 
 	</div>
 	</main>
-    <footer>
-      Copyright &#169; Yusuke Ota
-    </footer>
+    <%@include file="../include/footer.jsp" %>
 </body>
 </html>

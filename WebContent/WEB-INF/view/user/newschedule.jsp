@@ -17,29 +17,12 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 <link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
 </head>
 <body>
-
-	<header>
-		<h1><a href="./">Schedule Manager</a></h1>
-	</header>
-	<div id="name">
-		<p>${ userName }さん、こんにちは！</p>
-	</div>
+	<%@include file="../include/header.jsp" %>
+	<%@include file="./include/name.jsp" %>
 	<main>
-      <nav>
-        <div id="new">
-          <a href="./NewSchedule" class="list">New Schedule</a>
-        </div>
-        <div id="list">
-          <a href="./ScheduleList" class="list">Schedule List</a>
-        </div>
-        <div id="config">
-          <a href="./Config" class="list">Config</a>
-        </div>
-        <div id="logout">
-          <a href="./Logout" class="list">Logout</a>
-        </div>
-      </nav>
-      <div id="honbun">
+	<%@include file="./include/nav.jsp" %>
+	<div id="honbun">
+
       <p><a href="./UserPage">ユーザーページに戻る</a></p>
 	<!-- 空欄がある状態でsubmitしたら表示 -->
 	<p id="blanktext">空欄があります。<br>
@@ -73,11 +56,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	</table>
 		<input type="button" value="確認" onclick="isSubmit();"><input type="reset" value="リセット"><input type="button" value="test" onclick="AutoInput();">
 	</form>
+
 	</div>
 	</main>
-	<footer>
-      Copyright &#169; Yusuke Ota
-    </footer>
+<%@include file="../include/footer.jsp" %>
 
 	<script type="text/javascript">
 		// 最初は非表示
