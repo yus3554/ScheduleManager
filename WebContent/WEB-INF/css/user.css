@@ -66,7 +66,13 @@ nav #new:hover {
   -moz-border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 }
 
+#name {
+	font-family: "Mplus 1p";
+  font-size: 15px;
+}
+
 #honbun {
+	font-family: "Mplus 1p";
   font-size: 15px;
   border-radius: 5px;
   margin: 5px 5px;
@@ -75,6 +81,8 @@ nav #new:hover {
 }
 
 footer {
+	font-family: "Mplus 1p";
+  font-size: 15px;
   background-color: #cccccc;
   border-radius: 5px;
   text-align: center;

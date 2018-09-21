@@ -17,7 +17,7 @@
 		background-color: #71DCB5;
 	}
 </style>
-<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
+<%@include file="../include/font.jsp" %>
 </head>
 <body>
 

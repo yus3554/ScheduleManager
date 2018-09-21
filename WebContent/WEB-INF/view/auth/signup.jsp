@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>新規登録確認</title>
 <style><%@include file="../../css/single.css" %></style>
-<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
+<%@include file="../include/font.jsp" %>
 </head>
 <body>
 	<%@include file="../include/header.jsp" %>

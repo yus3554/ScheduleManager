@@ -15,15 +15,47 @@
 	}
 	nav #list{
 		background-color: #71DCB5;
-		-moz-box-sizing: border-box;
-   		-webkit-box-sizing: border-box;
-   		-o-box-sizing: border-box;
-   		-ms-box-sizing: border-box;
-   		box-sizing: border-box;
-		border: solid 1px #33aaaa;
 	}
+	#popup {
+ 	position: absolute;
+  padding: 10px;
+  background-color: #ffadad;
+  border: 2px solid #ca8888;
+  z-index:1;
+}
+
+#popup::before{
+	content: '';
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  left: -15px;
+  top: 10px;
+  border-right: 15px solid #ca8888;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+}
+
+#popup::after{
+  content: '';
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  left: -12px;
+  top: 10px;
+  border-right: 15px solid #ffadad;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+}
+
+#popup p {
+	margin: 0;
+	padding: 0;
+}
 </style>
-<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
+<%@include file="../include/font.jsp" %>
 </head>
 <body>
 	<%@include file="../include/header.jsp" %>
@@ -43,7 +75,7 @@
 			<th>全体の回答状況：<br>（○の数）</th>
 			<td>
 			<a href="./">対象者に日時の決定を送信する</a>
-				<table border="2">
+				<table id="table" border="2">
 					<tr>
 						<th>日付</th>
 						<th>1限</th>
@@ -102,10 +134,56 @@
 		</tr>
 		<% } %>
 	</table>
+	<div id="popup">
+      <p></p>
+    </div>
 
 	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
+
+<script type="text/javascript">
+var table = document.getElementById("table");
+var popup = document.getElementById("popup");
+
+// ポップアップを最初は表示させない
+popup.style.display = "none";
+
+var text = "このセルのinnerHTMLは<br>";
+var text2 = "<br>です。";
+
+// セルにマウスカーソルを重ねた時
+var cellMouseOver = function(){
+  // p内のテキストだけに干渉したい
+  (popup.children)[0].innerHTML = text + this.innerHTML + text2;
+  // セルの座標と幅を取得
+  var coordinates = this.getBoundingClientRect();
+  var width = this.clientWidth;
+  // 座標と現在のスクロール量と幅を使ってポップアップの位置を指定
+  // 15はcssの吹き出しの三角のleft-15pxから
+  popup.style.left = window.pageXOffset + coordinates.left + width + 15 + "px";
+  popup.style.top = window.pageYOffset + coordinates.top  + "px";
+  popup.style.display = "inline-block";
+}
+
+// セルからマウスカーソルを離した時
+var cellMouseOut = function(){
+  popup.style.display = "none";
+}
+
+var tr = table.children;
+for(var i = 0; i < tr.length; i++){
+  var td = tr[i].children;
+  for(var j = 1; j < td.length; j++){
+    var cell = td[j].children;
+    for(var k = 1; k < cell.length; k++){
+      cell[k].onmouseover = cellMouseOver;
+      cell[k].onmouseout = cellMouseOut;
+    }
+  }
+}
+
+</script>
 
 </body>
 </html>

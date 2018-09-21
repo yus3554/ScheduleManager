@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール管理</title>
 <style><%@include file="./css/single.css" %></style>
-<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
+<%@include file="./view/include/font.jsp" %>
 </head>
 <body>
 	<%@include file="./view/include/header.jsp" %>

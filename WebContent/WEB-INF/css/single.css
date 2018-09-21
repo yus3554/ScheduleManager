@@ -28,7 +28,13 @@ main {
 	min-height: 500px;
 }
 
+#description {
+	font-size: 15px;
+	font-family: "Mplus 1p";
+}
+
 #honbun {
+	font-family: "Mplus 1p";
 	font-size: 15px;
 	border-radius: 5px;
 	margin: 5px 5px;
@@ -37,6 +43,8 @@ main {
 }
 
 footer {
+	font-family: "Mplus 1p";
+  font-size: 15px;
 	background-color: #cccccc;
 	border-radius: 5px;
 	text-align: center;

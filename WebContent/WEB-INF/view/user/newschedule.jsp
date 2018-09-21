@@ -14,7 +14,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		background-color: #71DCB5;
 	}
 </style>
-<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
+<%@include file="../include/font.jsp" %>
 </head>
 <body>
 	<%@include file="../include/header.jsp" %>

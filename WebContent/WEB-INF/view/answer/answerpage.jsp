@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール回答</title>
 <style><%@include file="../../css/single.css" %></style>
-<link href="https://fonts.googleapis.com/css?family=Comfortaa|Poiret+One" rel="stylesheet">
+<%@include file="../include/font.jsp" %>
 </head>
 <body>
 
@@ -55,11 +55,11 @@
 		var table = document.getElementById("table");
 		var cellclick = function(){
 			if(this.innerHTML == "×"){
-				this.innerHTML = "△";
-			} else if(this.innerHTML == "△"){
 				this.innerHTML = "○";
-			} else if(this.innerHTML == "○"){
+			} else if(this.innerHTML == "△"){
 				this.innerHTML = "×";
+			} else if(this.innerHTML == "○"){
+				this.innerHTML = "△";
 			}
 		}
 
