@@ -16,6 +16,7 @@
 <h2>スケジュール回答</h2>
 
 	<h3>${ senderName }さんからの入力要求</h3>
+	セルをクリックするごとに、×→○→△の順で変わります。<br>
 
 	<form action="../AnswerConfirm" method="post" id="answerForm">
 	<table id="table" border="2" cellpadding="10">
@@ -44,6 +45,8 @@
 		</tr>
 		<% } %>
 	</table>
+	<br>[備考]<br>
+	<textarea wrap="hard" maxlength="200" rows="10" cols="70" name="note"></textarea>200字まで<br>
 	<input type="button" value="確認" onclick="answerSubmit();"/>
 	</form>
 

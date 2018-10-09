@@ -42,10 +42,12 @@ public class AnswerSubmit extends HttpServlet {
 		String[] fourth = (String[])session.getAttribute("fourth");
 		String[] fifth = (String[])session.getAttribute("fifth");
 
+		String note = (String)session.getAttribute("note");
+
 		// dbと接続して上のデータを使ってupdateする
 		new AnswerTable().update(randomURL, date, first, second, third, fourth, fifth);
 
-		new TargetTable().isInputUpdate(randomURL);
+		new TargetTable().isInputUpdate(randomURL, note);
 
 		// 最後にsessionを削除しておく
 		session.removeAttribute("date");

@@ -54,12 +54,18 @@ public class AnswerConfirm extends HttpServlet {
 			fifth[i] = request.getParameter("fifth" + i);
 		}
 
+		String note = request.getParameter("note");
+		note = note.replace("\n", "");
+    	note = note.replace("\r", "<br>");
+    	note = note.replace("\r\n", "<br>");
+
 		session.setAttribute("date", date);
 		session.setAttribute("first", first);
 		session.setAttribute("second", second);
 		session.setAttribute("third", third);
 		session.setAttribute("fourth", fourth);
 		session.setAttribute("fifth", fifth);
+		session.setAttribute("note", note);
 
 		// jspを指定
     	String view = "/WEB-INF/view/answer/answerconfirm.jsp";

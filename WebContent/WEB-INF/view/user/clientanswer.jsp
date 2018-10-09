@@ -54,6 +54,9 @@
 		</tr>
 		<% } %>
 	</table>
+	<br>[備考]<br>
+	${ note }
+	<br>
 	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>

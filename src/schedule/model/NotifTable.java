@@ -18,8 +18,8 @@ public class NotifTable {
 	}
 
 	// answerをanswersテーブルにインサート
-	// isfirstは0で再送、1で新規
-	public void insert(String[] randomURL, String notifTime, int isFirst) {
+	// typeは0で新規、1で再送、2で決定
+	public void insert(String[] randomURL, String notifTime, int type) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		try {
@@ -34,7 +34,7 @@ public class NotifTable {
 			for(String url: randomURL) {
 				patmt.setString(1, url);
 				patmt.setString(2, notifTime);
-				patmt.setInt(3, isFirst);
+				patmt.setInt(3, type);
 
 				patmt.executeUpdate();
 			}
@@ -77,7 +77,7 @@ public class NotifTable {
 			while (rs.next()) {
 				hm = new HashMap<>();
 				hm.put("randomURL", rs.getString("randomURL"));
-				hm.put("isFirst", rs.getString("isFirst"));
+				hm.put("type", rs.getString("type"));
 				notifs.add(hm);
 			}
 

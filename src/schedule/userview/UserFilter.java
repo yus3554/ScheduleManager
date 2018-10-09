@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 				"/ScheduleDeleteConfirm",
 				"/ScheduleDeleteExecute",
 				"/ClientAnswer",
+				"/DecideSchedule",
 				"/Config",
 				"/WithDrawConfirm",
 				"/WithDrawSubmit"

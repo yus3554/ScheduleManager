@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -18,7 +19,7 @@
 	}
 	#popup {
  	position: absolute;
-  padding: 10px;
+  padding: 5px;
   background-color: #ffadad;
   border: 2px solid #ca8888;
   z-index:1;
@@ -69,12 +70,15 @@
 	<table>
 		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
 		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
+		<% if( request.getAttribute("decideDate") != null) {%>
+		<tr><th>決定日時：</th><td>${ decideDate }<br><br>[備考]<br>${ note }</td></tr>
+		<% } %>
 		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
 		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
 		<tr>
 			<th>全体の回答状況：<br>（○の数）</th>
 			<td>
-			<a href="./">対象者に日時の決定を送信する</a>
+			<a href="./DecideSchedule/${ id }">対象者に日時の決定を送信する</a>
 				<table id="table" border="2">
 					<tr>
 						<th>日付</th>
@@ -85,6 +89,7 @@
 						<th>5限</th>
 					</tr>
 					<% int[][] counts = (int[][])request.getAttribute("counts"); %>
+					<% ArrayList<ArrayList<int[]>> targetsAnswers = (ArrayList<ArrayList<int[]>>)request.getAttribute("targetsAnswers"); %>
 					<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
 					<tr>
 						<th><%= request.getAttribute("date" + i)%></th>
@@ -135,7 +140,16 @@
 		<% } %>
 	</table>
 	<div id="popup">
-      <p></p>
+      <p>
+      	<table>
+      		<% for(int i = 0; i < targetListLength; i++) { %>
+      		<tr>
+      			<th><%= request.getAttribute("targetEmail" + i) %></th>
+      			<td class="popupTd"></td>
+      		</tr>
+      		<% } %>
+      	</table>
+      </p>
     </div>
 
 	</div>
@@ -145,17 +159,44 @@
 <script type="text/javascript">
 var table = document.getElementById("table");
 var popup = document.getElementById("popup");
+var popupTd = document.getElementsByClassName("popupTd");
+
+// ポップアップで使うtargetAnswerをjavaから受け取り、javascriptの変数に格納
+var targetsAnswers = [];
+<% for(int i = 0; i < targetsAnswers.size(); i++ ) { %>
+	var target<%= i %> = [];
+	<% ArrayList<int[]> targetAnswer = targetsAnswers.get(i); %>
+	<% for(int j = 0; j < targetAnswer.size(); j++) { %>
+		var answer<%= i %><%= j %> = [];
+		<% int[] answer = targetAnswer.get(j); %>
+		<% for(int k = 0; k < 5; k++) { %>
+			answer<%= i %><%= j %>.push(<%= answer[k] %>);
+		<% } %>
+		target<%= i %>.push(answer<%= i %><%= j %>);
+	<% } %>
+	targetsAnswers.push(target<%= i %>);
+<% } %>
 
 // ポップアップを最初は表示させない
 popup.style.display = "none";
 
-var text = "このセルのinnerHTMLは<br>";
-var text2 = "<br>です。";
-
 // セルにマウスカーソルを重ねた時
 var cellMouseOver = function(){
-  // p内のテキストだけに干渉したい
-  (popup.children)[0].innerHTML = text + this.innerHTML + text2;
+	<% for(int i = 0; i < targetListLength; i++) { %>
+		// 未回答
+		<% if( request.getAttribute("isInput" + i).equals("0")){ %>
+			popupTd[<%= i %>].innerHTML = "未回答";
+		<% } else { %>
+			var targetAnswer<%= i %> = targetsAnswers[<%= i %>][this.parentNode.rowIndex - 1][this.cellIndex - 1];
+			if ( targetAnswer<%= i %> == 0 ) {
+				popupTd[<%= i %>].innerHTML = "×";
+			} else if ( targetAnswer<%= i %> == 1 ){
+				popupTd[<%= i %>].innerHTML = "△";
+			} else {
+				popupTd[<%= i %>].innerHTML = "○";
+			}
+		<% } %>
+	<% } %>
   // セルの座標と幅を取得
   var coordinates = this.getBoundingClientRect();
   var width = this.clientWidth;

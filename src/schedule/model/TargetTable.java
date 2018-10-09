@@ -36,7 +36,7 @@ public class TargetTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targets");
 			conn = dataSource.getConnection();
 
-			String sql = "insert into targets value (?, ?, ?, ?, 0);";
+			String sql = "insert into targets value (?, ?, ?, ?, 0, null);";
 
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, id);
@@ -100,6 +100,7 @@ public class TargetTable {
 				hm.put("senderEmail", rs.getString("senderEmail"));
 				hm.put("targetEmail", rs.getString("targetEmail"));
 				hm.put("isInput", rs.getString("isInput"));
+				hm.put("note", rs.getString("note"));
 			}
 			return hm;
 
@@ -164,6 +165,7 @@ public class TargetTable {
 		return randomURL;
 	}
 
+	// idとsenderEmailから対象のメールアドレスなどを取得
 	public ArrayList<HashMap<String, String>> getTargetList(String id, String senderEmail){
 		ArrayList<HashMap<String, String>> list = new ArrayList<>();
 		DataSource dataSource = null;
@@ -247,29 +249,25 @@ public class TargetTable {
 		}
 	}
 
-	public void isInputUpdate(String randomURL) {
+	public void isInputUpdate(String randomURL, String note) {
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targets");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
+			String sql = "update targets set isInput = 1, note = ? where randomURL = \"" + randomURL + "\";";
+			PreparedStatement patmt = conn.prepareStatement(sql);
+			patmt.setString(1, note);
 
-			String sql = "update targets set isInput = \"" + "1" +
-						"\" where randomURL = \"" + randomURL + "\";";
-			stmt.executeUpdate(sql);
+			patmt.executeUpdate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}

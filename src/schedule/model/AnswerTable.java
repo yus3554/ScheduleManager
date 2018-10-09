@@ -45,7 +45,8 @@ public class AnswerTable {
 					String sql = "insert into answers values (?, ?, 0, 0, 0, 0, 0);";
 					PreparedStatement patmt = conn.prepareStatement(sql);
 
-					for(int i = 0; i < answer.getDateLength() + 1; i++) {
+					long duration = answer.getDateLength();
+					for(int i = 0; i < duration + 1; i++) {
 						// answersテーブルにインサート
 						patmt.setString(1, randomURL);
 						patmt.setString(2, ld.toString());

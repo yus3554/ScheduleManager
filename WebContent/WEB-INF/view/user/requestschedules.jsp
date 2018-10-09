@@ -30,6 +30,7 @@
 	<table>
 		<thead>
 		<tr>
+			<th>日時決定</th>
 			<th>イベント名</th>
 			<th>イベント内容</th>
 			<th>候補日程</th>
@@ -40,6 +41,7 @@
 		<tbody>
 	<% for (int i = (int) request.getAttribute("listLength") - 1; i >= 0; i--) { %>
 		<tr>
+			<td><% if( request.getAttribute("decideDate" + i) != null) {%>○<% } %></td>
 			<td>
 				<a href="./RequestSchedules/<%= request.getAttribute("id" + i) %>">
 					<%= request.getAttribute("eventName" + i) %>

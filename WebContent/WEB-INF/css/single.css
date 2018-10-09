@@ -28,6 +28,8 @@ main {
 	min-height: 500px;
 }
 
+table, td, th { border: 1px #000000 solid; }
+
 #description {
 	font-size: 15px;
 	font-family: "Mplus 1p";

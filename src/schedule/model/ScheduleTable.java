@@ -20,17 +20,15 @@ public class ScheduleTable {
 	public void insert(Schedule schedule) {
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/schedules");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
-
 			// 新規スケジュールをschedulesテーブルにインサート
-			String sql = "insert into schedules values (?, ?, ?, ?, ?, ?, ?);";
+			String sql = "insert into schedules (id, eventName, eventContent, eventStartDate, "
+					+ "eventEndDate, eventDeadlineDate, senderEmail) values (?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, schedule.getId());
 			patmt.setString(2, schedule.getEventName());
@@ -46,9 +44,6 @@ public class ScheduleTable {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}
@@ -87,6 +82,7 @@ public class ScheduleTable {
 				hm.put("eventStartDate", rs.getString("eventStartDate"));
 				hm.put("eventEndDate", rs.getString("eventEndDate"));
 				hm.put("eventDeadlineDate", rs.getString("eventDeadlineDate"));
+				hm.put("decideDate", rs.getString("decideDate"));
 				list.add(hm);
 			}
 
@@ -139,6 +135,8 @@ public class ScheduleTable {
 				hm.put("eventStartDate", rs.getString("eventStartDate"));
 				hm.put("eventEndDate", rs.getString("eventEndDate"));
 				hm.put("eventDeadlineDate", rs.getString("eventDeadlineDate"));
+				hm.put("decideDate", rs.getString("decideDate"));
+				hm.put("note", rs.getString("note"));
 			}
 
 			return hm;
@@ -196,4 +194,51 @@ public class ScheduleTable {
 			}
 		}
 	}
+
+	// idとsenderEmailで検索をかけて、日時決定のデータを上書きする
+		public void updateDecideDate(String id, String senderEmail, ArrayList<String> decideDates, String note) {
+			DataSource dataSource = null;
+			Connection conn = null;
+			Statement stmt = null;
+			try {
+				InitialContext context = new InitialContext();
+				// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
+				dataSource = (DataSource) context.lookup("java:comp/env/jdbc/schedules");
+				conn = dataSource.getConnection();
+
+				// senderEmailで検索
+				String sql = "update schedules set decideDate = ?, note = ? where id = ? and senderEmail = ?;";
+				PreparedStatement patmt = conn.prepareStatement(sql);
+
+				// 決定日時が複数の時は、カンマで区切って全部繋げて一つの文字列にする
+				String decideDate = "";
+				for(int i = 0; i < decideDates.size(); i++) {
+					decideDate += decideDates.get(i);
+					decideDate += ",";
+				}
+				if(decideDate != null && decideDate.length() > 0){
+					decideDate = decideDate.substring(0, decideDate.length()-1);
+				}
+				patmt.setString(1, decideDate);
+				patmt.setString(2, note);
+				patmt.setString(3, id);
+				patmt.setString(4, senderEmail);
+
+				patmt.executeUpdate();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmt != null) {
+						stmt.close();
+					}
+					if(conn != null) {
+						conn.close();
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 }

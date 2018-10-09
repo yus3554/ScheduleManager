@@ -54,13 +54,14 @@ public class RequestSchedules extends HttpServlet {
     		request.setAttribute("eventStartDate" + i, hm.get("eventStartDate"));
     		request.setAttribute("eventEndDate" + i, hm.get("eventEndDate"));
     		request.setAttribute("eventDeadlineDate" + i, hm.get("eventDeadlineDate"));
+    		request.setAttribute("decideDate" + i, hm.get("decideDate"));
     	}
 
     	// リストの長さをrequestに格納
     	request.setAttribute("listLength", listLength);
 
     	// jspを指定
-    	String view = "/WEB-INF/view/user/schedulelist.jsp";
+    	String view = "/WEB-INF/view/user/requestschedules.jsp";
     	// リクエストをviewに飛ばす
     	RequestDispatcher dispatcher = request.getRequestDispatcher(view);
 

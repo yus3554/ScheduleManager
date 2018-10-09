@@ -42,6 +42,10 @@
 		<% } %>
 	</table>
 
+	<br>[備考]<br>
+	${ note }
+	<br><br>
+
 	以上の内容でよろしいでしょうか？
 	<form action="./AnswerSubmit" method="post">
 		<input type="submit" value="送信"><input type="button" onClick="javascript:history.back();" value="戻る">

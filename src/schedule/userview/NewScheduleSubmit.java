@@ -69,8 +69,8 @@ public class NewScheduleSubmit extends HttpServlet {
 		}
 		// sqlのnotifTimeがdatetime型なので、DateTimeFormetterでldtを変える
 		String nowTime = ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		// 初回の通知なのでisFirstは1
-		new NotifTable().insert(randomURL, nowTime, 1);
+		// 初回の通知なのでtypeは0
+		new NotifTable().insert(randomURL, nowTime, 0);
 
 		// 再送の通知
 		String deadline = (String)session.getAttribute("eventDeadlineDate");
@@ -78,8 +78,8 @@ public class NewScheduleSubmit extends HttpServlet {
 		LocalDateTime deadlineDateTime = deadlineDate.atTime(0, 0, 0);
 		// とりあえず1日前にする
 		LocalDateTime notifTime = deadlineDateTime.minusDays(1);
-		// 2回目以降の通知なのでisFirstは0
-		new NotifTable().insert(randomURL, notifTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), 0);
+		// 再送の通知なのでtypeは1
+		new NotifTable().insert(randomURL, notifTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), 1);
 
 
 		//新規スケジュールで使ったsession attributeを削除

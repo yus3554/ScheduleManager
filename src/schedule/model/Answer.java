@@ -1,6 +1,7 @@
 package schedule.model;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Answer {
 
@@ -40,11 +41,11 @@ public class Answer {
 
 	// startとendの差を求める
 	// end - start の日数が返ってくる
-	public int getDateLength() {
+	public long getDateLength() {
 		LocalDate startDate = LocalDate.parse(eventStartDate);
 		LocalDate endDate = LocalDate.parse(eventEndDate);
 
-		int length = endDate.compareTo(startDate);
+		long length = ChronoUnit.DAYS.between(startDate, endDate);
 		return length;
 	}
 }

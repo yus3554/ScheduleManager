@@ -53,6 +53,11 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("eventStartDate", scheduleHM.get("eventStartDate"));
 		request.setAttribute("eventEndDate", scheduleHM.get("eventEndDate"));
 		request.setAttribute("eventDeadlineDate", scheduleHM.get("eventDeadlineDate"));
+		String decideDate = scheduleHM.get("decideDate");
+		if(decideDate != null)
+			decideDate = decideDate.replace(",", "<br>");
+		request.setAttribute("decideDate", decideDate);
+		request.setAttribute("note", scheduleHM.get("note"));
 
 		// 対象者全てをidとsenderEmailを使って取得
 		ArrayList<HashMap<String, String>> targetList = new ArrayList<>();
@@ -73,6 +78,7 @@ public class ScheduleDetail extends HttpServlet {
 			request.setAttribute("isInput" + i, targetHM.get("isInput"));
 			randomURLs.add(targetHM.get("randomURL"));
 		}
+
 
 		// 全体回答状況表のため
 		ArrayList<HashMap<String, String>> count = new AnswerTable().getCountAnswers(randomURLs);
@@ -106,9 +112,34 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("max", max);
 		request.setAttribute("max_1", max_1);
 
+		// 全体回答のポップアップに使う
+		// randomURLの順番で配列に入れる
+		ArrayList<ArrayList<int[]>> targetsAnswers = new ArrayList<>();
+		// getEmailAnswersから取得したものを格納しておく変数
+		ArrayList<HashMap<String, String>> gotAnswers = new ArrayList<>();
+		for(int i = 0; i < randomURLs.size(); i++) {
+			gotAnswers = new AnswerTable().getEmailAnswers(randomURLs.get(i));
+			// 一人分のanswerを入れる変数
+			ArrayList<int[]> answers = new ArrayList<>();
+			HashMap<String, String> hm = new HashMap<>();
+			for(int j = 0; j < gotAnswers.size(); j++) {
+				int[] answer = new int[5];
+				hm = gotAnswers.get(j);
+				answer[0] = Integer.parseInt(hm.get("first"));
+				answer[1] = Integer.parseInt(hm.get("second"));
+				answer[2] = Integer.parseInt(hm.get("third"));
+				answer[3] = Integer.parseInt(hm.get("fourth"));
+				answer[4] = Integer.parseInt(hm.get("fifth"));
+				answers.add(answer);
+				hm.clear();
+			}
+			targetsAnswers.add(answers);
+		}
+		request.setAttribute("targetsAnswers", targetsAnswers);
+
 		//TODO 全体の回答状況を動的に、三角とか丸とか変えられるようにする
 		// あとは、全体のところのセルを押すと日程決定のメールを送れるようにする
-		// 回答ページに文章で何か書けるように、備考欄を追加
+		// 回答ページや決定ページの備考欄をつけたので、それをSQLに保存するようにする
 		// 不正なIDやrandamURLに対するエラーページ
 		// SSL関係の証明書とかの勉強
 		// 退会ページ
