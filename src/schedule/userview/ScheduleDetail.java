@@ -65,10 +65,13 @@ public class ScheduleDetail extends HttpServlet {
 
 		// scheduleListの数を取得
 		int targetListLength = targetList.size();
+		request.setAttribute("targetLength", targetListLength);
 
 		HashMap<String, String> targetHM = new HashMap<>();
 
 		ArrayList<String> randomURLs = new ArrayList<>();
+
+		int notInput = 0;
 
 		// 0番目からrequestにスケジュールを格納
 		for(int i = 0; i < targetListLength; i++) {
@@ -76,9 +79,10 @@ public class ScheduleDetail extends HttpServlet {
 			request.setAttribute("targetEmail" + i, targetHM.get("targetEmail"));
 			request.setAttribute("randomURL" + i, targetHM.get("randomURL"));
 			request.setAttribute("isInput" + i, targetHM.get("isInput"));
+			notInput += Integer.parseInt((String)targetHM.get("isInput")) == 0 ? 1 : 0;
 			randomURLs.add(targetHM.get("randomURL"));
 		}
-
+		request.setAttribute("notInput", notInput);
 
 		// 全体回答状況表のため
 		ArrayList<HashMap<String, String>> count = new AnswerTable().getCountAnswers(randomURLs);
@@ -139,7 +143,6 @@ public class ScheduleDetail extends HttpServlet {
 
 		//TODO 全体の回答状況を動的に、三角とか丸とか変えられるようにする
 		// あとは、全体のところのセルを押すと日程決定のメールを送れるようにする
-		// 回答ページや決定ページの備考欄をつけたので、それをSQLに保存するようにする
 		// 不正なIDやrandamURLに対するエラーページ
 		// SSL関係の証明書とかの勉強
 		// 退会ページ
@@ -147,6 +150,10 @@ public class ScheduleDetail extends HttpServlet {
 		// 新規スケジュールの対象者アドレスのグループ化的な
 		// 中間発表のアブストラクトを作る
 		// リマインダー（再送）の日時をそれぞれ変えられるようにする
+		// jsを別ファイルに
+		// answerpageで備考を入れておく
+		// キーパーソンを指定、人数の条件等、どうやって指定するか
+
 
 		// リストの長さをrequestに格納
 		request.setAttribute("targetListLength", targetListLength);

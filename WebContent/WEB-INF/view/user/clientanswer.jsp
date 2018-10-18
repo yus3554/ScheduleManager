@@ -55,7 +55,8 @@
 		<% } %>
 	</table>
 	<br>[備考]<br>
-	${ note }
+	<% String note = (String)request.getAttribute("note"); %>
+	<%= note == null ? "" : note %>
 	<br>
 	</div>
 	</main>

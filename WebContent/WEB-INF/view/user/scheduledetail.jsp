@@ -55,6 +55,15 @@
 	margin: 0;
 	padding: 0;
 }
+
+#settingPopup {
+  display:inline-block;
+  background-color: #bbeecc;
+  padding: 10px;
+  border: #6495ed 3px ridge;
+  position: absolute;
+  z-index: 1;
+}
 </style>
 <%@include file="../include/font.jsp" %>
 </head>
@@ -76,8 +85,21 @@
 		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
 		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
 		<tr>
-			<th>全体の回答状況：<br>（○の数）</th>
+			<th>
+				全体の回答状況：<br>（○の数）
+				<% if ((int)request.getAttribute("notInput") != 0 ) {%>
+				<table>
+					<tr>
+						<th>未回答</th>
+						<td>${ notInput }/${ targetLength }人</td>
+					</tr>
+				</table>
+				<% } else { %>
+				<br><div style="display:inline-block; padding: 5px; border: #000000 3px double;">全員回答済</div>
+				<% } %>
+			</th>
 			<td>
+			<input type="button" id="settingButton" value="セル色付け設定" style="float:right;">
 			<a href="./DecideSchedule/${ id }">対象者に日時の決定を送信する</a>
 				<table id="table" border="2">
 					<tr>
@@ -94,14 +116,7 @@
 					<tr>
 						<th><%= request.getAttribute("date" + i)%></th>
 						<% for(int j = 0; j < 5; j++) { %>
-						<% if((int)request.getAttribute("max") == counts[i][j] && counts[i][j] != 0) { %>
-						<td bgcolor="#FE9A2E" align="center" valign="top">
-						<% } else if ((int)request.getAttribute("max_1") == counts[i][j] && counts[i][j] != 0){ %>
-						<td bgcolor="#F4FA58" align="center" valign="top">
-						<% } else { %>
-						<td align="center" valign="top">
-						<% } %>
-						<%= counts[i][j] %></td>
+						<td align="center" valign="top"><%= counts[i][j] %></td>
 						<% } %>
 					</tr>
 					<% } %>
@@ -151,15 +166,37 @@
       	</table>
       </p>
     </div>
-
+	<div id="settingPopup">
+	  	[セルの色付け]<br>
+		<form id="cellColor">
+			<input type="radio" name="rank" value="ranking" checked>多い順<br>
+			<input type="radio" name="rank" value="over">○の数が<input type="number" min="1" max="<%= targetListLength %>" id="num" value="1" required>以上<br>
+			<input type="button" value="適用" onclick="apply()">
+			<input type="text" name="dummy" style="display:none;">
+		</form>
+	</div>
 	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
 
 <script type="text/javascript">
+<%@include file="../../js/jquery-3.3.1.min.js" %>
+// 全体表示のテーブル
 var table = document.getElementById("table");
+// テーブルにマウスかざすと誰がどんな回答しているかわかるポップアップ
 var popup = document.getElementById("popup");
+// ポップアップ内のテーブルのtd
 var popupTd = document.getElementsByClassName("popupTd");
+// セルの色を変えるポップアップ
+var settingPopup = document.getElementById("settingPopup");
+// そのポップアップのボタン
+var settingButton = document.getElementById("settingButton");
+// そのポップアップの〇〇以上のセルを色付けるやつの〇〇を入れるinput text
+var numText = document.getElementById("num");
+// そのポップアップのラジオボタンとかテキストのフォーム
+var colorForm = document.getElementById("cellColor");
+// そのポップアップのラジオボタンのリスト
+var radioNodeList = colorForm.rank;
 
 // ポップアップで使うtargetAnswerをjavaから受け取り、javascriptの変数に格納
 var targetsAnswers = [];
@@ -177,8 +214,21 @@ var targetsAnswers = [];
 	targetsAnswers.push(target<%= i %>);
 <% } %>
 
+// 丸の数のjava側のcount配列と最大値、最大値-1をjavascriptの変数に格納
+var circleCount = [];
+var maxcount = <%= (int)request.getAttribute("max") %>;
+var maxcount_1 = <%= (int)request.getAttribute("max_1") %>;
+<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
+	var count<%= i %> = [];
+	<% for(int j = 0; j < 5; j++) { %>
+		count<%= i %>.push(<%= counts[i][j] %>);
+	<% } %>
+	circleCount.push(count<%= i %>);
+<% } %>
+
 // ポップアップを最初は表示させない
 popup.style.display = "none";
+settingPopup.style.visibility = "hidden";
 
 // セルにマウスカーソルを重ねた時
 var cellMouseOver = function(){
@@ -212,18 +262,95 @@ var cellMouseOut = function(){
   popup.style.display = "none";
 }
 
+// セルのいろ変えるポップアップを表示
+function colorSetting(){
+	var buttonPoint = settingButton.getBoundingClientRect();
+	settingPopup.style.top = window.pageYOffset + buttonPoint.top + settingButton.clientHeight + "px";
+	settingPopup.style.left = window.pageXOffset + buttonPoint.left + settingButton.clientWidth - settingPopup.offsetWidth + "px";
+	settingPopup.style.visibility = "visible";
+}
+
+// セルの色変える
+function apply(){
+	var num = numText.value;
+	var radioCheck = radioNodeList.value;
+	if(radioCheck == "ranking"){
+		rankingCellColor();
+	} else {
+		overCellColor(num);
+	}
+	settingPopup.style.visibility = "hidden";
+}
+
+// セルの色変えるやつの多い順のやつ
+function rankingCellColor(){
+	var tr = table.children;
+	for(var i = 0; i < tr.length; i++){
+	  var td = tr[i].children;
+	  for(var j = 1; j < td.length; j++){
+	    var cell = td[j].children;
+	    for(var k = 1; k < cell.length; k++){
+	    	if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+	    		cell[k].style.backgroundColor = "#FE9A2E";
+	    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
+	    		cell[k].style.backgroundColor = "#F4FA58";
+	    	} else {
+	    		cell[k].style.backgroundColor = "#ffffff";
+	    	}
+	    }
+	  }
+	}
+}
+// セルの色変えるやつの〇〇以上のやつ
+// ただし0の場合は色をつけない
+function overCellColor(num){
+	var tr = table.children;
+	for(var i = 0; i < tr.length; i++){
+	  var td = tr[i].children;
+	  for(var j = 1; j < td.length; j++){
+	    var cell = td[j].children;
+	    for(var k = 1; k < cell.length; k++){
+	    	if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+	    		cell[k].style.backgroundColor = "#FE9A2E";
+	    	} else {
+	    		cell[k].style.backgroundColor = "#ffffff";
+	    	}
+	    }
+	  }
+	}
+}
+
+// 全体表示の表にマウスオーバーでポップアップ出せるようにしたり
+// マウスアウトでポップアップしまったり
+// セルの色の初期設定をする
+// tr.lengthは1で、td.lengthは表の縦の数、cell.lengthは5限の5なので、最初のiはforである必要がない
 var tr = table.children;
 for(var i = 0; i < tr.length; i++){
   var td = tr[i].children;
   for(var j = 1; j < td.length; j++){
     var cell = td[j].children;
     for(var k = 1; k < cell.length; k++){
+    	if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+    		cell[k].style.backgroundColor = "#FE9A2E";
+    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
+    		cell[k].style.backgroundColor = "#F4FA58";
+    	} else {
+
+    	}
       cell[k].onmouseover = cellMouseOver;
       cell[k].onmouseout = cellMouseOut;
     }
   }
 }
 
+// 全体のクリックイベントを取得して、settingPopup以外をクリックしたらsettingPopupを隠す
+$(document).on('click touchend', function(event) {
+	  if (!$(event.target).closest('div#settingPopup').length && !$(event.target).closest("input#settingButton").length) {
+		  settingPopup.style.visibility = "hidden";
+	  } else if($(event.target).closest('input#settingButton').length){
+		  colorSetting();
+	  }
+});
 </script>
 
 </body>
