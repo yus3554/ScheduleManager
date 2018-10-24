@@ -37,6 +37,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr><td><%= ((String[])session.getAttribute("targetEmails"))[i] %></td></tr>
 		<% } %>
 		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
+		<tr><th>添付ファイル：</th><td>${ fileName }</td></tr>
 	</table>
 
 	以上の内容でよろしいでしょうか？

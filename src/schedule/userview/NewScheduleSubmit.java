@@ -1,5 +1,6 @@
 package schedule.userview;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.fileupload.FileItem;
 
 import schedule.model.Schedule;
 import schedule.model.ScheduleTable;
@@ -57,6 +60,17 @@ public class NewScheduleSubmit extends HttpServlet {
 		// DBに対象者リストを保存
 		Answer answer = sts.getAnswer();
 		new AnswerTable().insert(answer);
+
+		// 添付ファイルをサーバー内に保存
+		String path = getServletContext().getRealPath("data");
+		if(schedule.getFileName() != null) {
+			FileItem file = (FileItem)session.getAttribute("file");
+			try {
+				file.write(new File(path + "/" + id + "#" + schedule.getFileName()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 		// notifテーブルに通知を保存
 		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(schedule.getId(), schedule.getSenderEmail());

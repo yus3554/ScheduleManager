@@ -1,5 +1,6 @@
 package schedule.userview;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,12 +65,22 @@ public class ScheduleDeleteExecute extends HttpServlet {
     	request.setAttribute("targetListLength", targetListLength);
 
     	if(session.getAttribute("deleteConfirm") != "") {
+
     		new ScheduleTable().delete(id, (String) session.getAttribute("email"));
     		for(int i = 0; i < targetListLength; i++) {
         		new AnswerTable().delete(randomURLs[i]);
         		new NotifTable().delete(randomURLs[i]);
         	}
     		new TargetTable().delete(id, (String) session.getAttribute("email"));
+    		/* 添付ファイルをdataフォルダから削除 まだ実装できていない
+    		File file = new File("/Users/yus3554/eclipse-workspace/.metadata/.plugins/"
+    				+ "org.eclipse.wst.server.core/tmp1/wtpwebapps/ScheduleManager/data/" + id + "#" + fileName);
+    		if (file.exists()){
+    		    System.out.println("ファイルは存在します");
+    		}else{
+    		    System.out.println("ファイルは存在しません");
+    		}
+    		*/
     	}
 
     	// jspを指定

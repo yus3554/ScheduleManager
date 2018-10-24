@@ -28,7 +28,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	<p id="blanktext">空欄があります。<br>
 	再度、入力してください。</p>
 
-	<form id="newschedule" name="newschedule" action="./NewScheduleConfirm" method="post">
+	<form id="newschedule" name="newschedule" enctype="multipart/form-data" action="./NewScheduleConfirm" method="post">
 	<table>
 		<tr>
 			<td>イベント名：</td>
@@ -53,7 +53,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr><td><input type="email" size="32" name="targetEmail4"></td><td></td></tr>
 		<tr><td><input type="email" size="32" name="targetEmail5"></td><td></td></tr>
 		<tr><td>入力締切日：</td><td><input type="date" name="eventDeadlineDate"></td><td></td></tr>
-		<!-- <tr><td>添付ファイル</td><td><input type="file" name="file"/></td></tr> -->
+		<tr><td>添付ファイル</td><td><input type="file" name="file"/></td></tr>
 	</table>
 		<input type="button" value="確認" onclick="isSubmit();"><input type="reset" value="リセット"><input type="button" value="test" onclick="AutoInput();">
 	</form>

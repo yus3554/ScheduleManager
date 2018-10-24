@@ -37,7 +37,7 @@ public class AnswerTable {
 			for(String email: targetEmails) {
 				ld = startDate;
 				// targetにメールアドレスを登録
-				if (email != "") {
+				if (!email.equals("") && email != null) {
 					new TargetTable().insert(answer.getId(), answer.getSenderEmail(), email);
 
 					String randomURL = new TargetTable().getRandomURL(answer.getId(), answer.getSenderEmail(), email);
