@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.FileItem;
 
 import schedule.model.Schedule;
 import schedule.model.ScheduleTable;

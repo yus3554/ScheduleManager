@@ -15,10 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
+
 
 /**
  * Servlet implementation class NewScheduleConfirm
@@ -62,7 +64,7 @@ public class NewScheduleConfirm extends HttpServlet {
 		ArrayList<String> targetEmails = new ArrayList<>();
 
 		try {
-    		List list = sfu.parseRequest(request);
+    		List list = sfu.parseRequest(new ServletRequestContext(request));
     		Iterator iterator = list.iterator();
 
     		while(iterator.hasNext()){
