@@ -1,5 +1,7 @@
 package schedule.model;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpSession;
 
 public class SessionConvert {
@@ -30,10 +32,11 @@ public class SessionConvert {
 	public Answer getAnswer() {
 		answer = new Answer(
 				id,
-				(String[])session.getAttribute("targetEmails"),
+				(ArrayList<String>)session.getAttribute("targetEmails"),
 				(String)session.getAttribute("email"),
 				(String)session.getAttribute("eventStartDate"),
-				(String)session.getAttribute("eventEndDate"));
+				(String)session.getAttribute("eventEndDate"),
+				(ArrayList<Boolean>)session.getAttribute("keys"));
 		return answer;
 	}
 }

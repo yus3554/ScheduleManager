@@ -48,10 +48,12 @@ public class ClientAnswer extends HttpServlet {
 		String id = targetHM.get("id");
 		String targetEmail = targetHM.get("targetEmail");
 		String note = targetHM.get("note");
+		String key = targetHM.get("key");
 
 		request.setAttribute("id", id);
 		request.setAttribute("targetEmail", targetEmail);
 		request.setAttribute("note", note);
+		request.setAttribute("key", key);
 
 		// idとsenderEmailを入れてscheduleを取得
 		HashMap<String, String> scheduleHM = new HashMap<String, String>();

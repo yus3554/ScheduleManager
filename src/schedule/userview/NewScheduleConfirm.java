@@ -2,6 +2,7 @@ package schedule.userview;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -54,11 +55,11 @@ public class NewScheduleConfirm extends HttpServlet {
 		String eventStartDate = "";
 		String eventEndDate = "";
 		String eventDeadlineDate = "";
-		String targetEmail1 = "";
-		String targetEmail2 = "";
-		String targetEmail3 = "";
-		String targetEmail4 = "";
-		String targetEmail5 = "";
+		ArrayList<String> temp1Keys = new ArrayList<>();
+		ArrayList<Integer> temp2Keys = new ArrayList<>();
+		ArrayList<Boolean> keys = new ArrayList<>();
+		ArrayList<String> tempTargetEmails = new ArrayList<>();
+		ArrayList<String> targetEmails = new ArrayList<>();
 
 		try {
     		List list = sfu.parseRequest(request);
@@ -94,21 +95,11 @@ public class NewScheduleConfirm extends HttpServlet {
     			    case "eventEndDate":
     			    	eventEndDate = value;
     			    	break;
-    			    case "targetEmail1":
-    			    	targetEmail1 = value;
+    			    case "key":
+    			    	temp1Keys.add(value);
     			    	break;
-    			    case "targetEmail2":
-    			    	targetEmail2 = value;
-    			    	break;
-    			    case "targetEmail3":
-    			    	targetEmail3 = value;
-    			    	break;
-    			    case "targetEmail4":
-    			    	targetEmail4 = value;
-    			    	break;
-    			    case "targetEmail5":
-    			    	targetEmail5 = value;
-    			    	break;
+    			    case "targetEmail[]":
+    		    		tempTargetEmails.add(value);
     			    case "eventDeadlineDate":
     			    	eventDeadlineDate = value;
     			    	break;
@@ -123,14 +114,34 @@ public class NewScheduleConfirm extends HttpServlet {
     		  e.printStackTrace();
     	}
 
-		String[] targetEmails = {targetEmail1,targetEmail2,targetEmail3,targetEmail4,targetEmail5};
-
+		// とりあえず空欄を抜いて、空欄に合わせてキーパーソン内の添字を変更
+		int times = 0;
+		for(int i = 0; i < tempTargetEmails.size(); i++) {
+			if(!tempTargetEmails.get(i).equals("") && tempTargetEmails.get(i) != null) {
+				targetEmails.add(tempTargetEmails.get(i));
+				for(int j = 0; j < temp1Keys.size(); j++) {
+					if(Integer.parseInt(temp1Keys.get(j)) == i + 1) {
+						temp2Keys.add(times);
+					}
+				}
+				times++;
+			}
+		}
+		// そして、キーパーソンの添字から、そのemailがキーパーソンであるかどうかを0or1で判別
+		for(int i = 0; i < targetEmails.size(); i++) {
+			if(temp2Keys.contains(i)) {
+				keys.add(true);
+			} else {
+				keys.add(false);
+			}
+		}
 		// 取得した要素をsessionに保存
 		session.setAttribute("eventName", eventName);
 		session.setAttribute("eventContent", eventContent);
 		session.setAttribute("eventStartDate", eventStartDate);
 		session.setAttribute("eventEndDate", eventEndDate);
 		session.setAttribute("targetEmails", targetEmails);
+		session.setAttribute("keys", keys);
 		session.setAttribute("eventDeadlineDate", eventDeadlineDate);
 
 		// jspを指定

@@ -91,11 +91,11 @@
 				<table>
 					<tr>
 						<th>未回答</th>
-						<td>${ notInput }/${ targetLength }人</td>
+						<td>残り${ notInput }/${ targetLength }人</td>
 					</tr>
 				</table>
 				<% } else { %>
-				<br><div style="display:inline-block; padding: 5px; border: #000000 3px double;">全員回答済</div>
+				<br><div style="display:inline-block; padding: 5px; border: #000000 3px double;">${ targetLength }人全員回答済</div>
 				<% } %>
 			</th>
 			<td>
@@ -132,6 +132,9 @@
 				<a href="../ClientAnswer/<%= request.getAttribute("randomURL0") %>">
 					<%= request.getAttribute("targetEmail0") %>
 				</a>
+				<% if( request.getAttribute("key0").equals("1")){ %>
+				(キーパーソン)
+				<% } %>
 				<% if( request.getAttribute("isInput0").equals("0")){ %>
 				[未回答]
 				<% } else { %>
@@ -145,6 +148,9 @@
 				<a href="../ClientAnswer/<%= request.getAttribute("randomURL" + i) %>">
 					<%= request.getAttribute("targetEmail" + i) %>
 				</a>
+				<% if( request.getAttribute("key" + i).equals("1")){ %>
+				(キーパーソン)
+				<% } %>
 				<% if( request.getAttribute("isInput" + i).equals("0")){ %>
 				[未回答]
 				<% } else { %>
@@ -171,6 +177,7 @@
 		<form id="cellColor">
 			<input type="radio" name="rank" value="ranking" checked>多い順<br>
 			<input type="radio" name="rank" value="over">○の数が<input type="number" min="1" max="<%= targetListLength %>" id="num" value="1" required>以上<br>
+			<span style="float:right;"><input type="checkbox" name="key" value="key">キーパーソン有り</span>
 			<input type="button" value="適用" onclick="apply()">
 			<input type="text" name="dummy" style="display:none;">
 		</form>

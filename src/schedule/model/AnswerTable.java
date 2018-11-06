@@ -21,32 +21,30 @@ public class AnswerTable {
 	public void insert(Answer answer) {
 		DataSource dataSource = null;
 		Connection conn = null;
-		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/answers");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
-
-			String[] targetEmails = answer.getTargetEmails();
+			ArrayList<String> targetEmails = answer.getTargetEmails();
+			ArrayList<Boolean> keys = answer.getKeys();
 			LocalDate startDate = LocalDate.parse(answer.getEventStartDate());
 			LocalDate ld;
 
-			for(String email: targetEmails) {
+			for(int i = 0; i < targetEmails.size(); i++) {
 				ld = startDate;
 				// targetにメールアドレスを登録
-				if (!email.equals("") && email != null) {
-					new TargetTable().insert(answer.getId(), answer.getSenderEmail(), email);
+				if (!targetEmails.get(i).equals("") && targetEmails.get(i) != null) {
+					new TargetTable().insert(answer.getId(), answer.getSenderEmail(), targetEmails.get(i), keys.get(i));
 
-					String randomURL = new TargetTable().getRandomURL(answer.getId(), answer.getSenderEmail(), email);
+					String randomURL = new TargetTable().getRandomURL(answer.getId(), answer.getSenderEmail(), targetEmails.get(i));
 
 					String sql = "insert into answers values (?, ?, 0, 0, 0, 0, 0);";
 					PreparedStatement patmt = conn.prepareStatement(sql);
 
 					long duration = answer.getDateLength();
-					for(int i = 0; i < duration + 1; i++) {
+					for(int j = 0; j < duration + 1; j++) {
 						// answersテーブルにインサート
 						patmt.setString(1, randomURL);
 						patmt.setString(2, ld.toString());
@@ -62,9 +60,6 @@ public class AnswerTable {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(stmt != null) {
-					stmt.close();
-				}
 				if(conn != null) {
 					conn.close();
 				}
@@ -237,21 +232,21 @@ public class AnswerTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/answers");
 			conn = dataSource.getConnection();
 
-			stmt = conn.createStatement();
-
 			int size = date.length;
-			String sql = "";
+			String sql = "update answers set first = ?, second = ?, third = ?, fourth = ?,"
+					+ " fifth = ? where date = ? and randomURL = ?;";
+			PreparedStatement patmt = conn.prepareStatement(sql);
 
 			for(int i = 0; i < size; i++) {
-				sql = "update answers set first = \"" + first[i] +
-						"\", second = \"" + second[i] +
-						"\", third = \"" + third[i] +
-						"\", fourth = \"" + fourth[i] +
-						"\", fifth = \"" + fifth[i] +
-						"\" where date = \"" + date[i] +
-						"\" and randomURL = \"" + randomURL +
-						"\";";
-				stmt.executeUpdate(sql);
+				patmt.setString(1, first[i]);
+				patmt.setString(2, second[i]);
+				patmt.setString(3, third[i]);
+				patmt.setString(4, fourth[i]);
+				patmt.setString(5, fifth[i]);
+				patmt.setString(6, date[i]);
+				patmt.setString(7, randomURL);
+
+				patmt.executeUpdate();
 			}
 
 		} catch (Exception e) {

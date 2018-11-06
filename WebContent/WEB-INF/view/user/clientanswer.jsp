@@ -27,7 +27,12 @@
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
 	<h2>${ eventName }</h2>
-	<h3>${ targetEmail }さんの入力状況</h3>
+	<h3>
+		<% if((request.getAttribute("key").equals("1"))){ %>
+		[キーパーソン]
+		<% } %>
+		${ targetEmail }さんの入力状況
+	</h3>
 
 	<p><a href="../RequestSchedules/${ id }">スケジュール詳細に戻る</a></p>
 

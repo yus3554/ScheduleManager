@@ -20,7 +20,7 @@ public class TargetTable {
 
 	}
 
-	public void insert(String id, String senderEmail, String targetEmail) {
+	public void insert(String id, String senderEmail, String targetEmail, boolean key) {
 		String randomURL;
 		// randamURLの被りがなくなるまでrandamURLを出力
 		do {
@@ -36,13 +36,14 @@ public class TargetTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targets");
 			conn = dataSource.getConnection();
 
-			String sql = "insert into targets value (?, ?, ?, ?, 0, null);";
+			String sql = "insert into targets value (?, ?, ?, ?, 0, null, ?);";
 
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, id);
 			patmt.setString(2, senderEmail);
 			patmt.setString(3, targetEmail);
 			patmt.setString(4, randomURL);
+			patmt.setBoolean(5, key);
 
 			patmt.executeUpdate();
 
@@ -101,6 +102,7 @@ public class TargetTable {
 				hm.put("targetEmail", rs.getString("targetEmail"));
 				hm.put("isInput", rs.getString("isInput"));
 				hm.put("note", rs.getString("note"));
+				hm.put("key", rs.getString("key"));
 			}
 			return hm;
 
@@ -191,6 +193,7 @@ public class TargetTable {
 				hm.put("targetEmail", rs.getString("targetEmail"));
 				hm.put("randomURL", rs.getString("randomURL"));
 				hm.put("isInput", rs.getString("isInput"));
+				hm.put("key", rs.getString("key"));
 				list.add(hm);
 			}
 			return list;

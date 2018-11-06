@@ -29,7 +29,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	再度、入力してください。</p>
 
 	<form id="newschedule" name="newschedule" enctype="multipart/form-data" action="./NewScheduleConfirm" method="post">
-	<table>
+	<table id="table">
 		<tr>
 			<td>イベント名：</td>
 			<td><input type="text" maxlength="50" size="50" name="eventName"></td>
@@ -47,15 +47,23 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			</td>
 		</tr>
 		<tr><td>候補日程：</td><td><input type="date" name="eventStartDate"> 〜 <input type="date" name="eventEndDate"></td><td></td></tr>
-		<tr><td rowspan="5">対象者のアドレス：</td><td><input type="email" size="32" name="targetEmail1"></td><td></td></tr>
-		<tr><td><input type="email" size="32" name="targetEmail2"></td><td></td></tr>
-		<tr><td><input type="email" size="32" name="targetEmail3"></td><td></td></tr>
-		<tr><td><input type="email" size="32" name="targetEmail4"></td><td></td></tr>
-		<tr><td><input type="email" size="32" name="targetEmail5"></td><td></td></tr>
-		<tr><td>入力締切日：</td><td><input type="date" name="eventDeadlineDate"></td><td></td></tr>
+		<tr id="email">
+			<td>対象者のアドレス：</td>
+			<td>
+				<input type="checkbox" name="key" value="1">
+				<input type="email" size="32" name="targetEmail[]">
+				<span id="emailDelete1">×</span>
+				<input type="button" id="addButton" onclick="addEmail();" value="+">
+			</td>
+			<td>キーパーソンにはチェックを入れてください。</td>
+		</tr>
+		<tr id="beforeAdd"><td>入力締切日：</td><td><input type="date" name="eventDeadlineDate"></td><td></td></tr>
 		<tr><td>添付ファイル</td><td><input type="file" name="file"/></td></tr>
 	</table>
-		<input type="button" value="確認" onclick="isSubmit();"><input type="reset" value="リセット"><input type="button" value="test" onclick="AutoInput();">
+		<input type="button" value="確認" onclick="isSubmit();">
+		<input type="reset" value="リセット">
+		<input type="button" value="test" onclick="AutoInput();">
+		<input type="button" value="不愉快" onclick="AutoInputFuyukai();">
 	</form>
 
 	</div>
@@ -68,7 +76,11 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		document.getElementById("overEventName").style.display = "none";
 		document.getElementById("overEventContent").style.display = "none";
 
+		var times = 1;
 		var form = document.forms.newschedule;
+		var table = document.getElementById("table");
+		var email = form.elements["targetEmail[]"];
+		var emailTr = document.getElementById("email");
 
 		// とりあえず
 		// 今から2日後を締め切り
@@ -88,11 +100,22 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		function AutoInput(){
 			form.eventName.value = "会議の開催日程について";
 			form.eventContent.value = "会議をします。";
-			form.targetEmail1.value = "s152017@eecs.tottori-u.ac.jp";
-			form.targetEmail2.value = "yus3554@gmail.com";
+			if(times <= 1){
+				email.value = "s152017@eecs.tottori-u.ac.jp";
+			} else {
+				email[0].value = "s152017@eecs.tottori-u.ac.jp";
+			}
 			form.eventStartDate.value = "" + start.getFullYear() + "-" + addZero(start.getMonth() + 1) + "-" + addZero(start.getDate());
 			form.eventEndDate.value = "" + end.getFullYear() + "-" + addZero(end.getMonth() + 1) + "-" + addZero(end.getDate());
 			form.eventDeadlineDate.value = "" + deadline.getFullYear() + "-" + addZero(deadline.getMonth() + 1) + "-" + addZero(deadline.getDate());
+		}
+
+		function AutoInputFuyukai(){
+			email[0].value = "s152017@eecs.tottori-u.ac.jp"; // 太田
+			email[1].value = "s152119@eecs.tottori-u.ac.jp"; // 山田
+			email[2].value = "s132029@ike.tottori-u.ac.jp"; // 酒井
+			email[3].value = "s112052@ike.tottori-u.ac.jp"; // 松永
+			email[4].value = "takahashi@tottori-u.ac.jp"; // 高橋
 		}
 
 		function isSubmit(){
@@ -108,14 +131,18 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 				form.eventContent.value == "" ||
 				form.eventStartDate.value == "" ||
 				form.eventEndDate.value == "" ||
-				(form.targetEmail1.value == "" &&
-				 form.targetEmail2.value == "" &&
-				 form.targetEmail3.value == "" &&
-				 form.targetEmail4.value == "" &&
-				 form.targetEmail5.value == "") ||
 				form.eventDeadlineDate.value == "") {
-				blanktext.style.display = "block";
-				return false;
+				if(times <= 1){
+					if(email.value == ""){
+						blanktext.style.display = "block";
+						return false;
+					}
+				} else {
+					if(email[0].value == ""){
+						blanktext.style.display = "block";
+						return false;
+					}
+				}
 			} else {
 				return true;
 			}
@@ -136,6 +163,31 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 				return true;
 			}
 		}
+
+		function addEmail(){
+			  times++;
+			  var newTr = document.createElement("tr");
+			  newTr.innerHTML = "<tr><td>"
+			  + "<input type=\"checkbox\" name=\"key\" value=\"" + times + "\">"
+			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\">"
+			  + "<span id=\"emailDelete" + times + "\">×</span></td></tr>";
+			  newTr.children[0].appendChild(document.getElementById("addButton"));
+			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd"));
+			  emailTr.children[0].setAttribute("rowspan", times);
+			  emailTr.children[2].setAttribute("rowspan", times);
+			  document.getElementById("emailDelete" + times).onmousedown = emailReset;
+			  email = form.elements["targetEmail[]"];
+			}
+
+		// emailリセットボタン
+		var emailReset = function(){
+			var idNum = this.id.slice(-1);
+		  if(times <= 1){
+		    email.value = "";
+		  }
+			email[Number(idNum) - 1].value = "";
+		}
+		document.getElementById("emailDelete1").onmousedown = emailReset;
 	</script>
 </body>
 </html>
