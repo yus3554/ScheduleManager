@@ -44,8 +44,6 @@ public class NewScheduleConfirm extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
 
-		String path = getServletContext().getRealPath("cache");
-
     	DiskFileItemFactory factory = new DiskFileItemFactory();
     	ServletFileUpload sfu = new ServletFileUpload(factory);
     	sfu.setSizeMax(5 * 1000 * 1024);
@@ -62,6 +60,16 @@ public class NewScheduleConfirm extends HttpServlet {
 		ArrayList<Boolean> keys = new ArrayList<>();
 		ArrayList<String> tempTargetEmails = new ArrayList<>();
 		ArrayList<String> targetEmails = new ArrayList<>();
+
+		// 念の為セッション内を削除
+		session.removeAttribute("eventName");
+		session.removeAttribute("eventContent");
+		session.removeAttribute("eventStartDate");
+		session.removeAttribute("eventEndDate");
+		session.removeAttribute("targetEmails");
+		session.removeAttribute("eventDeadlineDate");
+		session.removeAttribute("fileName");
+		session.removeAttribute("file");
 
 		try {
     		List list = sfu.parseRequest(new ServletRequestContext(request));
