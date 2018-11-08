@@ -1,0 +1,67 @@
+@charset "UTF-8";
+
+header {
+	display: flex;
+	justify-content: center;
+	padding: 8px 19px;
+	margin: 2em 0;
+	color: #ffffff;
+	background: #33bbaa;
+	border: solid 5px #33aaaa;
+}
+
+h1 {
+	font-size: 40px;
+	font-family: 'Poiret One', cursive;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+}
+
+h1 a {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+main {
+	display: grid;
+  	grid-template-rows: 1fr;
+  	grid-template-columns: 0.5fr 0.5fr;
+  	min-height: 500px;
+	border-radius: 5px;
+	border: solid 5px #33aaaa;
+}
+
+table, td, th { border: 1px #000000 solid; }
+
+#description {
+	font-size: 15px;
+	font-family: "Mplus 1p";
+}
+
+#honbun {
+	font-family: "Mplus 1p";
+	font-size: 15px;
+	margin: 5px 5px;
+	padding: 10px 10px 100px 10px;
+}
+
+#honbun2 {
+	font-family: "Mplus 1p";
+	font-size: 15px;
+	margin: 5px 5px;
+	padding: 10px 10px 100px 10px;
+}
+
+footer {
+	font-family: "Mplus 1p";
+  font-size: 15px;
+	background-color: #cccccc;
+	border-radius: 5px;
+	text-align: center;
+}
+
+header, #description, main, footer {
+	margin: auto;
+	max-width: 1200px;
+}

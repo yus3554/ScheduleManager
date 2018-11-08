@@ -19,6 +19,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 <body>
 	<%@include file="../include/header.jsp" %>
 	<%@include file="./include/name.jsp" %>
+	<%@include file="./include/logoutpopup.jsp" %>
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
@@ -30,5 +31,11 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
+
+<script>
+<%@include file="../../js/jquery-3.3.1.min.js" %>
+<%@include file="./include/logoutpopupjs.jsp" %>
+</script>
+
 </body>
 </html>

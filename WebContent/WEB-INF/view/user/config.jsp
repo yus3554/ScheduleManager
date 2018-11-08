@@ -16,6 +16,7 @@ nav #config{
 <body>
 	<%@include file="../include/header.jsp" %>
 	<%@include file="./include/name.jsp" %>
+	<%@include file="./include/logoutpopup.jsp" %>
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
@@ -24,10 +25,15 @@ nav #config{
 		<li>テンプレートの設定</li>
 		<li>登録情報の変更</li>
 		<li><a href="./WithDrawConfirm">退会（未実装）</a></li>
+		<li><a href="./Test">テスト用</a></li>
 	</ul>
 	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
+<script>
+<%@include file="../../js/jquery-3.3.1.min.js" %>
+<%@include file="./include/logoutpopupjs.jsp" %>
+</script>
 
 </body>
 </html>

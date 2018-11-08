@@ -8,7 +8,7 @@
 <title>${ eventName }</title>
 <style>
 	<%@include file="../../css/user.css" %>
-	table th{
+table th{
 		padding: 10px;
 	}
 	table td{
@@ -70,6 +70,7 @@
 <body>
 	<%@include file="../include/header.jsp" %>
 	<%@include file="./include/name.jsp" %>
+	<%@include file="./include/logoutpopup.jsp" %>
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
@@ -188,6 +189,8 @@
 
 <script type="text/javascript">
 <%@include file="../../js/jquery-3.3.1.min.js" %>
+<%@include file="./include/logoutpopupjs.jsp" %>
+
 // 全体表示のテーブル
 var table = document.getElementById("table");
 // テーブルにマウスかざすと誰がどんな回答しているかわかるポップアップ

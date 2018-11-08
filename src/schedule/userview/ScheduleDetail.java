@@ -60,8 +60,7 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("note", scheduleHM.get("note"));
 
 		// 対象者全てをidとsenderEmailを使って取得
-		ArrayList<HashMap<String, String>> targetList = new ArrayList<>();
-		targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
+		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
 
 		// scheduleListの数を取得
 		int targetListLength = targetList.size();
@@ -144,21 +143,47 @@ public class ScheduleDetail extends HttpServlet {
 
 		//TODO 全体の回答状況を動的に、三角とか丸とか変えられるようにする
 		// あとは、全体のところのセルを押すと日程決定のメールを送れるようにする
-		// 不正なIDやrandamURLに対するエラーページ
+		// 不正なIDやrandamURLに対するエラーページ（一応やった）
 		// SSL関係の証明書とかの勉強
 		// 退会ページ
 		// 登録状況変更
 		// 新規スケジュールの対象者アドレスのグループ化的
 		// リマインダー（再送）の日時をそれぞれ変えられるようにする
 		// jsを別ファイルに
-		// answerpageで備考を入れておく
 		// キーパーソンを指定、人数の条件等、どうやって指定するか
 		// 新規登録の際の確認ページが表示できない、確認メールが送られてない
 		// 添付ファイルの削除
+		// 日程調整を出す際に、何分の1などの開催条件を指定できるように
+		// 回答ページで、答えを一時保存できるようにして欲しい
+		// 備考欄が大きすぎるんじゃ無いか
+
+		/*
+		・回答ページの備考欄が大きすぎな気がします．
+		→サイズを変更する
+
+	 ・確認，じゃなく，送信，とかの方がよくないですか？
+		→要確認
+
+	 ・一時保存，があった方がよいです．
+		→ブラウザの戻るボタンなどで入力がリセットされてしまうのも含めて、
+		　jsのlocalstorage機能を使うべき
+		　ただしサーバーに保存されているデータと競合しないように注意する
+
+	 ・回答者の名前をどっかに表示した方が良い気がします．
+		→即修正
+
+	 ・メールに，テスト，とありますが，回答ページには必要ない？
+		→即修正、スクロールする必要がないように空いている右側のスペースを使用する
+
+	 ・メールアドレスごとにユーザのデータを管理するようにして
+	  これまでの回答状況一覧とか見れるページとかあったらうれしいです．
+		→あったら良いけどなかなか面倒
+		*/
 
 		// 研究室のサーバの方ではビルドパスをcommonslangとmailはプロジェクトフォルダ直下のlibフォルダからで良いが、
 		// jdbcはtomcat内のlibフォルダにjarファイルを入れてそこから参照しないといけない
-		// notifmanagerの方では、それぞれのtable.java内のjdbcのところを書き換えるべし
+		// notifmanagerのメール送信のところで、添付ファイルを読み込むところで、パスを指定するが、
+		// 研究室のサーバーと自分のパソコンでは異なるので、変更が必要
 
 		// キーパーソンのやつ、あとはセルの色変える奴だけだけど、アイデアとしては、キーパーソンの2次元配列をそれぞれANDしていってできた2次元配列を使って
 		// セルの色つける関数のところでtrueかfalseかで色つけるかどうか見れば良い?

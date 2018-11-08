@@ -23,6 +23,8 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/commons-fileupload-1.3.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/jackson-annotations-2.9.7.jar"/>
+	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/jackson-core-2.9.7.jar"/>
+	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/jackson-databind-2.9.7.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

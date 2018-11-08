@@ -5,7 +5,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール回答</title>
-<style><%@include file="../../css/single.css" %></style>
+<style>
+	<%@include file="../../css/double.css" %>
+	textarea {
+    overflow: auto;
+    max-height: 300px;
+    max-width: 600px;
+    min-width: 350px;
+	}
+</style>
 <%@include file="../include/font.jsp" %>
 </head>
 <body>
@@ -15,7 +23,7 @@
 	<div id="honbun">
 <h2>スケジュール回答</h2>
 
-	<h3>${ senderName }さんからの入力要求</h3>
+	<h3>${ senderName }さんから${ targetEmail }さんへの入力要求</h3>
 	セルをクリックするごとに、×→○→△の順で変わります。<br>
 
 	<form action="../AnswerConfirm" method="post" id="answerForm">
@@ -46,10 +54,18 @@
 		<% } %>
 	</table>
 	<br>[備考]<br>
-	<textarea wrap="hard" maxlength="200" rows="10" cols="70" name="note"></textarea>200字まで<br>
+	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note">${ note }</textarea>200字まで<br>
 	<input type="button" value="確認" onclick="answerSubmit();"/>
 	</form>
 
+	</div>
+	<div id="honbun2">
+	<table>
+		<h3>イベント内容</h3>
+		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
+		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
+		<tr><th>回答人数</th><td>${ targetNum }人中/${ inputCount }人</td></tr>
+	</table>
 	</div>
 	</main>
     <%@include file="../include/footer.jsp" %>

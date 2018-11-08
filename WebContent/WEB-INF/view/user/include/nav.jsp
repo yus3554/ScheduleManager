@@ -10,6 +10,6 @@
           <a href="/ScheduleManager/Config" class="list">Config</a>
         </div>
         <div id="logout">
-          <a href="/ScheduleManager/LogoutConfirm" class="list">Logout</a>
+        Logout
         </div>
       </nav>

@@ -3,6 +3,7 @@ package schedule.answerview;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.AnswerTable;
+import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 import schedule.model.UserTable;
 
@@ -41,12 +43,33 @@ public class AnswerPage extends HttpServlet {
     	String randomURL = request.getPathInfo().substring(1);
 		session.setAttribute("randomURL", randomURL);
 
-    	HashMap<String, String> targetHM = new HashMap<>();
-		targetHM = new TargetTable().getTarget(randomURL);
+		// 対象者の情報を取得
+    	HashMap<String, String> targetHM = new TargetTable().getTarget(randomURL);
 
 		String senderEmail = targetHM.get("senderEmail");
+		String targetEmail = targetHM.get("targetEmail");
+		String note = targetHM.get("note");
+		String id = targetHM.get("id");
 
 		session.setAttribute("senderName", new UserTable().getName(senderEmail));
+		session.setAttribute("targetEmail", targetEmail);
+		session.setAttribute("note", note);
+
+		// イベント内容を取得
+		HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
+		session.setAttribute("eventName", scheduleHM.get("eventName"));
+		session.setAttribute("eventContent", scheduleHM.get("eventContent"));
+
+		// 対象者全てをidとsenderEmailを使って取得
+		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
+
+		// 回答済の人数をカウント
+		int inputCount = 0;
+		for(Iterator<HashMap<String, String>> i = targetList.iterator(); i.hasNext();) {
+			inputCount += Integer.parseInt((String)i.next().get("isInput")) == 0 ? 0 : 1;
+		}
+		request.setAttribute("targetNum", targetList.size());
+		request.setAttribute("inputCount", inputCount);
 
 		ArrayList<HashMap<String, String>> answers = new ArrayList<>();
 		answers = new AnswerTable().getEmailAnswers(randomURL);

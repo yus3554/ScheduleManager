@@ -19,6 +19,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 <body>
 	<%@include file="../include/header.jsp" %>
 	<%@include file="./include/name.jsp" %>
+	<%@include file="./include/logoutpopup.jsp" %>
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
@@ -71,6 +72,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 <%@include file="../include/footer.jsp" %>
 
 	<script type="text/javascript">
+
+	<%@include file="../../js/jquery-3.3.1.min.js" %>
+	<%@include file="./include/logoutpopupjs.jsp" %>
+
 		// 最初は非表示
 		document.getElementById("blanktext").style.display = "none";
 		document.getElementById("overEventName").style.display = "none";
@@ -111,6 +116,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		}
 
 		function AutoInputFuyukai(){
+			for(var i = 0; i < 4; i++){
+				addEmail();
+			}
+
 			email[0].value = "s152017@eecs.tottori-u.ac.jp"; // 太田
 			email[1].value = "s152119@eecs.tottori-u.ac.jp"; // 山田
 			email[2].value = "s132029@ike.tottori-u.ac.jp"; // 酒井
@@ -167,11 +176,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		function addEmail(){
 			  times++;
 			  var newTr = document.createElement("tr");
-			  newTr.innerHTML = "<tr><td>"
-			  + "<input type=\"checkbox\" name=\"key\" value=\"" + times + "\">"
-			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\">"
-			  + "<span id=\"emailDelete" + times + "\">×</span></td></tr>";
-			  newTr.children[0].appendChild(document.getElementById("addButton"));
+			  newTr.innerHTML = "<tr><td> "
+			  + "<input type=\"checkbox\" name=\"key\" value=\"" + times + "\"> "
+			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\"> "
+			  + "<span id=\"emailDelete" + times + "\">×</span> </td></tr>";
 			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd"));
 			  emailTr.children[0].setAttribute("rowspan", times);
 			  emailTr.children[2].setAttribute("rowspan", times);
