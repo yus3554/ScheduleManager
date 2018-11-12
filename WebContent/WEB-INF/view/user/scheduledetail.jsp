@@ -188,6 +188,9 @@ table th{
 		<form id="cellColor">
 			<input type="radio" name="rank" value="ranking" checked>多い順<br>
 			<input type="radio" name="rank" value="over">○の数が<input type="number" min="1" max="<%= targetListLength %>" id="num" value="1" required>以上<br>
+			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
+			<input type="radio" name="rank" value="condition">開催条件<br>
+			<% } %>
 			<span style="float:right;"><input type="checkbox" name="key" value="key">キーパーソン有り</span>
 			<input type="button" value="適用" onclick="apply()">
 			<input type="text" name="dummy" style="display:none;">
@@ -296,8 +299,10 @@ function apply(){
 	var radioCheck = radioNodeList.value;
 	if(radioCheck == "ranking"){
 		rankingCellColor();
-	} else {
+	} else if (radioCheck == "over") {
 		overCellColor(num);
+	} else {
+		conditionCellColor();
 	}
 	settingPopup.style.visibility = "hidden";
 }
@@ -331,6 +336,30 @@ function overCellColor(num){
 	    var cell = td[j].children;
 	    for(var k = 1; k < cell.length; k++){
 	    	if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+	    		cell[k].style.backgroundColor = "#FE9A2E";
+	    	} else {
+	    		cell[k].style.backgroundColor = "#ffffff";
+	    	}
+	    }
+	  }
+	}
+}
+
+//セルの色変えるやつの開催条件のやつ
+//ただし0の場合は色をつけない
+// 分母
+var denom = ${ eventConditionDenom };
+// 分子
+var numer = ${ eventConditionNumer };
+var condition = Number(numer) / Number(denom);
+function conditionCellColor(){
+	var tr = table.children;
+	for(var i = 0; i < tr.length; i++){
+	  var td = tr[i].children;
+	  for(var j = 1; j < td.length; j++){
+	    var cell = td[j].children;
+	    for(var k = 1; k < cell.length; k++){
+	    	if(condition * Number(${ targetLength }) <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
 	    		cell[k].style.backgroundColor = "#FE9A2E";
 	    	} else {
 	    		cell[k].style.backgroundColor = "#ffffff";

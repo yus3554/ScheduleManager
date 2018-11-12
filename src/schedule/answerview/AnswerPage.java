@@ -67,13 +67,18 @@ public class AnswerPage extends HttpServlet {
 			// 対象者全てをidとsenderEmailを使って取得
 			ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
 
-			// 回答済の人数をカウント
-			int inputCount = 0;
-			for(Iterator<HashMap<String, String>> i = targetList.iterator(); i.hasNext();) {
-				inputCount += Integer.parseInt((String)i.next().get("isInput")) == 0 ? 0 : 1;
+			// 要求者が知らせるようにしていれば、回答状況を送る
+			boolean isInputInform = scheduleHM.get("isInputInform").equals("1");
+			request.setAttribute("isInputInform", isInputInform);
+			if (isInputInform) {
+				// 回答済の人数をカウント
+				int inputCount = 0;
+				for(Iterator<HashMap<String, String>> i = targetList.iterator(); i.hasNext();) {
+					inputCount += Integer.parseInt((String)i.next().get("isInput")) == 0 ? 0 : 1;
+				}
+				request.setAttribute("targetNum", targetList.size());
+				request.setAttribute("inputCount", inputCount);
 			}
-			request.setAttribute("targetNum", targetList.size());
-			request.setAttribute("inputCount", inputCount);
 
 			ArrayList<HashMap<String, String>> answers = new ArrayList<>();
 			answers = new AnswerTable().getEmailAnswers(randomURL);

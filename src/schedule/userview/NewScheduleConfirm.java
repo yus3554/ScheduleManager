@@ -61,8 +61,8 @@ public class NewScheduleConfirm extends HttpServlet {
 		ArrayList<String> tempTargetEmails = new ArrayList<>();
 		ArrayList<String> targetEmails = new ArrayList<>();
 		boolean isEventCondition = false;
-		int eventConditionNumer = 0;
-		int eventConditionDenom = 0;
+		int eventConditionNumer = 1;
+		int eventConditionDenom = 1;
 		boolean isInputInform = false;
 
 		// 念の為セッション内を削除
@@ -129,11 +129,11 @@ public class NewScheduleConfirm extends HttpServlet {
     			    	break;
     			    // イベントの開催条件の分子
     			    case "eventConditionNumer":
-    			    	eventConditionNumer = Integer.parseInt(value);
+    			    	eventConditionNumer = (int)Double.parseDouble(value);
     			    	break;
     			    // イベントの開催条件の分母
     			    case "eventConditionDenom":
-    			    	eventConditionDenom = Integer.parseInt(value);
+    			    	eventConditionDenom = (int)Double.parseDouble(value);
     			    	break;
     			    // 回答者に現在の回答状況を伝えるかどうかのチェック
     			    case "isInputInform":
@@ -171,6 +171,14 @@ public class NewScheduleConfirm extends HttpServlet {
 				keys.add(false);
 			}
 		}
+
+		// 条件の修正（分母が0、分数が1より大きくなる場合）
+		eventConditionDenom = eventConditionDenom <= 0 ? 1 : eventConditionDenom;
+		if (eventConditionNumer / eventConditionDenom > 1) {
+			eventConditionDenom = 1;
+			eventConditionNumer = 1;
+		}
+
 		// 取得した要素をsessionに保存
 		session.setAttribute("eventName", eventName);
 		session.setAttribute("eventContent", eventContent);

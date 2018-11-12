@@ -101,12 +101,10 @@
 			  var newTr = document.createElement("tr");
 			  newTr.innerHTML = "<tr><td> "
 			  + "<input type=\"checkbox\" name=\"key\" value=\"" + times + "\"> "
-			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\"> "
-			  + "<span id=\"emailDelete" + times + "\">×</span> </td></tr>";
+			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\"> </td></tr>";
 			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd"));
 			  emailTr.children[0].setAttribute("rowspan", times);
 			  emailTr.children[2].setAttribute("rowspan", times);
-			  document.getElementById("emailDelete" + times).onmousedown = emailReset;
 			  email = form.elements["targetEmail[]"];
 			}
 
@@ -122,3 +120,4 @@
 				form.eventConditionDenom.disabled = true;
 			}
 		}
+		condition(form.isEventCondition.checked);

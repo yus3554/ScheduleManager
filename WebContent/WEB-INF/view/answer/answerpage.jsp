@@ -64,7 +64,9 @@
 		<h3>イベント内容</h3>
 		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
 		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
+		<% if((boolean)request.getAttribute("isInputInform")) { %>
 		<tr><th>回答人数</th><td>${ targetNum }人中/${ inputCount }人</td></tr>
+		<% } %>
 	</table>
 	</div>
 	</main>

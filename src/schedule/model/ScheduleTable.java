@@ -142,6 +142,7 @@ public class ScheduleTable {
 				hm.put("decideDate", rs.getString("decideDate"));
 				hm.put("note", rs.getString("note"));
 				hm.put("condition", rs.getString("condition"));
+				hm.put("isInputInform", rs.getString("isInputInform"));
 			}
 
 			return hm;
