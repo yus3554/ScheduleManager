@@ -36,6 +36,7 @@
 			<th>イベント内容</th>
 			<th>候補日程</th>
 			<th>入力締切日</th>
+			<th>回答人数</th>
 			<th>削除</th>
 		</tr>
 		</thead>
@@ -58,6 +59,7 @@
 			</td>
 			<td><%= request.getAttribute("eventStartDate" + i) %> 〜 <%= request.getAttribute("eventEndDate" + i) %></td>
 			<td><%= request.getAttribute("eventDeadlineDate" + i) %></td>
+			<td><%= request.getAttribute("isInputNum" + i) %> / <%= request.getAttribute("targetNum" + i) %>人</td>
 			<td><a href="./RequestSchedules/DeleteConfirm/<%= request.getAttribute("id" + i) %>">[x]</a></td>
 		</tr>
 	<% } %>

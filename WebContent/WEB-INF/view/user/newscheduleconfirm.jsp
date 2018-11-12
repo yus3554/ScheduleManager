@@ -51,8 +51,19 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		</tr>
 		<% } %>
 		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
+		<tr>
+			<th>開催条件：</th>
+			<td>
+			<% if ((boolean)session.getAttribute("isEventCondition")) { %>
+				${ eventConditionDenom }分の${ eventConditionNumer }以上
+			<% } else { %>
+				なし
+			<% } %>
+			</td>
+		</tr>
 		<tr><th>添付ファイル：</th><td>${ fileName }</td></tr>
 	</table>
+	回答者が現在の回答人数を分かるようにする：<%= (boolean)session.getAttribute("isInputInform") ? "有効" : "無効" %><br><br>
 
 	以上の内容でよろしいでしょうか？
 	<form action="./NewScheduleSubmit" method="post">

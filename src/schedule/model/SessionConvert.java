@@ -25,7 +25,11 @@ public class SessionConvert {
 				(String)session.getAttribute("eventEndDate"),
 				(String)session.getAttribute("eventDeadlineDate"),
 				(String)session.getAttribute("email"),
-				(String)session.getAttribute("fileName"));
+				(String)session.getAttribute("fileName"),
+				(boolean)session.getAttribute("isEventCondition"),
+				(int)session.getAttribute("eventConditionNumer"),
+				(int)session.getAttribute("eventConditionDenom"),
+				(boolean)session.getAttribute("isInputInform"));
 		return schedule;
 	}
 

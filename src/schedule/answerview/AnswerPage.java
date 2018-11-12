@@ -25,80 +25,88 @@ import schedule.model.UserTable;
 public class AnswerPage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AnswerPage() {
-        super();
-    }
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public AnswerPage() {
+		super();
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    	HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession(true);
 
-    	// randomURLを取得
-    	String randomURL = request.getPathInfo().substring(1);
+		// randomURLを取得
+		String randomURL = request.getPathInfo().substring(1);
 		session.setAttribute("randomURL", randomURL);
 
 		// 対象者の情報を取得
-    	HashMap<String, String> targetHM = new TargetTable().getTarget(randomURL);
+		HashMap<String, String> targetHM = new TargetTable().getTarget(randomURL);
 
-		String senderEmail = targetHM.get("senderEmail");
-		String targetEmail = targetHM.get("targetEmail");
-		String note = targetHM.get("note");
-		String id = targetHM.get("id");
+		// idキーがあるならば回答ページを表示
+		if(targetHM.containsKey("id")) {
 
-		session.setAttribute("senderName", new UserTable().getName(senderEmail));
-		session.setAttribute("targetEmail", targetEmail);
-		session.setAttribute("note", note);
+			String senderEmail = targetHM.get("senderEmail");
+			String targetEmail = targetHM.get("targetEmail");
+			String note = targetHM.get("note");
+			String id = targetHM.get("id");
 
-		// イベント内容を取得
-		HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
-		session.setAttribute("eventName", scheduleHM.get("eventName"));
-		session.setAttribute("eventContent", scheduleHM.get("eventContent"));
+			session.setAttribute("senderName", new UserTable().getName(senderEmail));
+			session.setAttribute("targetEmail", targetEmail);
+			session.setAttribute("note", note);
+			session.setAttribute("isInput", targetHM.get("isInput"));
 
-		// 対象者全てをidとsenderEmailを使って取得
-		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
+			// イベント内容を取得
+			HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
+			session.setAttribute("eventName", scheduleHM.get("eventName"));
+			session.setAttribute("eventContent", scheduleHM.get("eventContent"));
 
-		// 回答済の人数をカウント
-		int inputCount = 0;
-		for(Iterator<HashMap<String, String>> i = targetList.iterator(); i.hasNext();) {
-			inputCount += Integer.parseInt((String)i.next().get("isInput")) == 0 ? 0 : 1;
+			// 対象者全てをidとsenderEmailを使って取得
+			ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
+
+			// 回答済の人数をカウント
+			int inputCount = 0;
+			for(Iterator<HashMap<String, String>> i = targetList.iterator(); i.hasNext();) {
+				inputCount += Integer.parseInt((String)i.next().get("isInput")) == 0 ? 0 : 1;
+			}
+			request.setAttribute("targetNum", targetList.size());
+			request.setAttribute("inputCount", inputCount);
+
+			ArrayList<HashMap<String, String>> answers = new ArrayList<>();
+			answers = new AnswerTable().getEmailAnswers(randomURL);
+
+			// scheduleListの数を取得
+			int answersLength = answers.size();
+
+			HashMap<String, String> answerHM = new HashMap<>();
+
+			// 0番目からrequestにスケジュールを格納
+			for(int i = 0; i < answersLength; i++) {
+				answerHM = answers.get(i);
+				request.setAttribute("isInput", answerHM.get("isInput"));
+				request.setAttribute("date" + i, answerHM.get("date"));
+				request.setAttribute("first" + i, answerHM.get("first"));
+				request.setAttribute("second" + i, answerHM.get("second"));
+				request.setAttribute("third" + i, answerHM.get("third"));
+				request.setAttribute("fourth" + i, answerHM.get("fourth"));
+				request.setAttribute("fifth" + i, answerHM.get("fifth"));
+			}
+
+			// リストの長さをsessionに格納
+			session.setAttribute("answersLength", answersLength);
+			// jspを指定
+	    	String view = "/WEB-INF/view/answer/answerpage.jsp";
+
+	    	// リクエストをviewに飛ばす
+	    	RequestDispatcher dispatcher = request.getRequestDispatcher(view);
+
+	    	dispatcher.forward(request, response);
+		} else {
+			// 回答ページがないのでエラーページを表示
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "見つかりません");
 		}
-		request.setAttribute("targetNum", targetList.size());
-		request.setAttribute("inputCount", inputCount);
-
-		ArrayList<HashMap<String, String>> answers = new ArrayList<>();
-		answers = new AnswerTable().getEmailAnswers(randomURL);
-
-		// scheduleListの数を取得
-		int answersLength = answers.size();
-
-		HashMap<String, String> answerHM = new HashMap<>();
-
-		// 0番目からrequestにスケジュールを格納
-		for(int i = 0; i < answersLength; i++) {
-			answerHM = answers.get(i);
-			request.setAttribute("isInput", answerHM.get("isInput"));
-			request.setAttribute("date" + i, answerHM.get("date"));
-			request.setAttribute("first" + i, answerHM.get("first"));
-			request.setAttribute("second" + i, answerHM.get("second"));
-			request.setAttribute("third" + i, answerHM.get("third"));
-			request.setAttribute("fourth" + i, answerHM.get("fourth"));
-			request.setAttribute("fifth" + i, answerHM.get("fifth"));
-		}
-
-		// リストの長さをsessionに格納
-		session.setAttribute("answersLength", answersLength);
-
-    	// jspを指定
-    	String view = "/WEB-INF/view/answer/answerpage.jsp";
-    	// リクエストをviewに飛ばす
-    	RequestDispatcher dispatcher = request.getRequestDispatcher(view);
-
-    	dispatcher.forward(request, response);
     }
 }

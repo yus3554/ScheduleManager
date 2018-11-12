@@ -84,6 +84,16 @@ table th{
 		<tr><th>決定日時：</th><td>${ decideDate }<br><br>[備考]<br>${ note }</td></tr>
 		<% } %>
 		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
+		<tr>
+			<th>開催条件：</th>
+			<td>
+			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
+				${ eventConditionDenom }分の${ eventConditionNumer }以上
+			<% } else { %>
+				なし
+			<% } %>
+			</td>
+		</tr>
 		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
 		<tr>
 			<th>

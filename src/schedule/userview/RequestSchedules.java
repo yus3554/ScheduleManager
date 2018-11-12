@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.ScheduleTable;
+import schedule.model.TargetTable;
 
 /**
  * Servlet implementation class RequestSchedules
@@ -37,8 +38,7 @@ public class RequestSchedules extends HttpServlet {
     	HttpSession session = request.getSession(false);
 
     	// 全てのscheduleをsenderEmailを使って取得
-    	ArrayList<HashMap<String, String>> scheduleList = new ArrayList<>();
-    	scheduleList = new ScheduleTable().getScheduleList((String) session.getAttribute("email"));
+    	ArrayList<HashMap<String, String>> scheduleList = new ScheduleTable().getScheduleList((String) session.getAttribute("email"));
 
     	// scheduleListの数を取得
     	int listLength = scheduleList.size();
@@ -55,6 +55,16 @@ public class RequestSchedules extends HttpServlet {
     		request.setAttribute("eventEndDate" + i, hm.get("eventEndDate"));
     		request.setAttribute("eventDeadlineDate" + i, hm.get("eventDeadlineDate"));
     		request.setAttribute("decideDate" + i, hm.get("decideDate"));
+
+    		// 何人中何人が回答済みか
+    		ArrayList<HashMap<String, String>> targetHM = new TargetTable().getTargetList(hm.get("id"), (String)session.getAttribute("email"));
+    		int isInputNum = 0;
+    		for(int j = 0; j < targetHM.size(); j++) {
+    			isInputNum += (targetHM.get(j).get("isInput").equals("1")) ? 1 : 0;
+    		}
+
+    		request.setAttribute("targetNum" + i, targetHM.size());
+    		request.setAttribute("isInputNum" + i, isInputNum);
     	}
 
     	// リストの長さをrequestに格納

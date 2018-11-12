@@ -12,7 +12,7 @@
 	<%@include file="../../view/include/header.jsp" %>
 	<main>
 	<div id="honbun">
-	<h2>Not Found</h2>
+	<h2>404 Not Found</h2>
 	ページが存在しません。
 	</div>
 

@@ -58,6 +58,12 @@ public class ScheduleDetail extends HttpServlet {
 			decideDate = decideDate.replace(",", "<br>");
 		request.setAttribute("decideDate", decideDate);
 		request.setAttribute("note", scheduleHM.get("note"));
+		String condition = scheduleHM.get("condition");
+		request.setAttribute("isEventCondition", condition == null ? false : true);
+		// 分子
+		request.setAttribute("eventConditionNumer", condition == null ? null : condition.split("/")[0]);
+		// 分母
+		request.setAttribute("eventConditionDenom", condition == null ? null : condition.split("/")[1]);
 
 		// 対象者全てをidとsenderEmailを使って取得
 		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));

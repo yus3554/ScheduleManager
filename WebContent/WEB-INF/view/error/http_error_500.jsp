@@ -12,7 +12,7 @@
 	<%@include file="../../view/include/header.jsp" %>
 	<main>
 	<div id="honbun">
-	<h2>Internal Server Error</h2>
+	<h2>500 Internal Server Error</h2>
 	</div>
 
 	</main>

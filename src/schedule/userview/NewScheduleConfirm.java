@@ -60,6 +60,10 @@ public class NewScheduleConfirm extends HttpServlet {
 		ArrayList<Boolean> keys = new ArrayList<>();
 		ArrayList<String> tempTargetEmails = new ArrayList<>();
 		ArrayList<String> targetEmails = new ArrayList<>();
+		boolean isEventCondition = false;
+		int eventConditionNumer = 0;
+		int eventConditionDenom = 0;
+		boolean isInputInform = false;
 
 		// 念の為セッション内を削除
 		session.removeAttribute("eventName");
@@ -70,6 +74,10 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.removeAttribute("eventDeadlineDate");
 		session.removeAttribute("fileName");
 		session.removeAttribute("file");
+		session.removeAttribute("isEventCondition");
+		session.removeAttribute("eventConditionNumer");
+		session.removeAttribute("eventConditionDenom");
+		session.removeAttribute("isInputInform");
 
 		try {
     		List list = sfu.parseRequest(new ServletRequestContext(request));
@@ -105,13 +113,31 @@ public class NewScheduleConfirm extends HttpServlet {
     			    case "eventEndDate":
     			    	eventEndDate = value;
     			    	break;
+    			    // キーパーソン
     			    case "key":
     			    	temp1Keys.add(value);
     			    	break;
     			    case "targetEmail[]":
     		    		tempTargetEmails.add(value);
+    		    		break;
     			    case "eventDeadlineDate":
     			    	eventDeadlineDate = value;
+    			    	break;
+    			    // イベントの開催条件のチェック
+    			    case "isEventCondition":
+    			    	isEventCondition = Boolean.valueOf(value);
+    			    	break;
+    			    // イベントの開催条件の分子
+    			    case "eventConditionNumer":
+    			    	eventConditionNumer = Integer.parseInt(value);
+    			    	break;
+    			    // イベントの開催条件の分母
+    			    case "eventConditionDenom":
+    			    	eventConditionDenom = Integer.parseInt(value);
+    			    	break;
+    			    // 回答者に現在の回答状況を伝えるかどうかのチェック
+    			    case "isInputInform":
+    			    	isInputInform = Boolean.valueOf(value);
     			    	break;
     		    	default:
     			    }
@@ -153,6 +179,10 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.setAttribute("targetEmails", targetEmails);
 		session.setAttribute("keys", keys);
 		session.setAttribute("eventDeadlineDate", eventDeadlineDate);
+		session.setAttribute("isEventCondition", isEventCondition);
+		session.setAttribute("eventConditionNumer", eventConditionNumer);
+		session.setAttribute("eventConditionDenom", eventConditionDenom);
+		session.setAttribute("isInputInform", isInputInform);
 
 		// jspを指定
 		String view = "/WEB-INF/view/user/newscheduleconfirm.jsp";
