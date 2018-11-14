@@ -5,7 +5,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>New Schedule</title>
+
+<script><%@include file="../../js/jquery-3.3.1.min.js" %></script>
+<script><%@include file="./include/jquery.datetimepicker.full.js" %></script>
+
 <style>
+<%@include file="./include/jquery.datetimepicker.css"%>
 <%@include file="../../css/user.css" %>
 nav #new{
 border-radius: 5px 5px 0 0 / 5px 5px 0 0;
@@ -67,8 +72,18 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			</td>
 			<td>キーパーソンにはチェックを入れてください。</td>
 		</tr>
-		<tr id="beforeAdd"><th>入力締切日</th><td><input type="date" name="eventDeadlineDate"></td><td></td></tr>
-		<tr>
+		<tr id="beforeAdd1"><th>入力締切日時</th><td><input id="eventDeadline" name="eventDeadline" autocomplete="off"></td><td></td></tr>
+		<tr id="reminder">
+			<th>リマインダー設定</th>
+			<td>
+				締め切りの
+				<input type="number" min="0" max="30" name="remindDate[]" value="1">日前の
+				<input type="number" min="0" max="23" name="remindTime[]" value="12">時に再通知
+				<input type="button" id="addButton" onclick="addRemind();" value="+">
+			</td>
+			<td><span id="remindRemarks">日数は0~30日、時間は0~23時で指定してください。</span></td>
+		</tr>
+		<tr id="beforeAdd2">
 			<th>開催条件</th>
 			<td>
 				<input type="checkbox" name="isEventCondition" value="true" onclick="condition(this.checked);">
@@ -91,10 +106,9 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 <%@include file="../include/footer.jsp" %>
 
 	<script type="text/javascript">
-
-	<%@include file="../../js/jquery-3.3.1.min.js" %>
 	<%@include file="./include/logoutpopupjs.jsp" %>
 	<%@include file="./include/newschedulejs.jsp" %>
+	$("#eventDeadline").datetimepicker();
 	</script>
 </body>
 </html>

@@ -94,7 +94,7 @@ table th{
 			<% } %>
 			</td>
 		</tr>
-		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
+		<tr><th>入力締切日：</th><td>${ eventDeadline }</td></tr>
 		<tr>
 			<th>
 				全体の回答状況：<br>（○の数）
@@ -345,6 +345,7 @@ function overCellColor(num){
 	}
 }
 
+<% if ((boolean)request.getAttribute("isEventCondition")) { %>
 //セルの色変えるやつの開催条件のやつ
 //ただし0の場合は色をつけない
 // 分母
@@ -368,6 +369,7 @@ function conditionCellColor(){
 	  }
 	}
 }
+<% } %>
 
 // 全体表示の表にマウスオーバーでポップアップ出せるようにしたり
 // マウスアウトでポップアップしまったり

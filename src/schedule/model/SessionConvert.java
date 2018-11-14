@@ -23,7 +23,7 @@ public class SessionConvert {
 				(String)session.getAttribute("eventContent"),
 				(String)session.getAttribute("eventStartDate"),
 				(String)session.getAttribute("eventEndDate"),
-				(String)session.getAttribute("eventDeadlineDate"),
+				(String)session.getAttribute("eventDeadline"),
 				(String)session.getAttribute("email"),
 				(String)session.getAttribute("fileName"),
 				(boolean)session.getAttribute("isEventCondition"),

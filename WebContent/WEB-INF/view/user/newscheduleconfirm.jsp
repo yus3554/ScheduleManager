@@ -50,7 +50,23 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			</td>
 		</tr>
 		<% } %>
-		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
+		<tr><th>入力締切日時：</th><td>${ eventDeadline }</td></tr>
+		<% int remindDatesSize = ((ArrayList<int[]>)session.getAttribute("remindDates")).size(); %>
+		<tr>
+			<th rowspan="<%= remindDatesSize %>">リマインダー日時：</th>
+			<td>
+				締め切り日時の<%= ((ArrayList<int[]>)session.getAttribute("remindDates")).get(0) %>日前の
+				<%= ((ArrayList<int[]>)session.getAttribute("remindTimes")).get(0) %>時
+			</td>
+		</tr>
+		<% for(int i = 1; i < remindDatesSize ; i++) { %>
+		<tr>
+			<td>
+				締め切り日時の<%= ((ArrayList<int[]>)session.getAttribute("remindDates")).get(i) %>日前の
+				<%= ((ArrayList<int[]>)session.getAttribute("remindTimes")).get(i) %>時
+			</td>
+		</tr>
+		<% } %>
 		<tr>
 			<th>開催条件：</th>
 			<td>

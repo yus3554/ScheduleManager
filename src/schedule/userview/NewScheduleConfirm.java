@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,12 +56,18 @@ public class NewScheduleConfirm extends HttpServlet {
 		String eventContent = "";
 		String eventStartDate = "";
 		String eventEndDate = "";
-		String eventDeadlineDate = "";
+		String eventDeadline = "";
 		ArrayList<String> temp1Keys = new ArrayList<>();
 		ArrayList<Integer> temp2Keys = new ArrayList<>();
 		ArrayList<Boolean> keys = new ArrayList<>();
 		ArrayList<String> tempTargetEmails = new ArrayList<>();
 		ArrayList<String> targetEmails = new ArrayList<>();
+		ArrayList<String> remindDatesTemp1 = new ArrayList<>();
+		ArrayList<String> remindTimesTemp1 = new ArrayList<>();
+		ArrayList<Integer> remindDatesTemp2 = new ArrayList<>();
+		ArrayList<Integer> remindTimesTemp2 = new ArrayList<>();
+		ArrayList<Integer> remindDates = new ArrayList<>();
+		ArrayList<Integer> remindTimes = new ArrayList<>();
 		boolean isEventCondition = false;
 		int eventConditionNumer = 1;
 		int eventConditionDenom = 1;
@@ -71,7 +79,10 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.removeAttribute("eventStartDate");
 		session.removeAttribute("eventEndDate");
 		session.removeAttribute("targetEmails");
-		session.removeAttribute("eventDeadlineDate");
+		session.removeAttribute("keys");
+		session.removeAttribute("eventDeadline");
+		session.removeAttribute("remindDates");
+		session.removeAttribute("remindTimes");
 		session.removeAttribute("fileName");
 		session.removeAttribute("file");
 		session.removeAttribute("isEventCondition");
@@ -120,8 +131,14 @@ public class NewScheduleConfirm extends HttpServlet {
     			    case "targetEmail[]":
     		    		tempTargetEmails.add(value);
     		    		break;
-    			    case "eventDeadlineDate":
-    			    	eventDeadlineDate = value;
+    			    case "remindDate[]":
+    			    	remindDatesTemp1.add(value);
+    			    	break;
+    			    case "remindTime[]":
+    			    	remindTimesTemp1.add(value);
+    			    	break;
+    			    case "eventDeadline":
+    			    	eventDeadline = value;
     			    	break;
     			    // イベントの開催条件のチェック
     			    case "isEventCondition":
@@ -149,7 +166,6 @@ public class NewScheduleConfirm extends HttpServlet {
     	}catch (Exception e) {
     		  e.printStackTrace();
     	}
-
 		// とりあえず空欄を抜いて、空欄に合わせてキーパーソン内の添字を変更
 		int times = 0;
 		for(int i = 0; i < tempTargetEmails.size(); i++) {
@@ -179,6 +195,26 @@ public class NewScheduleConfirm extends HttpServlet {
 			eventConditionNumer = 1;
 		}
 
+		// リマインダーの日時両方あったら入れる
+		for(int i = 0; i < Math.max(remindDatesTemp1.size(), remindTimesTemp1.size()); i++) {
+			if(remindDatesTemp1.get(i) != null && remindTimesTemp1.get(i) != null) {
+				if(!remindDatesTemp1.get(i).equals("") && !remindTimesTemp1.get(i).equals("")){
+					if((Integer.parseInt(remindDatesTemp1.get(i)) >= 0 && Integer.parseInt(remindTimesTemp1.get(i)) >= 0)
+							&& (Integer.parseInt(remindDatesTemp1.get(i)) <= 30 && Integer.parseInt(remindTimesTemp1.get(i)) < 24)) {
+						remindDatesTemp2.add(Integer.parseInt(remindDatesTemp1.get(i)));
+						remindTimesTemp2.add(Integer.parseInt(remindTimesTemp1.get(i)));
+					}
+				}
+			}
+		}
+		// リマインダーの被りがあったらいれない
+		for(int i = 0; i < remindDatesTemp2.size(); i++) {
+			if(!remindDates.contains(remindDatesTemp2.get(i)) || !remindTimes.contains(remindTimesTemp2.get(i))){
+				remindDates.add(remindDatesTemp2.get(i));
+				remindTimes.add(remindTimesTemp2.get(i));
+			}
+		}
+
 		// 取得した要素をsessionに保存
 		session.setAttribute("eventName", eventName);
 		session.setAttribute("eventContent", eventContent);
@@ -186,7 +222,9 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.setAttribute("eventEndDate", eventEndDate);
 		session.setAttribute("targetEmails", targetEmails);
 		session.setAttribute("keys", keys);
-		session.setAttribute("eventDeadlineDate", eventDeadlineDate);
+		session.setAttribute("remindDates", remindDates);
+		session.setAttribute("remindTimes", remindTimes);
+		session.setAttribute("eventDeadline", eventDeadline);
 		session.setAttribute("isEventCondition", isEventCondition);
 		session.setAttribute("eventConditionNumer", eventConditionNumer);
 		session.setAttribute("eventConditionDenom", eventConditionDenom);

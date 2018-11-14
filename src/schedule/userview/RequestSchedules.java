@@ -53,7 +53,7 @@ public class RequestSchedules extends HttpServlet {
     		request.setAttribute("eventContent" + i, hm.get("eventContent"));
     		request.setAttribute("eventStartDate" + i, hm.get("eventStartDate"));
     		request.setAttribute("eventEndDate" + i, hm.get("eventEndDate"));
-    		request.setAttribute("eventDeadlineDate" + i, hm.get("eventDeadlineDate"));
+    		request.setAttribute("eventDeadline" + i, hm.get("eventDeadline"));
     		request.setAttribute("decideDate" + i, hm.get("decideDate"));
 
     		// 何人中何人が回答済みか

@@ -32,7 +32,7 @@
 		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
 		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
 		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
-		<tr><th>入力締切日：</th><td>${ eventDeadlineDate }</td></tr>
+		<tr><th>入力締切日：</th><td>${ eventDeadline }</td></tr>
 		<% int targetListLength = (int) request.getAttribute("targetListLength"); %>
 		<tr>
 			<th rowspan="<%= targetListLength %>">

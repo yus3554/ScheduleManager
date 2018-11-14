@@ -58,7 +58,7 @@
 				<% } %>
 			</td>
 			<td><%= request.getAttribute("eventStartDate" + i) %> 〜 <%= request.getAttribute("eventEndDate" + i) %></td>
-			<td><%= request.getAttribute("eventDeadlineDate" + i) %></td>
+			<td><%= request.getAttribute("eventDeadline" + i) %></td>
 			<td><%= request.getAttribute("isInputNum" + i) %> / <%= request.getAttribute("targetNum" + i) %>人</td>
 			<td><a href="./RequestSchedules/DeleteConfirm/<%= request.getAttribute("id" + i) %>">[x]</a></td>
 		</tr>

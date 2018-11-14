@@ -52,7 +52,7 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("eventContent", scheduleHM.get("eventContent"));
 		request.setAttribute("eventStartDate", scheduleHM.get("eventStartDate"));
 		request.setAttribute("eventEndDate", scheduleHM.get("eventEndDate"));
-		request.setAttribute("eventDeadlineDate", scheduleHM.get("eventDeadlineDate"));
+		request.setAttribute("eventDeadline", scheduleHM.get("eventDeadline"));
 		String decideDate = scheduleHM.get("decideDate");
 		if(decideDate != null)
 			decideDate = decideDate.replace(",", "<br>");
@@ -163,33 +163,12 @@ public class ScheduleDetail extends HttpServlet {
 		// 回答ページで、答えを一時保存できるようにして欲しい
 		// 備考欄が大きすぎるんじゃ無いか
 
-		/*
-		・回答ページの備考欄が大きすぎな気がします．
-		→サイズを変更する
-
-	 ・確認，じゃなく，送信，とかの方がよくないですか？
-		→要確認
-
-	 ・一時保存，があった方がよいです．
-		→ブラウザの戻るボタンなどで入力がリセットされてしまうのも含めて、
-		　jsのlocalstorage機能を使うべき
-		　ただしサーバーに保存されているデータと競合しないように注意する
-
-	 ・回答者の名前をどっかに表示した方が良い気がします．
-		→即修正
-
-	 ・メールに，テスト，とありますが，回答ページには必要ない？
-		→即修正、スクロールする必要がないように空いている右側のスペースを使用する
-
-	 ・メールアドレスごとにユーザのデータを管理するようにして
-	  これまでの回答状況一覧とか見れるページとかあったらうれしいです．
-		→あったら良いけどなかなか面倒
-		*/
-
 		// 研究室のサーバの方ではビルドパスをcommonslangとmailはプロジェクトフォルダ直下のlibフォルダからで良いが、
 		// jdbcはtomcat内のlibフォルダにjarファイルを入れてそこから参照しないといけない
 		// notifmanagerのメール送信のところで、添付ファイルを読み込むところで、パスを指定するが、
 		// 研究室のサーバーと自分のパソコンでは異なるので、変更が必要
+		// schedulesテーブルにconditionとisInputInformのカラムを追加せよ
+		// isInputInformは初期値を0にせよ
 
 		// キーパーソンのやつ、あとはセルの色変える奴だけだけど、アイデアとしては、キーパーソンの2次元配列をそれぞれANDしていってできた2次元配列を使って
 		// セルの色つける関数のところでtrueかfalseかで色つけるかどうか見れば良い?

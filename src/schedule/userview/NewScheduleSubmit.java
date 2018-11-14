@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -87,14 +90,25 @@ public class NewScheduleSubmit extends HttpServlet {
 		new NotifTable().insert(randomURL, nowTime, 0);
 
 		// 再送の通知
-		String deadline = (String)session.getAttribute("eventDeadlineDate");
-		LocalDate deadlineDate = LocalDate.parse(deadline, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		LocalDateTime deadlineDateTime = deadlineDate.atTime(0, 0, 0);
-		// とりあえず1日前にする
-		LocalDateTime notifTime = deadlineDateTime.minusDays(1);
-		// 再送の通知なのでtypeは1
-		new NotifTable().insert(randomURL, notifTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), 1);
-
+		String deadline = (String)session.getAttribute("eventDeadline");
+		String deadlineDateStr = deadline.split(" ")[0];
+		String deadlineDateTimeStr = deadline.split(" ")[1];
+		LocalDate deadlineDate = LocalDate.parse(deadlineDateStr, DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+		LocalDateTime deadlineDateTime =
+				deadlineDate.atTime(Integer.parseInt(deadlineDateTimeStr.split(":")[0]), Integer.parseInt(deadlineDateTimeStr.split(":")[1]), 0);
+		// 再送日程を取得
+		ArrayList<Integer> remindDates = (ArrayList<Integer>)session.getAttribute("remindDates");
+		ArrayList<Integer> remindTimes = (ArrayList<Integer>)session.getAttribute("remindTimes");
+		for(int i = 0; i < remindDates.size(); i++) {
+			// 指定したリマインダー日時を設定
+			LocalDateTime notifTime = deadlineDateTime.minusDays(remindDates.get(i));
+			notifTime = notifTime.with(LocalTime.of(remindTimes.get(i), 0));
+			// notifTimeとldtを比べてnotifTimeが前なら通知は行わない
+			if(ldt.isBefore(notifTime)) {
+				// 再送の通知なのでtypeは1
+				new NotifTable().insert(randomURL, notifTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), 1);
+			}
+		}
 
 		//新規スケジュールで使ったsession attributeを削除
 		session.removeAttribute("eventName");
@@ -102,7 +116,7 @@ public class NewScheduleSubmit extends HttpServlet {
 		session.removeAttribute("eventStartDate");
 		session.removeAttribute("eventEndDate");
 		session.removeAttribute("targetEmails");
-		session.removeAttribute("eventDeadlineDate");
+		session.removeAttribute("eventDeadline");
 
 		// jspを指定
 		String view = "/WEB-INF/view/user/newschedulesubmit.jsp";

@@ -3,12 +3,17 @@
 		document.getElementById("blanktext").style.display = "none";
 		document.getElementById("overEventName").style.display = "none";
 		document.getElementById("overEventContent").style.display = "none";
+		document.getElementById("remindRemarks").style.display = "none";
 
-		var times = 1;
+		var emailIndex = 1;
+		var remindIndex = 1;
 		var form = document.forms.newschedule;
 		var table = document.getElementById("table");
 		var email = form.elements["targetEmail[]"];
 		var emailTr = document.getElementById("email");
+		var remindDate = form.elements["remindDate[]"];
+		var remindTime = form.elements["remindTime[]"];
+		var remindTr = document.getElementById("reminder");
 
 		// とりあえず
 		// 今から2日後を締め切り
@@ -28,14 +33,15 @@
 		function AutoInput(){
 			form.eventName.value = "会議の開催日程について";
 			form.eventContent.value = "会議をします。";
-			if(times <= 1){
+			if(emailIndex <= 1){
 				email.value = "s152017@eecs.tottori-u.ac.jp";
 			} else {
 				email[0].value = "s152017@eecs.tottori-u.ac.jp";
 			}
 			form.eventStartDate.value = "" + start.getFullYear() + "-" + addZero(start.getMonth() + 1) + "-" + addZero(start.getDate());
 			form.eventEndDate.value = "" + end.getFullYear() + "-" + addZero(end.getMonth() + 1) + "-" + addZero(end.getDate());
-			form.eventDeadlineDate.value = "" + deadline.getFullYear() + "-" + addZero(deadline.getMonth() + 1) + "-" + addZero(deadline.getDate());
+			form.eventDeadline.value = "" + deadline.getFullYear() + "/" + addZero(deadline.getMonth() + 1) + "/" + addZero(deadline.getDate())
+										+ " " + "00:00";
 		}
 
 		function AutoInputFuyukai(){
@@ -51,7 +57,7 @@
 		}
 
 		function isSubmit(){
-			if(isBlank() && isOverEventName() && isOverEventContent()){
+			if(isBlank() && isOverEventName() && isOverEventContent() && isOverRemind()){
 				form.submit();
 			}
 		}
@@ -63,8 +69,8 @@
 				form.eventContent.value == "" ||
 				form.eventStartDate.value == "" ||
 				form.eventEndDate.value == "" ||
-				form.eventDeadlineDate.value == "") {
-				if(times <= 1){
+				form.eventDeadline.value == "") {
+				if(emailIndex <= 1){
 					if(email.value == ""){
 						blanktext.style.display = "block";
 						return false;
@@ -84,6 +90,7 @@
 		function isOverEventName(){
 			if(form.eventName.value.length > 50){
 				overEventName.style.display = "block";
+				return false;
 			}else{
 				return true;
 			}
@@ -91,22 +98,58 @@
 		function isOverEventContent(){
 			if(form.eventContent.value.length > 1000){
 				overEventContent.style.display = "block";
+				return false;
 			}else{
 				return true;
 			}
 		}
 
+		// リマインダーの範囲が正しいかどうか
+		function isOverRemind(){
+			remindDate = form.elements["remindDate[]"];
+			remindTime = form.elements["remindTime[]"];
+			if(remindIndex <= 1){
+				if(remindDate.value < 0 || remindDate.value > 30 || remindTime.value < 0 || remindTime.value > 23){
+					remindRemarks.style.display = "block";
+					return false;
+				} else {
+					return true;
+				}
+			}else{
+				for(var i = 0; i < remindIndex; i++){
+					if(remindDate[i].value < 0 || remindDate[i].value > 30 || remindTime[i].value < 0 || remindTime[i].value > 23){
+						remindRemarks.style.display = "block";
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+
 		function addEmail(){
-			  times++;
+			  emailIndex++;
 			  var newTr = document.createElement("tr");
 			  newTr.innerHTML = "<tr><td> "
-			  + "<input type=\"checkbox\" name=\"key\" value=\"" + times + "\"> "
+			  + "<input type=\"checkbox\" name=\"key\" value=\"" + emailIndex + "\"> "
 			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\"> </td></tr>";
-			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd"));
-			  emailTr.children[0].setAttribute("rowspan", times);
-			  emailTr.children[2].setAttribute("rowspan", times);
+			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd1"));
+			  emailTr.children[0].setAttribute("rowspan", emailIndex);
+			  emailTr.children[2].setAttribute("rowspan", emailIndex);
 			  email = form.elements["targetEmail[]"];
-			}
+		}
+
+		function addRemind(){
+			  remindIndex++;
+			  var newTr = document.createElement("tr");
+			  newTr.innerHTML = "<tr><td> "
+			  + "締め切りの <input type=\"number\" min=\"1\" max=\"30\" name=\"remindDate[]\">日前の "
+			  + "<input type=\"number\" min=\"0\" max=\"24\" name=\"remindTime[]\">時に再通知 </td></tr>";
+			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd2"));
+			  remindTr.children[0].setAttribute("rowspan", remindIndex);
+			  remindTr.children[2].setAttribute("rowspan", remindIndex);
+			  remindDate = form.elements["remindDate[]"];
+			  remindTime = form.elements["remindTime[]"];
+		}
 
 		// 開催条件のチェックを入れると数字を入れられるようになる
 		function condition(isCheck){

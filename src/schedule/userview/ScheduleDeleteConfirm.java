@@ -50,7 +50,7 @@ public class ScheduleDeleteConfirm extends HttpServlet {
 		request.setAttribute("eventContent", scheduleHM.get("eventContent"));
 		request.setAttribute("eventStartDate", scheduleHM.get("eventStartDate"));
 		request.setAttribute("eventEndDate", scheduleHM.get("eventEndDate"));
-		request.setAttribute("eventDeadlineDate", scheduleHM.get("eventDeadlineDate"));
+		request.setAttribute("eventDeadline", scheduleHM.get("eventDeadline"));
 
 		// 対象者全てをidとsenderEmailを使って取得
 		ArrayList<HashMap<String, String>> targetList = new ArrayList<>();

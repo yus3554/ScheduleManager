@@ -26,6 +26,7 @@ nav #config{
 		<li>登録情報の変更</li>
 		<li><a href="./WithDrawConfirm">退会（未実装）</a></li>
 		<li><a href="./Test">テスト用</a></li>
+		<li><a href="./ReminderConfig">リマインダーの設定</a></li>
 	</ul>
 	</div>
 	</main>

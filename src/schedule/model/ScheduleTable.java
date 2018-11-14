@@ -28,7 +28,7 @@ public class ScheduleTable {
 
 			// 新規スケジュールをschedulesテーブルにインサート
 			String sql = "insert into schedules (id, eventName, eventContent, eventStartDate, "
-					+ "eventEndDate, eventDeadlineDate, senderEmail, fileName, `condition`, isInputInform)"
+					+ "eventEndDate, eventDeadline, senderEmail, fileName, `condition`, isInputInform)"
 					+ " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, schedule.getId());
@@ -36,7 +36,7 @@ public class ScheduleTable {
 			patmt.setString(3, schedule.getEventContent());
 			patmt.setString(4, schedule.getEventStartDate());
 			patmt.setString(5, schedule.getEventEndDate());
-			patmt.setString(6, schedule.getEventDeadlineDate());
+			patmt.setString(6, schedule.getEventDeadline());
 			patmt.setString(7, schedule.getSenderEmail());
 			patmt.setString(8, schedule.getFileName());
 			patmt.setString(9, schedule.getCondition());
@@ -85,7 +85,7 @@ public class ScheduleTable {
 				hm.put("eventContent", rs.getString("eventContent"));
 				hm.put("eventStartDate", rs.getString("eventStartDate"));
 				hm.put("eventEndDate", rs.getString("eventEndDate"));
-				hm.put("eventDeadlineDate", rs.getString("eventDeadlineDate"));
+				hm.put("eventDeadline", rs.getString("eventDeadline"));
 				hm.put("decideDate", rs.getString("decideDate"));
 				list.add(hm);
 			}
@@ -138,7 +138,7 @@ public class ScheduleTable {
 				hm.put("eventContent", rs.getString("eventContent"));
 				hm.put("eventStartDate", rs.getString("eventStartDate"));
 				hm.put("eventEndDate", rs.getString("eventEndDate"));
-				hm.put("eventDeadlineDate", rs.getString("eventDeadlineDate"));
+				hm.put("eventDeadline", rs.getString("eventDeadline"));
 				hm.put("decideDate", rs.getString("decideDate"));
 				hm.put("note", rs.getString("note"));
 				hm.put("condition", rs.getString("condition"));
