@@ -9,6 +9,8 @@ import java.sql.Statement;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 public class UserTable {
 
 	public UserTable() {
@@ -24,12 +26,15 @@ public class UserTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/users");
 			conn = dataSource.getConnection();
 
-			String sql = "insert into users (name, email, pass) values (?, ?, ?);";
+			String salt = RandomStringUtils.randomAlphanumeric(20);
+			String sql = "insert into users (name, email, pass_hash, salt) values (?, ?, SHA2(concat(?, ?), 256), ?);";
 
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, name);
 			patmt.setString(2, email);
 			patmt.setString(3, pass);
+			patmt.setString(4, salt);
+			patmt.setString(5, salt);
 
 			patmt.executeUpdate();
 
@@ -59,7 +64,7 @@ public class UserTable {
 			stmt = conn.createStatement();
 
 			// senderEmailで検索
-			String sql = "select * from users where email = \"" +
+			String sql = "select name from users where email = \"" +
 					email + "\";";
 
 			// HashMapに入れてそれをArrayListに格納
@@ -144,10 +149,10 @@ public class UserTable {
 			stmt = conn.createStatement();
 
 			// senderEmailで検索
-			String sql = "delete from schedules where email = \"" +
+			String sql = "delete from users where email = \"" +
 					email +
-					"\" and pass = \"" +
-					pass + "\";";
+					"\" and pass = SHA2(concat(\"" +
+					pass + "\", salt), 256);";
 
 			stmt.executeUpdate(sql);
 

@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 //import org.apache.tomcat.jdbc.pool.DataSource;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 /**
  * サーブレット実行クラス LoginCheck
  * ログインチェック
@@ -86,7 +88,7 @@ public class LoginCheck extends HttpServlet {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/users");
 			conn = dataSource.getConnection();
 
-			String sql = "select * from users where email = ? and pass = ?;";
+			String sql = "select * from users where email = ? and pass_hash = SHA2(concat(?, salt), 256);";
 
 			// SQLインジェクション対策
 			PreparedStatement patmt = conn.prepareStatement(sql);
