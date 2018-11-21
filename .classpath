@@ -13,18 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/Users/yus3554/eclipse-workspace/ScheduleManager/lib/commons-lang3-3.7.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/yus3554/eclipse-workspace/ScheduleManager/lib/javax.mail.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/jackson-annotations-2.9.7.jar"/>
-	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/jackson-core-2.9.7.jar"/>
-	<classpathentry kind="lib" path="/Users/yus3554/tomcat/lib/jackson-databind-2.9.7.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.7.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

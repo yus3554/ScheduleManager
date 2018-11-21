@@ -163,6 +163,8 @@ public class ScheduleDetail extends HttpServlet {
 		// jdbcはtomcat内のlibフォルダにjarファイルを入れてそこから参照しないといけない
 		// notifmanagerのメール送信のところで、添付ファイルを読み込むところで、パスを指定するが、
 		// 研究室のサーバーと自分のパソコンでは異なるので、変更が必要
+		// userテーブルのpassをpass_hash char(64)に変更、salt binary(20)を追加
+		// パスワードを変更
 
 		// キーパーソンのやつ、あとはセルの色変える奴だけだけど、アイデアとしては、キーパーソンの2次元配列をそれぞれANDしていってできた2次元配列を使って
 		// セルの色つける関数のところでtrueかfalseかで色つけるかどうか見れば良い?
