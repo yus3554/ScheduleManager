@@ -17,7 +17,7 @@
 	<table>
 		<tr><td>名前：</td><td>${ userName }</td></tr>
 		<tr><td>メールアドレス：</td><td>${ email }</td></tr>
-		<tr><td>パスワード：</td><td>${ passwordHidden }</td></tr>
+		<tr><td>パスワード：</td><td>**********</td></tr>
 	</table>
 
 	以上で登録してもよろしいですか？

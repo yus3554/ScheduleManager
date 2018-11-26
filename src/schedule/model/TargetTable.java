@@ -11,7 +11,7 @@ import java.util.HashMap;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 
 public class TargetTable {
@@ -22,9 +22,10 @@ public class TargetTable {
 
 	public void insert(String id, String senderEmail, String targetEmail, boolean key) {
 		String randomURL;
-		// randamURLの被りがなくなるまでrandamURLを出力
+		// 念の為randamURLの被りがなくなるまでrandamURLを出力
 		do {
-			randomURL = createRandomURL();
+			// sha256を用いて一意な文字列を作成
+			randomURL = createRandomURL(id + senderEmail + targetEmail);
 		}while(isSameURL(randomURL));
 
 		DataSource dataSource = null;
@@ -71,9 +72,9 @@ public class TargetTable {
 	}
 
 	// urlに使うランダム文字列を出力する
-	private String createRandomURL() {
-		// common-langを使ってランダムな20文字の文字列を出力
-		String url = RandomStringUtils.randomAlphanumeric(20);
+	private String createRandomURL(String str) {
+		// common-codecを使ってランダムな20文字の文字列を出力
+		String url = DigestUtils.sha256Hex(str);
 		return url;
 	}
 

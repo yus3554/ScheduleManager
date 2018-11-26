@@ -43,7 +43,6 @@ public class SignUpSubmit extends HttpServlet {
 		String userName = (String)session.getAttribute("userName");
 		String email = (String)session.getAttribute("email");
 		String pass = (String)session.getAttribute("password");
-		String passHidden = (String)session.getAttribute("passwordHidden");
 
 		// 回答ページのリンクに使うポート番号などを含むアドレス
 		String address = "";
@@ -72,7 +71,7 @@ public class SignUpSubmit extends HttpServlet {
 				+ "<table>" +
 				"		<tr><td>名前：</td><td>" + userName + "</td></tr>" +
 				"		<tr><td>メールアドレス：</td><td>" + email + "</td></tr>" +
-				"		<tr><td>パスワード：</td><td>" + passHidden + "</td></tr>" +
+				"		<tr><td>パスワード：</td><td>**********</td></tr>" +
 				"	</table><br><br>"
 				+ "<a href=\"" + address + "/ScheduleManager/TopPage\">ログインはこちら</a><br><br></body></html>";
 

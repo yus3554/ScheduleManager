@@ -37,13 +37,10 @@ public class SignUpConfirm extends HttpServlet {
 		String name = (String) request.getParameter("userName");
 		String email = (String) request.getParameter("email");
 		String pass = (String) request.getParameter("password");
-		int passNum = pass.length();
-		String passwordHidden = new String(new char[passNum]).replace("\0", "*");
 
 		session.setAttribute("userName", name);
 		session.setAttribute("email", email);
 		session.setAttribute("password", pass);
-		session.setAttribute("passwordHidden", passwordHidden);
 
 		// jspを指定
 		String view = "/WEB-INF/view/auth/signupconfirm.jsp";
