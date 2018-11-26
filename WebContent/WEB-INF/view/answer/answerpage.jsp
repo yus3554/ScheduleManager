@@ -24,9 +24,15 @@
 <h2>スケジュール回答</h2>
 
 	<h3>${ senderName }さんから${ targetEmail }さんへの入力要求</h3>
+
+	<% if(((String)request.getAttribute("isInput")).equals("0")) { %>
+	<h4>未回答</h4>
+	<% } else { %>
+	<h4>回答済（変更日時：${ sendDate }）</h4>
+	<% } %>
 	セルをクリックするごとに、×→○→△の順で変わります。<br>
 
-	<form action="../AnswerConfirm" method="post" id="answerForm">
+	<form action="../AnswerPage/<%= session.getAttribute("randomURL") %>" method="post" id="answerForm">
 	<table id="table" border="2" cellpadding="10">
 		<tr>
 			<th>日付</th>
@@ -55,7 +61,14 @@
 	</table>
 	<br>[備考]<br>
 	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note">${ note }</textarea>200字まで<br>
-	<input type="button" value="確認" onclick="answerSubmit();"/>
+	<div id="saveload"></div><br>
+	<% if(request.getAttribute("isInput").equals("0")) { %>
+	<input type="button" value="送信" onclick="answerSubmit();"/>
+	<% } else { %>
+	<input type="button" value="修正" onclick="answerSubmit();"/>
+	<% } %>
+	<input type="button" value="一時保存" onclick="save();"/>
+	<input type="button" value="一時保存反映" onclick="load();"/>
 	</form>
 
 	</div>
@@ -72,7 +85,9 @@
 	</main>
     <%@include file="../include/footer.jsp" %>
 
+	<script><%@include file="../../js/jquery-3.3.1.min.js"%></script>
 	<script>
+		$("#saveload").hide();
 		var table = document.getElementById("table");
 		var cellclick = function(){
 			if(this.innerHTML == "×"){
@@ -110,6 +125,29 @@
 			<% } %>
 			<% } %>
 			form.submit();
+		}
+
+		// 一時保存
+		function save(){
+			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
+			<% for(int j = 0; j < times.length; j++){ %>
+				var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
+				localStorage.setItem("<%= times[j] + i %>", <%= times[j] %>tdText);
+			<% } %>
+			<% } %>
+			$("#saveload").html("一時保存しました。");
+			$("#saveload").show();
+		}
+
+		// 一時保存の反映
+		function load(){
+			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
+			<% for(int j = 0; j < times.length; j++){ %>
+				document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML = localStorage.getItem("<%= times[j] + i %>");
+			<% } %>
+			<% } %>
+			$("#saveload").html("一時保存を反映しました。");
+			$("#saveload").show();
 		}
 	</script>
 

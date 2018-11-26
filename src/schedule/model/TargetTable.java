@@ -37,7 +37,7 @@ public class TargetTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targets");
 			conn = dataSource.getConnection();
 
-			String sql = "insert into targets value (?, ?, ?, ?, 0, null, ?);";
+			String sql = "insert into targets value (?, ?, ?, ?, 0, null, ?, null);";
 
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, id);
@@ -104,6 +104,7 @@ public class TargetTable {
 				hm.put("isInput", rs.getString("isInput"));
 				hm.put("note", rs.getString("note"));
 				hm.put("key", rs.getString("key"));
+				hm.put("sendDate", rs.getString("sendDate"));
 			}
 			return hm;
 
@@ -253,7 +254,7 @@ public class TargetTable {
 		}
 	}
 
-	public void isInputUpdate(String randomURL, String note) {
+	public void isInputUpdate(String randomURL, String note, String sendDate) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		try {
@@ -262,9 +263,10 @@ public class TargetTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targets");
 			conn = dataSource.getConnection();
 
-			String sql = "update targets set isInput = 1, note = ? where randomURL = \"" + randomURL + "\";";
+			String sql = "update targets set isInput = 1, note = ?, sendDate = ? where randomURL = \"" + randomURL + "\";";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, note);
+			patmt.setString(2, sendDate);
 
 			patmt.executeUpdate();
 

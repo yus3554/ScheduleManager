@@ -1,6 +1,7 @@
 package schedule.answerview;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,11 +54,13 @@ public class AnswerPage extends HttpServlet {
 			String targetEmail = targetHM.get("targetEmail");
 			String note = targetHM.get("note");
 			String id = targetHM.get("id");
+			String sendDate = targetHM.get("sendDate");
 
 			session.setAttribute("senderName", new UserTable().getName(senderEmail));
 			session.setAttribute("targetEmail", targetEmail);
 			session.setAttribute("note", note);
-			session.setAttribute("isInput", targetHM.get("isInput"));
+			request.setAttribute("isInput", targetHM.get("isInput"));
+			request.setAttribute("sendDate", sendDate);
 
 			// イベント内容を取得
 			HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
@@ -91,7 +94,6 @@ public class AnswerPage extends HttpServlet {
 			// 0番目からrequestにスケジュールを格納
 			for(int i = 0; i < answersLength; i++) {
 				answerHM = answers.get(i);
-				request.setAttribute("isInput", answerHM.get("isInput"));
 				request.setAttribute("date" + i, answerHM.get("date"));
 				request.setAttribute("first" + i, answerHM.get("first"));
 				request.setAttribute("second" + i, answerHM.get("second"));
@@ -114,4 +116,54 @@ public class AnswerPage extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "見つかりません");
 		}
     }
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		request.setCharacterEncoding("utf-8");
+
+		String randomURL = (String)session.getAttribute("randomURL");
+
+		int answersLength = (int)session.getAttribute("answersLength");
+
+		String[] date = new String[answersLength];
+		String[] first = new String[answersLength];
+		String[] second = new String[answersLength];
+		String[] third = new String[answersLength];
+		String[] fourth = new String[answersLength];
+		String[] fifth = new String[answersLength];
+
+		for(int i = 0; i < answersLength; i++) {
+			date[i] = request.getParameter("date" + i);
+			first[i] = request.getParameter("first" + i);
+			second[i] = request.getParameter("second" + i);
+			third[i] = request.getParameter("third" + i);
+			fourth[i] = request.getParameter("fourth" + i);
+			fifth[i] = request.getParameter("fifth" + i);
+		}
+
+		String note = request.getParameter("note");
+		note = note.replace("\n", "");
+    	note = note.replace("\r", "<br>");
+    	note = note.replace("\r\n", "<br>");
+
+		// dbと接続して上のデータを使ってupdateする
+		new AnswerTable().update(randomURL, date, first, second, third, fourth, fifth);
+
+		LocalDateTime ldt = LocalDateTime.now();
+
+		new TargetTable().isInputUpdate(randomURL, note, ldt.toString());
+
+		// 最後にsessionを削除しておく
+		session.removeAttribute("date");
+		session.removeAttribute("first");
+		session.removeAttribute("second");
+		session.removeAttribute("third");
+		session.removeAttribute("fourth");
+		session.removeAttribute("fifth");
+
+		doGet(request, response);
+	}
 }
