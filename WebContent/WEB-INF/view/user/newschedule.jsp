@@ -92,7 +92,13 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 				<input type="number" min="1" name="eventConditionNumer">以上
 			</td>
 		</tr>
-		<tr><th>添付ファイル</th><td><input type="file" name="file"/></td></tr>
+		<tr id="file">
+			<th>添付ファイル</th>
+			<td>
+				<input type="file" name="files" multiple>
+				<input type="button" id="addButton" onclick="addFile();" value="+">
+			</td>
+		</tr>
 	</table>
 		<input type="checkbox" name="isInputInform" value="true">回答者が現在の回答人数を分かるようにする<br>
 		<input type="button" value="確認" onclick="isSubmit();">

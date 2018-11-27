@@ -3,9 +3,6 @@ package schedule.userview;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -83,27 +80,35 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.removeAttribute("eventDeadline");
 		session.removeAttribute("remindDates");
 		session.removeAttribute("remindTimes");
-		session.removeAttribute("fileName");
-		session.removeAttribute("file");
+		if( session.getAttribute("fileNum") != null ) {
+			for(int i = 0; i <= (int)session.getAttribute("fileNum"); i++) {
+				session.removeAttribute("fileName" + i);
+				session.removeAttribute("file" + i);
+			}
+			session.removeAttribute("fileNum");
+		}
 		session.removeAttribute("isEventCondition");
 		session.removeAttribute("eventConditionNumer");
 		session.removeAttribute("eventConditionDenom");
 		session.removeAttribute("isInputInform");
 
+		int fileNum = -1;
 		try {
     		List list = sfu.parseRequest(new ServletRequestContext(request));
     		Iterator iterator = list.iterator();
 
     		while(iterator.hasNext()){
-    			FileItem item = (FileItem)iterator.next();;
+    			FileItem item = (FileItem)iterator.next();
 
     			// アップロードされたファイルのみ対象の処理
     			if (!item.isFormField()){
     				fileName = item.getName();
     				if ((fileName != null) && (!fileName.equals(""))) {
+    					fileNum++;
     					fileName = (new File(fileName)).getName();
-    					session.setAttribute("fileName", fileName);
-    					session.setAttribute("file", item);
+    					System.out.println(fileName);
+    					session.setAttribute("fileName" + fileNum, fileName);
+    					session.setAttribute("file" + fileNum, item);
     				}
     			} else {
     				String name = item.getFieldName();
@@ -222,6 +227,7 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.setAttribute("eventEndDate", eventEndDate);
 		session.setAttribute("targetEmails", targetEmails);
 		session.setAttribute("keys", keys);
+		session.setAttribute("fileNum", fileNum);
 		session.setAttribute("remindDates", remindDates);
 		session.setAttribute("remindTimes", remindTimes);
 		session.setAttribute("eventDeadline", eventDeadline);

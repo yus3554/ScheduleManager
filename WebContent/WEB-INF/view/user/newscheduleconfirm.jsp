@@ -77,7 +77,17 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			<% } %>
 			</td>
 		</tr>
-		<tr><th>添付ファイル：</th><td>${ fileName }</td></tr>
+		<% if((int)session.getAttribute("fileNum") != -1) { %>
+			<tr>
+				<th rowspan="<%= (int)session.getAttribute("fileNum") + 1 %>">添付ファイル：</th>
+				<td>${ fileName0 }</td>
+			</tr>
+			<% for(int i = 1; i < (int)session.getAttribute("fileNum") + 1 ; i++) { %>
+				<tr>
+					<td><%= (String)session.getAttribute("fileName" + i) %></td>
+				</tr>
+			<% } %>
+		<% } %>
 	</table>
 	回答者が現在の回答人数を分かるようにする：<%= (boolean)session.getAttribute("isInputInform") ? "有効" : "無効" %><br><br>
 

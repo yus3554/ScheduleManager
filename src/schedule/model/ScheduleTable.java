@@ -28,8 +28,8 @@ public class ScheduleTable {
 
 			// 新規スケジュールをschedulesテーブルにインサート
 			String sql = "insert into schedules (id, eventName, eventContent, eventStartDate, "
-					+ "eventEndDate, eventDeadline, senderEmail, fileName, `condition`, isInputInform)"
-					+ " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+					+ "eventEndDate, eventDeadline, senderEmail, `condition`, isInputInform)"
+					+ " values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, schedule.getId());
 			patmt.setString(2, schedule.getEventName());
@@ -38,9 +38,8 @@ public class ScheduleTable {
 			patmt.setString(5, schedule.getEventEndDate());
 			patmt.setString(6, schedule.getEventDeadline());
 			patmt.setString(7, schedule.getSenderEmail());
-			patmt.setString(8, schedule.getFileName());
-			patmt.setString(9, schedule.getCondition());
-			patmt.setBoolean(10, schedule.getIsInputInform());
+			patmt.setString(8, schedule.getCondition());
+			patmt.setBoolean(9, schedule.getIsInputInform());
 
 			patmt.executeUpdate();
 

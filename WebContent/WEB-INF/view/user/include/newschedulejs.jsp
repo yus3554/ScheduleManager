@@ -7,6 +7,7 @@
 
 		var emailIndex = 1;
 		var remindIndex = 1;
+		var fileIndex = 1;
 		var form = document.forms.newschedule;
 		var table = document.getElementById("table");
 		var email = form.elements["targetEmail[]"];
@@ -14,6 +15,7 @@
 		var remindDate = form.elements["remindDate[]"];
 		var remindTime = form.elements["remindTime[]"];
 		var remindTr = document.getElementById("reminder");
+		var fileTr = document.getElementById("file");
 
 		// とりあえず
 		// 今から2日後を締め切り
@@ -149,6 +151,16 @@
 			  remindTr.children[2].setAttribute("rowspan", remindIndex);
 			  remindDate = form.elements["remindDate[]"];
 			  remindTime = form.elements["remindTime[]"];
+		}
+
+		function addFile(){
+			  fileIndex++;
+			  var newTr = document.createElement("tr");
+			  newTr.innerHTML = "<tr><td> "
+			  + "<input type=\"file\" name=\"file\" multiple> " + "</td></tr>";
+			  table.children[0].append(newTr);
+			  fileTr.children[0].setAttribute("rowspan", fileIndex);
+			  fileTr.children[2].setAttribute("rowspan", fileIndex);
 		}
 
 		// 開催条件のチェックを入れると数字を入れられるようになる

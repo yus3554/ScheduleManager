@@ -8,14 +8,13 @@ public class Schedule {
 	private String eventEndDate;
 	private String eventDeadline;
 	private String senderEmail;
-	private String fileName;
 	private boolean isEventCondition;
 	private int eventConditionNumer;
 	private int eventConditionDenom;
 	private boolean isInputInform;
 
 	public Schedule(String id, String eventName, String eventContent, String eventStartDate,
-			String eventEndDate, String eventDeadline, String senderEmail, String fileName,
+			String eventEndDate, String eventDeadline, String senderEmail,
 			boolean isEventCondition, int eventConditionNumer, int eventConditionDenom, boolean isInputInform) {
 		this.id = id;
 		this.eventName = eventName;
@@ -24,7 +23,6 @@ public class Schedule {
 		this.eventEndDate = eventEndDate;
 		this.eventDeadline = eventDeadline;
 		this.senderEmail = senderEmail;
-		this.fileName = fileName;
 		this.isEventCondition = isEventCondition;
 		this.eventConditionNumer = eventConditionNumer;
 		this.eventConditionDenom = eventConditionDenom;
@@ -57,10 +55,6 @@ public class Schedule {
 
 	public String getSenderEmail() {
 		return senderEmail;
-	}
-
-	public String getFileName() {
-		return fileName;
 	}
 
 	public String getCondition() {

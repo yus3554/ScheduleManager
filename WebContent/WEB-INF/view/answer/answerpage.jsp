@@ -60,7 +60,7 @@
 		<% } %>
 	</table>
 	<br>[備考]<br>
-	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note">${ note }</textarea>200字まで<br>
+	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note" id="note">${ note }</textarea>200字まで<br>
 	<div id="saveload"></div><br>
 	<% if(request.getAttribute("isInput").equals("0")) { %>
 	<input type="button" value="送信" onclick="answerSubmit();"/>
@@ -135,6 +135,7 @@
 				localStorage.setItem("<%= times[j] + i %>", <%= times[j] %>tdText);
 			<% } %>
 			<% } %>
+			localStorage.setItem("note", $("#note").val());
 			$("#saveload").html("一時保存しました。");
 			$("#saveload").show();
 		}
@@ -146,6 +147,7 @@
 				document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML = localStorage.getItem("<%= times[j] + i %>");
 			<% } %>
 			<% } %>
+			$("#note").val(localStorage.getItem("note"));
 			$("#saveload").html("一時保存を反映しました。");
 			$("#saveload").show();
 		}

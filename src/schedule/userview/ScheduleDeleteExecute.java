@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 import schedule.model.AnswerTable;
+import schedule.model.AttachmentTable;
 import schedule.model.NotifTable;
 
 /**
@@ -44,9 +45,11 @@ public class ScheduleDeleteExecute extends HttpServlet {
     	// sessionを取得
     	HttpSession session = request.getSession(false);
 
+    	String email = (String)session.getAttribute("email");
+
     	// 対象者全てをidとsenderEmailを使って取得
     	ArrayList<HashMap<String, String>> targetList = new ArrayList<>();
-    	targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
+    	targetList = new TargetTable().getTargetList(id, email);
 
     	// scheduleListの数を取得
     	int targetListLength = targetList.size();
@@ -66,21 +69,13 @@ public class ScheduleDeleteExecute extends HttpServlet {
 
     	if(session.getAttribute("deleteConfirm") != "") {
 
-    		new ScheduleTable().delete(id, (String) session.getAttribute("email"));
+    		new ScheduleTable().delete(id, email);
     		for(int i = 0; i < targetListLength; i++) {
         		new AnswerTable().delete(randomURLs[i]);
         		new NotifTable().delete(randomURLs[i]);
         	}
-    		new TargetTable().delete(id, (String) session.getAttribute("email"));
-    		/* 添付ファイルをdataフォルダから削除 まだ実装できていない
-    		File file = new File("/Users/yus3554/eclipse-workspace/.metadata/.plugins/"
-    				+ "org.eclipse.wst.server.core/tmp1/wtpwebapps/ScheduleManager/data/" + id + "#" + fileName);
-    		if (file.exists()){
-    		    System.out.println("ファイルは存在します");
-    		}else{
-    		    System.out.println("ファイルは存在しません");
-    		}
-    		*/
+    		new TargetTable().delete(id, email);
+    		new AttachmentTable().delete(id, email);
     	}
 
     	// jspを指定
