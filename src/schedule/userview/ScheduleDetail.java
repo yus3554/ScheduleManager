@@ -162,7 +162,14 @@ public class ScheduleDetail extends HttpServlet {
 		// notifmanagerのメール送信のところで、添付ファイルを読み込むところで、パスを指定するが、
 		// 研究室のサーバーと自分のパソコンでは異なるので、変更が必要
 		// ↑添付ファイルをSQL内に保存する予定(BLOB型などを用いる)なので、パスの指定が必要なくなるかも
+		// ↑おっけーなのでパスの指定がいらない
 		// メール送信メソッド内のipアドレスを変更しないといけない(ScheduleManagerとScheduleNotifManagerどっちも)
+
+		// データベースの変更
+		// schedulesテーブルからfilenameを削除
+		// create tableでrequestAttachmentsを作り、
+		// id varchar(30), senderEmail varchar(50), fileName varchar(100), file mediumblob
+		// で作る
 
 		// キーパーソンのやつ、あとはセルの色変える奴だけだけど、アイデアとしては、キーパーソンの2次元配列をそれぞれANDしていってできた2次元配列を使って
 		// セルの色つける関数のところでtrueかfalseかで色つけるかどうか見れば良い?

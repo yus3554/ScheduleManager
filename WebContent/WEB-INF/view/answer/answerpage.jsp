@@ -32,7 +32,7 @@
 	<% } %>
 	セルをクリックするごとに、×→○→△の順で変わります。<br>
 
-	<form action="../AnswerPage/<%= session.getAttribute("randomURL") %>" method="post" id="answerForm">
+	<form action="../AnswerPage/<%= session.getAttribute("randomURL") %>" method="post" id="answerForm" enctype="multipart/form-data">
 	<table id="table" border="2" cellpadding="10">
 		<tr>
 			<th>日付</th>
@@ -59,9 +59,11 @@
 		</tr>
 		<% } %>
 	</table>
-	<br>[備考]<br>
+	<br>[添付ファイル]<br><input type="file" multiple><br>
+	[備考]<br>
 	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note" id="note">${ note }</textarea>200字まで<br>
-	<div id="saveload"></div><br>
+
+	<div id="saveload"></div>
 	<% if(request.getAttribute("isInput").equals("0")) { %>
 	<input type="button" value="送信" onclick="answerSubmit();"/>
 	<% } else { %>

@@ -78,14 +78,14 @@ table th{
 	<h2>${ eventName }</h2>
 
 	<table>
-		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
-		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
+		<tr><th>イベント名</th><td>${ eventName }</td></tr>
+		<tr><th>イベント内容</th><td>${ eventContent }</td></tr>
 		<% if( request.getAttribute("decideDate") != null) {%>
-		<tr><th>決定日時：</th><td>${ decideDate }<br><br>[備考]<br>${ note }</td></tr>
+		<tr><th>決定日時</th><td>${ decideDate }<br><br>[備考]<br>${ note }</td></tr>
 		<% } %>
-		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
+		<tr><th>候補日程</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
 		<tr>
-			<th>開催条件：</th>
+			<th>開催条件</th>
 			<td>
 			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
 				${ eventConditionDenom }分の${ eventConditionNumer }以上
@@ -94,10 +94,10 @@ table th{
 			<% } %>
 			</td>
 		</tr>
-		<tr><th>入力締切日：</th><td>${ eventDeadline }</td></tr>
+		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
 		<tr>
 			<th>
-				全体の回答状況：<br>（○の数）
+				全体の回答状況<br>（○の数）
 				<% if ((int)request.getAttribute("notInput") != 0 ) {%>
 				<table>
 					<tr>
@@ -137,7 +137,7 @@ table th{
 		<% int targetListLength = (int) request.getAttribute("targetListLength"); %>
 		<tr>
 			<th rowspan="<%= targetListLength %>">
-				各対象者の回答状況：
+				各対象者の回答状況
 			</th>
 			<td>
 				<a href="../ClientAnswer/<%= request.getAttribute("randomURL0") %>">

@@ -27,7 +27,7 @@ import schedule.model.SessionConvert;
 import schedule.model.TargetTable;
 import schedule.model.Answer;
 import schedule.model.AnswerTable;
-import schedule.model.AttachmentTable;
+import schedule.model.RequestAttachmentTable;
 import schedule.model.NotifTable;
 
 /**
@@ -72,7 +72,7 @@ public class NewScheduleSubmit extends HttpServlet {
 		for(int i = 0; i <= fileNum; i++) {
 			String fileName = (String)session.getAttribute("fileName" + i);
 			FileItem file = (FileItem)session.getAttribute("file" + i);
-			new AttachmentTable().insert(id, senderEmail, fileName, file.getInputStream());
+			new RequestAttachmentTable().insert(id, senderEmail, fileName, file.getInputStream());
 		}
 
 		// notifテーブルに通知を保存

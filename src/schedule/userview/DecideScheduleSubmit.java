@@ -74,15 +74,19 @@ public class DecideScheduleSubmit extends HttpServlet {
     	// 対象者のrandomURLを取得
     	ArrayList<HashMap<String, String>> target = new TargetTable().getTargetList(id, senderEmail);
     	HashMap<String, String> targetHM = new HashMap<>();
-    	String[] randomURLs = new String[target.size()];
+    	String[] randomURLs = new String[target.size() + 1];
     	for(int i = 0; i < target.size(); i++) {
     		targetHM = target.get(i);
     		randomURLs[i] = targetHM.get("randomURL");
     	}
+
     	// 日時を決定したので、リマインダーなど他の通知は消す
     	for(String url: randomURLs) {
     		new NotifTable().delete(url);
     	}
+
+    	// 要求者に決定の通知を行うため
+    	randomURLs[target.size()] = senderEmail;
     	// 日時の決定通知をインサート
     	new NotifTable().insert(randomURLs, nowTime, 2);
 

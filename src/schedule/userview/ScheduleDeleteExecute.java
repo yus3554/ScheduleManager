@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 import schedule.model.AnswerTable;
-import schedule.model.AttachmentTable;
+import schedule.model.RequestAttachmentTable;
 import schedule.model.NotifTable;
 
 /**
@@ -75,7 +75,7 @@ public class ScheduleDeleteExecute extends HttpServlet {
         		new NotifTable().delete(randomURLs[i]);
         	}
     		new TargetTable().delete(id, email);
-    		new AttachmentTable().delete(id, email);
+    		new RequestAttachmentTable().delete(id, email);
     	}
 
     	// jspを指定
