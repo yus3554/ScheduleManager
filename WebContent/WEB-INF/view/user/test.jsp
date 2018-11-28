@@ -15,6 +15,7 @@
         	<div id="test">
         	</div>
         	<input type="button" value="サーバー通信テスト" onclick="ajaxTest();">
+			<a href="/ScheduleManager/Download/dghjfkljkmntbrkflkvjdghjfdghjfdghjfdghjfdghjfdghjfdghjfdghjfdghj/wolf-3818343_1920.jpg">ダウンロード</a>
     	</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
@@ -40,7 +41,7 @@
 		      //通信が成功した場合に受け取るメッセージ
 		      response1 = data["response1"];
 		      response2 = data["response2"];
-		      console.log(response1 + response2);
+		      $("#test").html(response1 + response2);
 		    },
 		    error : function(XMLHttpRequest, textStatus, errorThrown) {
 		      alert("リクエスト時になんらかのエラーが発生しました：" + textStatus +":\n" + errorThrown);

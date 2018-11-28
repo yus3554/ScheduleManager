@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import schedule.model.AnswerTable;
 import schedule.model.ScheduleTable;
+import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
 
 /**
@@ -55,11 +56,17 @@ public class ClientAnswer extends HttpServlet {
 		request.setAttribute("note", note);
 		request.setAttribute("key", key);
 
+		request.setAttribute("isInput", targetHM.get("isInput"));
+		request.setAttribute("sendDate", targetHM.get("sendDate"));
+
 		// idとsenderEmailを入れてscheduleを取得
 		HashMap<String, String> scheduleHM = new HashMap<String, String>();
 		scheduleHM = new ScheduleTable().getSchedule(id, (String) session.getAttribute("email"));
 		request.setAttribute("eventName", scheduleHM.get("eventName"));
 
+		// 既にアップロードされた添付ファイルの名前を取得
+		ArrayList<String> uploadFileNameList = new TargetAttachmentTable().getFileNames(randomURL);
+		request.setAttribute("uploadFileNameList", uploadFileNameList);
 
 		// arraylistでanswersを取得する
 		// randomURLを使ってselect
@@ -74,7 +81,6 @@ public class ClientAnswer extends HttpServlet {
 		// 0番目からrequestにスケジュールを格納
 		for(int i = 0; i < answersLength; i++) {
 			answerHM = answers.get(i);
-			request.setAttribute("isInput", answerHM.get("isInput"));
 			request.setAttribute("date" + i, answerHM.get("date"));
 			request.setAttribute("first" + i, answerHM.get("first"));
 			request.setAttribute("second" + i, answerHM.get("second"));

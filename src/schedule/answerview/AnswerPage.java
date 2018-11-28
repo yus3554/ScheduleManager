@@ -1,10 +1,12 @@
 package schedule.answerview;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,8 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
+
 import schedule.model.AnswerTable;
 import schedule.model.ScheduleTable;
+import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
 import schedule.model.UserTable;
 
@@ -56,16 +65,16 @@ public class AnswerPage extends HttpServlet {
 			String id = targetHM.get("id");
 			String sendDate = targetHM.get("sendDate");
 
-			session.setAttribute("senderName", new UserTable().getName(senderEmail));
-			session.setAttribute("targetEmail", targetEmail);
-			session.setAttribute("note", note);
+			request.setAttribute("senderName", new UserTable().getName(senderEmail));
+			request.setAttribute("targetEmail", targetEmail);
+			request.setAttribute("note", note);
 			request.setAttribute("isInput", targetHM.get("isInput"));
 			request.setAttribute("sendDate", sendDate);
 
 			// イベント内容を取得
 			HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
-			session.setAttribute("eventName", scheduleHM.get("eventName"));
-			session.setAttribute("eventContent", scheduleHM.get("eventContent"));
+			request.setAttribute("eventName", scheduleHM.get("eventName"));
+			request.setAttribute("eventContent", scheduleHM.get("eventContent"));
 
 			// 対象者全てをidとsenderEmailを使って取得
 			ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
@@ -85,6 +94,10 @@ public class AnswerPage extends HttpServlet {
 
 			ArrayList<HashMap<String, String>> answers = new ArrayList<>();
 			answers = new AnswerTable().getEmailAnswers(randomURL);
+
+			// 既にアップロードされた添付ファイルの名前を取得
+			ArrayList<String> uploadFileNameList = new TargetAttachmentTable().getFileNames(randomURL);
+			request.setAttribute("uploadFileNameList", uploadFileNameList);
 
 			// scheduleListの数を取得
 			int answersLength = answers.size();
@@ -121,33 +134,82 @@ public class AnswerPage extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		HttpSession session = request.getSession(false);
+
 		request.setCharacterEncoding("utf-8");
+
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+    	ServletFileUpload sfu = new ServletFileUpload(factory);
+    	sfu.setSizeMax(5 * 1000 * 1024);
+		sfu.setFileSizeMax(10 * 1000 * 1024);
 
 		String randomURL = (String)session.getAttribute("randomURL");
 
-		int answersLength = (int)session.getAttribute("answersLength");
+		//int answersLength = (int)session.getAttribute("answersLength");
 
-		String[] date = new String[answersLength];
-		String[] first = new String[answersLength];
-		String[] second = new String[answersLength];
-		String[] third = new String[answersLength];
-		String[] fourth = new String[answersLength];
-		String[] fifth = new String[answersLength];
+		String fileName = "";
+		ArrayList<String> date = new ArrayList<>();
+		ArrayList<String> first = new ArrayList<>();
+		ArrayList<String> second = new ArrayList<>();
+		ArrayList<String> third = new ArrayList<>();
+		ArrayList<String> fourth = new ArrayList<>();
+		ArrayList<String> fifth = new ArrayList<>();
+		String note = "";
 
-		for(int i = 0; i < answersLength; i++) {
-			date[i] = request.getParameter("date" + i);
-			first[i] = request.getParameter("first" + i);
-			second[i] = request.getParameter("second" + i);
-			third[i] = request.getParameter("third" + i);
-			fourth[i] = request.getParameter("fourth" + i);
-			fifth[i] = request.getParameter("fifth" + i);
-		}
+		int fileNum = 0;
+		try {
+			List list = sfu.parseRequest(new ServletRequestContext(request));
+			Iterator iterator = list.iterator();
 
-		String note = request.getParameter("note");
+			while(iterator.hasNext()){
+				FileItem item = (FileItem)iterator.next();
+
+				// アップロードされたファイルのみ対象の処理
+				if (!item.isFormField()){
+					fileName = item.getName();
+					if ((fileName != null) && (!fileName.equals(""))) {
+						fileName = (new File(fileName)).getName();
+						new TargetAttachmentTable().insert(randomURL, fileName, item.getInputStream());
+					}
+				} else {
+					String name = item.getFieldName();
+					String value = item.getString("utf-8");
+					switch(name) {
+					case "date[]":
+						date.add(value);
+						break;
+					case "first[]":
+						first.add(value);
+						break;
+					case "second[]":
+						second.add(value);
+						break;
+					case "third[]":
+						third.add(value);
+						break;
+					case "fourth[]":
+						fourth.add(value);
+						break;
+					case "fifth[]":
+						fifth.add(value);
+						break;
+					case "note":
+						note = value;
+						break;
+					default:
+					}
+				}
+			}
+		}catch (FileUploadException e) {
+    		e.printStackTrace();
+    	}catch (Exception e) {
+    		  e.printStackTrace();
+    	}
+
 		note = note.replace("\n", "");
-    	note = note.replace("\r", "<br>");
-    	note = note.replace("\r\n", "<br>");
+		note = note.replace("\r", "<br>");
+		note = note.replace("\r\n", "<br>");
 
 		// dbと接続して上のデータを使ってupdateする
 		new AnswerTable().update(randomURL, date, first, second, third, fourth, fifth);
@@ -155,14 +217,6 @@ public class AnswerPage extends HttpServlet {
 		LocalDateTime ldt = LocalDateTime.now();
 
 		new TargetTable().isInputUpdate(randomURL, note, ldt.toString());
-
-		// 最後にsessionを削除しておく
-		session.removeAttribute("date");
-		session.removeAttribute("first");
-		session.removeAttribute("second");
-		session.removeAttribute("third");
-		session.removeAttribute("fourth");
-		session.removeAttribute("fifth");
 
 		doGet(request, response);
 	}

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+     <%@ page import="java.util.ArrayList" %>
+     <%@ page import="java.util.Iterator" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,6 +15,10 @@
     max-width: 600px;
     min-width: 350px;
 	}
+	td:empty {
+  background: url('data:image/svg+xml,<svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><line fill="none" stroke="#000000" stroke-width="0.2" stroke-miterlimit="10" x1="0" y1="0" x2="10" y2="10"/></svg>') no-repeat;
+  background-size: 100%;
+    }
 </style>
 <%@include file="../include/font.jsp" %>
 </head>
@@ -47,20 +53,31 @@
 		<tr>
 			<th>
 				<%= request.getAttribute("date" + i) %>
-				<input type="hidden" name="date<%= i %>" value="<%= request.getAttribute("date" + i) %>">
+				<input type="hidden" name="date[]" value="<%= request.getAttribute("date" + i) %>">
 			</th>
 			<% for(int j = 0; j < times.length; j++) { %>
 			<td align="center" valign="top" id="<%= times[j] %>Td<%= i %>"><%
 			if( request.getAttribute(times[j] + i).equals("0") ){ %>×<%
 			} else if( request.getAttribute(times[j] + i).equals("1") ){ %>△<%
-			} else if( request.getAttribute(times[j] + i).equals("2") ){ %>○<% } %></td>
-			<input type="hidden" name="<%= times[j] + i %>" value="">
+			} else if( request.getAttribute(times[j] + i).equals("2") ){ %>○<%
+			} else if( request.getAttribute(times[j] + i).equals("-1") ){ %><% } %></td>
+			<input type="hidden" name="<%= times[j] %>[]" value="">
 			<% } %>
 		</tr>
 		<% } %>
 	</table>
-	<br>[添付ファイル]<br><input type="file" multiple><br>
-	[備考]<br>
+	<h4>添付ファイル</h4>
+	<div id="uploadedFileNameList">
+	<% int fileNameIndex = 0; %>
+	<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("uploadFileNameList")).iterator(); i.hasNext();) { %>
+	<% String fileName = i.next(); %>
+	<a href="/ScheduleManager/Download/${ randomURL }/<%= fileName %>"><%= fileName %></a>
+	<input type="button" id="<%= fileName %>" value="削除"
+	onclick="deleteFile('/ScheduleManager/AnswerUpdateFileDelete', {'fileName':this.id, 'randomURL':'${ randomURL }'});"><br>
+	<% } %>
+	</div>
+	<br><input type="file" name="files" multiple><br>
+	<h4>備考</h4>
 	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note" id="note">${ note }</textarea>200字まで<br>
 
 	<div id="saveload"></div>
@@ -104,9 +121,9 @@
 		var tr = table.children;
 		for(var i = 0; i < tr.length; i++){
 			var td = tr[i].children;
-			for(var j = 0; j < td.length; j++){
+			for(var j = 1; j < td.length; j++){
 				var cell = td[j].children;
-				for(var k = 0; k < cell.length; k++){
+				for(var k = 1; k < cell.length; k++){
 					cell[k].onclick = cellclick;
 				}
 			}
@@ -118,11 +135,13 @@
 			<% for(int j = 0; j < times.length; j++){ %>
 				var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
 				if( <%= times[j] %>tdText == "×"){
-					document.getElementsByName("<%= times[j] + i %>")[0].value = "0";
+					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("0");
 				} else if( <%= times[j] %>tdText == "△" ){
-					document.getElementsByName("<%= times[j] + i %>")[0].value = "1";
+					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("1");
+				} else if( <%= times[j] %>tdText == "○" ){
+					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("2");
 				} else {
-					document.getElementsByName("<%= times[j] + i %>")[0].value = "2";
+					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("-1");
 				}
 			<% } %>
 			<% } %>
@@ -152,6 +171,28 @@
 			$("#note").val(localStorage.getItem("note"));
 			$("#saveload").html("一時保存を反映しました。");
 			$("#saveload").show();
+		}
+
+		// ファイル削除
+		function deleteFile(action, data) {
+			// フォームの生成
+			var form = document.createElement("form");
+			form.setAttribute("action", action);
+			form.setAttribute("method", "post");
+			form.style.display = "none";
+			document.body.appendChild(form);
+			// パラメタの設定
+			if (data !== undefined) {
+				for (var paramName in data) {
+					var input = document.createElement('input');
+					input.setAttribute('type', 'hidden');
+					input.setAttribute('name', paramName);
+					input.setAttribute('value', data[paramName]);
+					form.appendChild(input);
+				}
+			}
+			// submit
+			form.submit();
 		}
 	</script>
 

@@ -157,7 +157,7 @@
 			  fileIndex++;
 			  var newTr = document.createElement("tr");
 			  newTr.innerHTML = "<tr><td> "
-			  + "<input type=\"file\" name=\"file\" multiple> " + "</td></tr>";
+			  + "<input type=\"file\" name=\"files\" multiple> " + "</td></tr>";
 			  table.children[0].append(newTr);
 			  fileTr.children[0].setAttribute("rowspan", fileIndex);
 			  fileTr.children[2].setAttribute("rowspan", fileIndex);

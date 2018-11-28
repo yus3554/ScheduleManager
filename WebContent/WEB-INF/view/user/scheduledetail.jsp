@@ -149,7 +149,7 @@ table th{
 				<% if( request.getAttribute("isInput0").equals("0")){ %>
 				[未回答]
 				<% } else { %>
-				[回答済]
+				[回答済（最終更新：<%= request.getAttribute("sendDate0") %>）]
 				<% } %>
 			</td>
 		</tr>
@@ -165,7 +165,7 @@ table th{
 				<% if( request.getAttribute("isInput" + i).equals("0")){ %>
 				[未回答]
 				<% } else { %>
-				[回答済]
+				[回答済（最終更新：<%= request.getAttribute("sendDate" + i) %>）]
 				<% } %>
 			</td>
 		</tr>

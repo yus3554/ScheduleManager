@@ -87,6 +87,7 @@ public class ScheduleDetail extends HttpServlet {
 			request.setAttribute("key" + i, targetHM.get("key"));
 			notInput += Integer.parseInt((String)targetHM.get("isInput")) == 0 ? 1 : 0;
 			randomURLs.add(targetHM.get("randomURL"));
+			request.setAttribute("sendDate" + i, targetHM.get("sendDate"));
 		}
 		request.setAttribute("notInput", notInput);
 

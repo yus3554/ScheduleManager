@@ -14,27 +14,25 @@ import java.util.HashMap;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-public class RequestAttachmentTable {
+public class TargetAttachmentTable {
 
-	public RequestAttachmentTable() {
+	public TargetAttachmentTable() {
 	}
 
-	public void insert(String id, String senderEmail, String fileName, InputStream stream) {
+	public void insert(String randomURL, String fileName, InputStream stream) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
-			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/requestAttachments");
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targetAttachments");
 			conn = dataSource.getConnection();
-
-			String sql = "insert into requestAttachments values (?, ?, ?, ?);";
+			String sql = "insert into targetAttachments values (?, ?, ?);";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 
-			patmt.setString(1, id);
-			patmt.setString(2, senderEmail);
-			patmt.setString(3, fileName);
-			patmt.setBlob(4, stream);
+			patmt.setString(1, randomURL);
+			patmt.setString(2, fileName);
+			patmt.setBlob(3, stream);
 
 			patmt.executeUpdate();
 
@@ -51,22 +49,21 @@ public class RequestAttachmentTable {
 		}
 	}
 
-	public InputStream getFile(String id, String senderEmail, String fileName) {
+	public InputStream getFile(String randomURL, String fileName) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
-			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/requestAttachments");
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targetAttachments");
 			conn = dataSource.getConnection();
 
 			stmt = conn.createStatement();
 
 			// senderEmailで検索
-			String sql = "select file from requestAttachments where "
-						+ "id = \"" + id + "\" and "
-						+ "senderEmail = \"" + senderEmail + "\" and "
+			String sql = "select file from targetAttachments where "
+						+ "randomURL = \"" + randomURL + "\" and "
 						+ "fileName = \"" + fileName + "\";";
 
 			// HashMapに入れてそれをArrayListに格納
@@ -75,7 +72,6 @@ public class RequestAttachmentTable {
 			InputStream is;
 			while (rs.next()) {
 				is = rs.getBlob("file").getBinaryStream();
-
 				return is;
 			}
 
@@ -97,7 +93,7 @@ public class RequestAttachmentTable {
 		return null;
 	}
 
-	public ArrayList<String> getFileNames(String id, String senderEmail) {
+	public ArrayList<String> getFileNames(String randomURL) {
 		ArrayList<String> names = new ArrayList<>();
 		DataSource dataSource = null;
 		Connection conn = null;
@@ -105,14 +101,13 @@ public class RequestAttachmentTable {
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
-			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/requestAttachments");
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targetAttachments");
 			conn = dataSource.getConnection();
 
 			stmt = conn.createStatement();
 
 			// senderEmailで検索
-			String sql = "select fileName from requestAttachments where id = \"" +
-					id + "\" and senderEmail = \"" + senderEmail + "\";";
+			String sql = "select fileName from targetAttachments where randomURL = \"" + randomURL + "\";";
 
 			// HashMapに入れてそれをArrayListに格納
 			// HashMapはwhileでループごとに毎回初期化する必要がある
@@ -141,30 +136,28 @@ public class RequestAttachmentTable {
 	}
 
 	// idとsenderEmailを入れて対応するanswerを返す
-	public ArrayList<RequestAttachment> getFiles(String id, String senderEmail) {
-		ArrayList<RequestAttachment> files = new ArrayList<>();
+	public ArrayList<InputStream> getFiles(String randomURL) {
+		ArrayList<InputStream> files = new ArrayList<>();
 		DataSource dataSource = null;
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
-			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/requestAttachments");
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targetAttachments");
 			conn = dataSource.getConnection();
 
 			stmt = conn.createStatement();
 
 			// senderEmailで検索
-			String sql = "select * from requestAttachments where id = \"" +
-					id + "\" and senderEmail = \"" + senderEmail + "\";";
+			String sql = "select * from targetAttachments where randomURL = \"" + randomURL + "\";";
 
 			// HashMapに入れてそれをArrayListに格納
 			// HashMapはwhileでループごとに毎回初期化する必要がある
 			ResultSet rs = stmt.executeQuery(sql);
 			RequestAttachment am;
 			while (rs.next()) {
-				am = new RequestAttachment(rs.getString("fileName"), (rs.getBlob("file")).getBinaryStream());
-				files.add(am);
+				files.add(rs.getBlob("file").getBinaryStream());
 			}
 
 			return files;
@@ -187,21 +180,55 @@ public class RequestAttachmentTable {
 	}
 
 	// idとsenderEmailを入れて削除する
-	public void delete(String id, String senderEmail) {
+	public void deleteFile(String randomURL, String fileName) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		Statement stmt = null;
 		try {
 			InitialContext context = new InitialContext();
 			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
-			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/requestAttachments");
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targetAttachments");
 			conn = dataSource.getConnection();
 
 			stmt = conn.createStatement();
 
 			// senderEmailで検索
-			String sql = "delete from requestAttachments where id = \"" + id + "\" and "
-					+ "senderEmail = \"" + senderEmail +"\";";
+			String sql = "delete from targetAttachments where randomURL = \"" + randomURL + "\""
+					+ " and fileName = \"" + fileName + "\";";
+
+			stmt.executeUpdate(sql);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(stmt != null) {
+					stmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// idとsenderEmailを入れて削除する
+	public void deleteAll(String randomURL) {
+		DataSource dataSource = null;
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			InitialContext context = new InitialContext();
+			// lookupのjdbc/以下がテーブル名 context.xmlやweb.xmlと合わせる
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/targetAttachments");
+			conn = dataSource.getConnection();
+
+			stmt = conn.createStatement();
+
+			// senderEmailで検索
+			String sql = "delete from targetAttachments where randomURL = \"" + randomURL + "\";";
 
 			stmt.executeUpdate(sql);
 

@@ -222,7 +222,8 @@ public class AnswerTable {
 		}
 	}
 
-	public void update(String randomURL, String[] date, String[] first, String[] second, String[] third, String[] fourth, String[] fifth) {
+	public void update(String randomURL, ArrayList<String> date, ArrayList<String> first,
+			ArrayList<String> second, ArrayList<String> third, ArrayList<String> fourth, ArrayList<String> fifth) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		Statement stmt = null;
@@ -232,18 +233,18 @@ public class AnswerTable {
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/answers");
 			conn = dataSource.getConnection();
 
-			int size = date.length;
+			int size = date.size();
 			String sql = "update answers set first = ?, second = ?, third = ?, fourth = ?,"
 					+ " fifth = ? where date = ? and randomURL = ?;";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 
 			for(int i = 0; i < size; i++) {
-				patmt.setString(1, first[i]);
-				patmt.setString(2, second[i]);
-				patmt.setString(3, third[i]);
-				patmt.setString(4, fourth[i]);
-				patmt.setString(5, fifth[i]);
-				patmt.setString(6, date[i]);
+				patmt.setString(1, first.get(i));
+				patmt.setString(2, second.get(i));
+				patmt.setString(3, third.get(i));
+				patmt.setString(4, fourth.get(i));
+				patmt.setString(5, fifth.get(i));
+				patmt.setString(6, date.get(i));
 				patmt.setString(7, randomURL);
 
 				patmt.executeUpdate();

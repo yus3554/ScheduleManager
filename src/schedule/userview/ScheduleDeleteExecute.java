@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.ScheduleTable;
+import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
 import schedule.model.AnswerTable;
 import schedule.model.RequestAttachmentTable;
@@ -73,6 +74,7 @@ public class ScheduleDeleteExecute extends HttpServlet {
     		for(int i = 0; i < targetListLength; i++) {
         		new AnswerTable().delete(randomURLs[i]);
         		new NotifTable().delete(randomURLs[i]);
+        		new TargetAttachmentTable().deleteAll(randomURLs[i]);
         	}
     		new TargetTable().delete(id, email);
     		new RequestAttachmentTable().delete(id, email);

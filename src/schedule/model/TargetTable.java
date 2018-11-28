@@ -196,6 +196,7 @@ public class TargetTable {
 				hm.put("randomURL", rs.getString("randomURL"));
 				hm.put("isInput", rs.getString("isInput"));
 				hm.put("key", rs.getString("key"));
+				hm.put("sendDate", rs.getString("sendDate"));
 				list.add(hm);
 			}
 			return list;
