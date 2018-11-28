@@ -223,11 +223,14 @@ var radioNodeList = colorForm.rank;
 
 // ポップアップで使うtargetAnswerをjavaから受け取り、javascriptの変数に格納
 var targetsAnswers = [];
+// targetAnswersは対象者達、サイズは対象者の人数
 <% for(int i = 0; i < targetsAnswers.size(); i++ ) { %>
 	var target<%= i %> = [];
+	// targetAnswerはそれぞれの対象者、サイズは候補日程の日数
 	<% ArrayList<int[]> targetAnswer = targetsAnswers.get(i); %>
 	<% for(int j = 0; j < targetAnswer.size(); j++) { %>
 		var answer<%= i %><%= j %> = [];
+		// k < 5は1から5限の5
 		<% int[] answer = targetAnswer.get(j); %>
 		<% for(int k = 0; k < 5; k++) { %>
 			answer<%= i %><%= j %>.push(<%= answer[k] %>);
@@ -248,6 +251,28 @@ var maxcount_1 = <%= (int)request.getAttribute("max_1") %>;
 	<% } %>
 	circleCount.push(count<%= i %>);
 <% } %>
+
+// キーパーソンの回答の○をandする
+// 1で全要素初期化し、その上からandしていく
+var keyAnswers = [[2, 2, 2, 2, 2]];
+for(var i = 1; i < circleCount.length; i++){
+	keyAnswers.push([2, 2, 2, 2, 2]);
+}
+//targetAnswersは対象者達、サイズは対象者の人数
+var keyPerson = [];
+<% for(int i = 0; i < (int) request.getAttribute("targetListLength"); i++){ %>
+	<% if( request.getAttribute("key" + i).equals("1") ) { %>
+		keyPerson.push(<%= i %>);
+	<% } %>
+<% } %>
+for(var i = 0; i < keyPerson.length; i++){
+	var keyAnswer = targetsAnswers[keyPerson[i]];
+	for(var j = 0; j < circleCount.length; j++){
+		for(var k = 0; k < 5; k++){
+			keyAnswers[j][k] = (keyAnswers[j][k] == 2 && (keyAnswers[j][k] == keyAnswer[j][k])) ? 2 : 0;
+		}
+	}
+}
 
 // ポップアップを最初は表示させない
 popup.style.display = "none";
@@ -294,7 +319,13 @@ function colorSetting(){
 }
 
 // セルの色変える
+var keyCheck = false;
 function apply(){
+	$('input:checked').each(function(){
+		if( "key" == $(this).val()){
+			keyCheck = true;
+		}
+	});
 	var num = numText.value;
 	var radioCheck = radioNodeList.value;
 	if(radioCheck == "ranking"){
@@ -304,6 +335,7 @@ function apply(){
 	} else {
 		conditionCellColor();
 	}
+	keyCheck = false;
 	settingPopup.style.visibility = "hidden";
 }
 
@@ -315,12 +347,26 @@ function rankingCellColor(){
 	  for(var j = 1; j < td.length; j++){
 	    var cell = td[j].children;
 	    for(var k = 1; k < cell.length; k++){
-	    	if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-	    		cell[k].style.backgroundColor = "#FE9A2E";
-	    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
-	    		cell[k].style.backgroundColor = "#F4FA58";
+	    	if(!keyCheck){
+		    	if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+		    		cell[k].style.backgroundColor = "#FE9A2E";
+		    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
+		    		cell[k].style.backgroundColor = "#F4FA58";
+		    	} else {
+		    		cell[k].style.backgroundColor = "#ffffff";
+		    	}
 	    	} else {
-	    		cell[k].style.backgroundColor = "#ffffff";
+	    		if(keyAnswers[j-1][k-1] == 2) {
+		    		if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0 ){
+			    		cell[k].style.backgroundColor = "#FE9A2E";
+			    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
+			    		cell[k].style.backgroundColor = "#F4FA58";
+			    	} else {
+			    		cell[k].style.backgroundColor = "#ffffff";
+			    	}
+	    		} else {
+		    		cell[k].style.backgroundColor = "#ffffff";
+		    	}
 	    	}
 	    }
 	  }
@@ -335,10 +381,22 @@ function overCellColor(num){
 	  for(var j = 1; j < td.length; j++){
 	    var cell = td[j].children;
 	    for(var k = 1; k < cell.length; k++){
-	    	if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-	    		cell[k].style.backgroundColor = "#FE9A2E";
+	    	if(!keyCheck){
+		    	if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+		    		cell[k].style.backgroundColor = "#FE9A2E";
+		    	} else {
+		    		cell[k].style.backgroundColor = "#ffffff";
+		    	}
 	    	} else {
-	    		cell[k].style.backgroundColor = "#ffffff";
+	    		if(keyAnswers[j-1][k-1] == 2) {
+		    		if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
+			    		cell[k].style.backgroundColor = "#FE9A2E";
+			    	} else {
+			    		cell[k].style.backgroundColor = "#ffffff";
+			    	}
+	    		} else {
+		    		cell[k].style.backgroundColor = "#ffffff";
+		    	}
 	    	}
 	    }
 	  }

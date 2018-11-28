@@ -47,22 +47,25 @@ public class SignUpSubmit extends HttpServlet {
 		// 回答ページのリンクに使うポート番号などを含むアドレス
 		String address = "";
 
-		/////////////////////////////////////////////////////////////////
-		// 研究室のサーバーでは、ipアドレスは固定なのでこっち
-		// address = "http://192.168.132.118:8081";
-		/////////////////////////////////////////////////////////////////
-
+		String osName = System.getProperty("os.name").toLowerCase();
 		////////////////////////////////////////////////////////////////
 		// 自分のパソコンだと、ipアドレスは変更されるので、こっち
-		String ipAddr = "";
-		System.setProperty("java.net.preferIPv4Stack" , "true");
-		try {
-			InetAddress addr = InetAddress.getLocalHost();
-			ipAddr = addr.getHostAddress();
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
+		if(osName.startsWith("mac")) {
+			String ipAddr = "";
+			System.setProperty("java.net.preferIPv4Stack" , "true");
+			try {
+				InetAddress addr = InetAddress.getLocalHost();
+				ipAddr = addr.getHostAddress();
+			} catch (UnknownHostException e1) {
+				e1.printStackTrace();
+			}
+			address = "https://" + ipAddr + ":8443";
+		/////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////
+		// 研究室のサーバーでは、ipアドレスは固定なのでこっち
+		} else if(osName.startsWith("linux")) {
+			address = "http://192.168.132.118:8081";
 		}
-		address = "https://" + ipAddr + ":8443";
 		/////////////////////////////////////////////////////////////////
 
 		// 登録者にメールを送信
