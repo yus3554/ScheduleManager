@@ -21,8 +21,6 @@ public class SessionConvert {
 				id,
 				(String)session.getAttribute("eventName"),
 				(String)session.getAttribute("eventContent"),
-				(String)session.getAttribute("eventStartDate"),
-				(String)session.getAttribute("eventEndDate"),
 				(String)session.getAttribute("eventDeadline"),
 				(String)session.getAttribute("email"),
 				(boolean)session.getAttribute("isEventCondition"),
@@ -37,8 +35,6 @@ public class SessionConvert {
 				id,
 				(ArrayList<String>)session.getAttribute("targetEmails"),
 				(String)session.getAttribute("email"),
-				(String)session.getAttribute("eventStartDate"),
-				(String)session.getAttribute("eventEndDate"),
 				(ArrayList<Boolean>)session.getAttribute("keys"));
 		return answer;
 	}

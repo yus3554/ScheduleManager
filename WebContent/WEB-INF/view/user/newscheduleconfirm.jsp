@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import = "java.util.*" %>
+<%@ page import = "schedule.model.ScheduleDate" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -29,7 +30,17 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	<table>
 		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
 		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
-		<tr><th>候補日程：</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
+		<tr>
+			<th>候補日程：</th>
+			<td>
+				<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
+				<table>
+				<% for(ScheduleDate sd : sdList){ %>
+					<%= sd.toString() %>
+				<% } %>
+				</table>
+			</td>
+		</tr>
 		<% int addressNum = ((ArrayList<String>)session.getAttribute("targetEmails")).size(); %>
 		<tr>
 			<th rowspan="<%= addressNum %>">対象者のアドレス：</th>

@@ -3,6 +3,7 @@ package schedule.userview;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import schedule.model.ScheduleDate;
+import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
 
 /**
@@ -40,23 +43,17 @@ public class DecideSchedule extends HttpServlet {
     	// sessionを取得
     	HttpSession session = request.getSession(false);
 
+    	String senderEmail = (String) session.getAttribute("email");
+
     	// idとsenderEmailを入れてscheduleを取得
     	HashMap<String, String> scheduleHM = new HashMap<String, String>();
-    	scheduleHM = new ScheduleTable().getSchedule(id, (String) session.getAttribute("email"));
+    	scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
+    	ArrayList<ScheduleDate> sdList = new ScheduleDateTable().getDateList(id, senderEmail);
+    	session.setAttribute("eventDates", sdList);
 
     	// scheduleをrequestに格納
-    	String eventStartDate = scheduleHM.get("eventStartDate");
-    	String eventEndDate = scheduleHM.get("eventEndDate");
-    	LocalDate startDate = LocalDate.parse(eventStartDate);
-		LocalDate endDate = LocalDate.parse(eventEndDate);
-
-		long dateLength = ChronoUnit.DAYS.between(startDate, endDate);
-
     	session.setAttribute("id", scheduleHM.get("id"));
     	session.setAttribute("eventName", scheduleHM.get("eventName"));
-    	session.setAttribute("eventStartDate", scheduleHM.get("eventStartDate"));
-    	session.setAttribute("eventEndDate", scheduleHM.get("eventEndDate"));
-		session.setAttribute("dateLength", dateLength);
 
     	// jspを指定
     	String view = "/WEB-INF/view/user/decideschedule.jsp";

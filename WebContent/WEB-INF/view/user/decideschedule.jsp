@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page import="java.time.LocalDate" %>
+    <%@ page import="java.util.ArrayList" %>
+    <%@ page import="schedule.model.ScheduleDate" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -17,6 +18,10 @@
 	nav #list{
 		background-color: #71DCB5;
 	}
+	td:empty {
+  background: url('data:image/svg+xml,<svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><line fill="none" stroke="#000000" stroke-width="0.2" stroke-miterlimit="10" x1="0" y1="0" x2="10" y2="10"/></svg>') no-repeat;
+  background-size: 100%;
+    }
 </style>
 <%@include file="../include/font.jsp" %>
 </head>
@@ -47,18 +52,17 @@
 							<th>4限</th>
 							<th>5限</th>
 						</tr>
-						<% LocalDate ld = LocalDate.parse((String)session.getAttribute("eventStartDate")); %>
-						<% for(int i = 0; i < (long)session.getAttribute("dateLength") + 1; i++) { %>
+						<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
+						<% for(int i = 0; i < sdList.size(); i++) { %>
 						<tr>
 							<th>
-								<%= ld.toString() %>
+								<%= sdList.get(i).getDate() %>
 							</th>
 							<% for(int j = 0; j < 5; j++) { %>
-							<td>
-							<input type="checkbox" name="date" value="<%= i %>,<%= j %>">
-							</td>
+							<td><% if(sdList.get(i).getTime(j) != -1) {
+							%><input type="checkbox" name="date" value="<%= i %>,<%= j %>"><%
+									} %></td>
 							<% } %>
-							<% ld = ld.plusDays(1); %>
 						</tr>
 						<% } %>
 					</table>

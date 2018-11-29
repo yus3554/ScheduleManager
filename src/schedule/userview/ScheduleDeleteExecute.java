@@ -18,6 +18,7 @@ import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
 import schedule.model.AnswerTable;
 import schedule.model.RequestAttachmentTable;
+import schedule.model.ScheduleDateTable;
 import schedule.model.NotifTable;
 
 /**
@@ -76,6 +77,7 @@ public class ScheduleDeleteExecute extends HttpServlet {
         		new NotifTable().delete(randomURLs[i]);
         		new TargetAttachmentTable().deleteAll(randomURLs[i]);
         	}
+    		new ScheduleDateTable().delete(id, email);
     		new TargetTable().delete(id, email);
     		new RequestAttachmentTable().delete(id, email);
     	}

@@ -1,6 +1,7 @@
 package schedule.userview;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import schedule.model.ScheduleDate;
 
 /**
  * Servlet implementation class DecideScheduleConfirm
@@ -37,7 +40,7 @@ public class DecideScheduleConfirm extends HttpServlet {
     	// sessionを取得
     	HttpSession session = request.getSession(false);
 
-    	int dateLength = (int)(long)session.getAttribute("dateLength") + 1;
+    	int dateLength = ((ArrayList<ScheduleDate>)session.getAttribute("eventDates")).size();
     	int[][] date = new int[dateLength][5];
 
     	String[] dateIndex = request.getParameterValues("date");

@@ -27,19 +27,17 @@ public class ScheduleTable {
 			conn = dataSource.getConnection();
 
 			// 新規スケジュールをschedulesテーブルにインサート
-			String sql = "insert into schedules (id, eventName, eventContent, eventStartDate, "
-					+ "eventEndDate, eventDeadline, senderEmail, `condition`, isInputInform)"
-					+ " values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			String sql = "insert into schedules (id, eventName, eventContent,"
+					+ " eventDeadline, senderEmail, `condition`, isInputInform)"
+					+ " values (?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, schedule.getId());
 			patmt.setString(2, schedule.getEventName());
 			patmt.setString(3, schedule.getEventContent());
-			patmt.setString(4, schedule.getEventStartDate());
-			patmt.setString(5, schedule.getEventEndDate());
-			patmt.setString(6, schedule.getEventDeadline());
-			patmt.setString(7, schedule.getSenderEmail());
-			patmt.setString(8, schedule.getCondition());
-			patmt.setBoolean(9, schedule.getIsInputInform());
+			patmt.setString(4, schedule.getEventDeadline());
+			patmt.setString(5, schedule.getSenderEmail());
+			patmt.setString(6, schedule.getCondition());
+			patmt.setBoolean(7, schedule.getIsInputInform());
 
 			patmt.executeUpdate();
 
@@ -82,8 +80,6 @@ public class ScheduleTable {
 				hm.put("id", rs.getString("id"));
 				hm.put("eventName", rs.getString("eventName"));
 				hm.put("eventContent", rs.getString("eventContent"));
-				hm.put("eventStartDate", rs.getString("eventStartDate"));
-				hm.put("eventEndDate", rs.getString("eventEndDate"));
 				hm.put("eventDeadline", rs.getString("eventDeadline"));
 				hm.put("decideDate", rs.getString("decideDate"));
 				list.add(hm);
@@ -135,8 +131,6 @@ public class ScheduleTable {
 				hm.put("id", rs.getString("id"));
 				hm.put("eventName", rs.getString("eventName"));
 				hm.put("eventContent", rs.getString("eventContent"));
-				hm.put("eventStartDate", rs.getString("eventStartDate"));
-				hm.put("eventEndDate", rs.getString("eventEndDate"));
 				hm.put("eventDeadline", rs.getString("eventDeadline"));
 				hm.put("decideDate", rs.getString("decideDate"));
 				hm.put("note", rs.getString("note"));

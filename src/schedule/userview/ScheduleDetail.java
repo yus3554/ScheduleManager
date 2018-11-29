@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.AnswerTable;
+import schedule.model.ScheduleDate;
+import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 
@@ -42,16 +44,17 @@ public class ScheduleDetail extends HttpServlet {
 		// sessionを取得
 		HttpSession session = request.getSession(false);
 
+		String senderEmail = (String) session.getAttribute("email");
+
 		// idとsenderEmailを入れてscheduleを取得
-		HashMap<String, String> scheduleHM = new HashMap<String, String>();
-		scheduleHM = new ScheduleTable().getSchedule(id, (String) session.getAttribute("email"));
+		HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
+		ArrayList<ScheduleDate> sdList = new ScheduleDateTable().getDateList(id, senderEmail);
 
 		// scheduleをrequestに格納
-		request.setAttribute("id", scheduleHM.get("id"));
+		request.setAttribute("id", id);
 		request.setAttribute("eventName", scheduleHM.get("eventName"));
 		request.setAttribute("eventContent", scheduleHM.get("eventContent"));
-		request.setAttribute("eventStartDate", scheduleHM.get("eventStartDate"));
-		request.setAttribute("eventEndDate", scheduleHM.get("eventEndDate"));
+		request.setAttribute("eventDates", sdList);
 		request.setAttribute("eventDeadline", scheduleHM.get("eventDeadline"));
 		String decideDate = scheduleHM.get("decideDate");
 		if(decideDate != null)
@@ -91,7 +94,18 @@ public class ScheduleDetail extends HttpServlet {
 		}
 		request.setAttribute("notInput", notInput);
 
+		// sdList、ScheduleDateListの何限があるかどうかを配列に入れる
+		// そうすることで、全体回答状況表に斜線を入れたり、マウスカーソル合わせた時のポップアップを表示しないようにする
+		int[][] sdTimes = new int[sdList.size()][5];
+		for(int i = 0; i < sdList.size(); i++) {
+			for(int j = 0; j < 5; j++) {
+				sdTimes[i][j] = sdList.get(i).getTime(j);
+			}
+		}
+		request.setAttribute("sdTimes", sdTimes);
+
 		// 全体回答状況表のため
+		String[] timeStr = {"first", "second", "third", "fourth", "fifth"};
 		ArrayList<HashMap<String, String>> count = new AnswerTable().getCountAnswers(randomURLs);
 		int countLength = count.size();
 		request.setAttribute("countLength", countLength);
@@ -103,11 +117,9 @@ public class ScheduleDetail extends HttpServlet {
 		int max_1 = 0;
 		for(int i = 0; i < countLength; i++) {
 			request.setAttribute("date" + i, count.get(i).get("date"));
-			counts[i][0] = Integer.parseInt(count.get(i).get("first"));
-			counts[i][1] = Integer.parseInt(count.get(i).get("second"));
-			counts[i][2] = Integer.parseInt(count.get(i).get("third"));
-			counts[i][3] = Integer.parseInt(count.get(i).get("fourth"));
-			counts[i][4] = Integer.parseInt(count.get(i).get("fifth"));
+			for(int j = 0; j < 5; j++) {
+				counts[i][j] = Integer.parseInt(count.get(i).get(timeStr[j]));
+			}
 		}
 		// 最大値と最大値引く1の取得
 		for(int i = 0; i < countLength; i++) {
@@ -136,11 +148,9 @@ public class ScheduleDetail extends HttpServlet {
 			for(int j = 0; j < gotAnswers.size(); j++) {
 				int[] answer = new int[5];
 				hm = gotAnswers.get(j);
-				answer[0] = Integer.parseInt(hm.get("first"));
-				answer[1] = Integer.parseInt(hm.get("second"));
-				answer[2] = Integer.parseInt(hm.get("third"));
-				answer[3] = Integer.parseInt(hm.get("fourth"));
-				answer[4] = Integer.parseInt(hm.get("fifth"));
+				for(int k = 0; k < 5; k++) {
+					answer[k] = Integer.parseInt(hm.get(timeStr[k]));
+				}
 				answers.add(answer);
 				hm.clear();
 			}

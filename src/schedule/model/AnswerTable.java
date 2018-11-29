@@ -18,7 +18,7 @@ public class AnswerTable {
 	}
 
 	// answerをanswersテーブルにインサート
-	public void insert(Answer answer) {
+	public void insert(Answer answer, ArrayList<ScheduleDate> sdList) {
 		DataSource dataSource = null;
 		Connection conn = null;
 		try {
@@ -29,28 +29,24 @@ public class AnswerTable {
 
 			ArrayList<String> targetEmails = answer.getTargetEmails();
 			ArrayList<Boolean> keys = answer.getKeys();
-			LocalDate startDate = LocalDate.parse(answer.getEventStartDate());
-			LocalDate ld;
 
 			for(int i = 0; i < targetEmails.size(); i++) {
-				ld = startDate;
 				// targetにメールアドレスを登録
 				if (!targetEmails.get(i).equals("") && targetEmails.get(i) != null) {
 					new TargetTable().insert(answer.getId(), answer.getSenderEmail(), targetEmails.get(i), keys.get(i));
 
 					String randomURL = new TargetTable().getRandomURL(answer.getId(), answer.getSenderEmail(), targetEmails.get(i));
 
-					String sql = "insert into answers values (?, ?, 0, 0, 0, 0, 0);";
+					String sql = "insert into answers values (?, ?, ?, ?, ?, ?, ?);";
 					PreparedStatement patmt = conn.prepareStatement(sql);
 
-					long duration = answer.getDateLength();
-					for(int j = 0; j < duration + 1; j++) {
+					for(int j = 0; j < sdList.size(); j++) {
 						// answersテーブルにインサート
 						patmt.setString(1, randomURL);
-						patmt.setString(2, ld.toString());
-
-						ld = ld.plusDays(1);
-
+						patmt.setString(2, sdList.get(j).getDate());
+						for(int k = 0; k < sdList.get(j).getTimes().length; k++) {
+							patmt.setInt(k + 3, sdList.get(j).getTime(k));
+						}
 						patmt.executeUpdate();
 					}
 				}

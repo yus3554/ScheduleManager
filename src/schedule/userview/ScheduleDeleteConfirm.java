@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import schedule.model.ScheduleDate;
+import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 
@@ -40,17 +42,19 @@ public class ScheduleDeleteConfirm extends HttpServlet {
 		// sessionを取得
 		HttpSession session = request.getSession(false);
 
+		String senderEmail = (String) session.getAttribute("email");
+
 		// idとsenderEmailを入れてscheduleを取得
 		HashMap<String, String> scheduleHM = new HashMap<String, String>();
-		scheduleHM = new ScheduleTable().getSchedule(id, (String) session.getAttribute("email"));
+		scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
+		ArrayList<ScheduleDate> sdList = new ScheduleDateTable().getDateList(id, senderEmail);
 
 		// scheduleをrequestに格納
-		request.setAttribute("id", scheduleHM.get("id"));
+		request.setAttribute("id", id);
 		request.setAttribute("eventName", scheduleHM.get("eventName"));
 		request.setAttribute("eventContent", scheduleHM.get("eventContent"));
-		request.setAttribute("eventStartDate", scheduleHM.get("eventStartDate"));
-		request.setAttribute("eventEndDate", scheduleHM.get("eventEndDate"));
 		request.setAttribute("eventDeadline", scheduleHM.get("eventDeadline"));
+		request.setAttribute("eventDates", sdList);
 
 		// 対象者全てをidとsenderEmailを使って取得
 		ArrayList<HashMap<String, String>> targetList = new ArrayList<>();

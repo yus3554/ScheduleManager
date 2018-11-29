@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ page import="java.util.ArrayList" %>
+    <%@ page import="schedule.model.ScheduleDate" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -64,6 +65,10 @@ table th{
   position: absolute;
   z-index: 1;
 }
+td:empty {
+  background: url('data:image/svg+xml,<svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><line fill="none" stroke="#000000" stroke-width="0.2" stroke-miterlimit="10" x1="0" y1="0" x2="10" y2="10"/></svg>') no-repeat;
+  background-size: 100%;
+    }
 </style>
 <%@include file="../include/font.jsp" %>
 </head>
@@ -83,7 +88,17 @@ table th{
 		<% if( request.getAttribute("decideDate") != null) {%>
 		<tr><th>決定日時</th><td>${ decideDate }<br><br>[備考]<br>${ note }</td></tr>
 		<% } %>
-		<tr><th>候補日程</th><td>${ eventStartDate } 〜 ${ eventEndDate }</td></tr>
+		<tr>
+			<th>候補日程</th>
+			<td>
+				<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)request.getAttribute("eventDates"); %>
+				<table>
+					<% for(ScheduleDate sd : sdList) { %>
+						<%= sd.toString() %>
+					<% } %>
+				</table>
+			</td>
+		</tr>
 		<tr>
 			<th>開催条件</th>
 			<td>
@@ -122,12 +137,13 @@ table th{
 						<th>5限</th>
 					</tr>
 					<% int[][] counts = (int[][])request.getAttribute("counts"); %>
+					<% int[][] sdTimes = (int[][])request.getAttribute("sdTimes"); %>
 					<% ArrayList<ArrayList<int[]>> targetsAnswers = (ArrayList<ArrayList<int[]>>)request.getAttribute("targetsAnswers"); %>
 					<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
 					<tr>
 						<th><%= request.getAttribute("date" + i)%></th>
 						<% for(int j = 0; j < 5; j++) { %>
-						<td align="center" valign="top"><%= counts[i][j] %></td>
+						<td align="center" valign="top"><% if( sdTimes[i][j] != -1 ){ %><%= counts[i][j] %><% } %></td>
 						<% } %>
 					</tr>
 					<% } %>
@@ -251,6 +267,18 @@ var maxcount_1 = <%= (int)request.getAttribute("max_1") %>;
 	<% } %>
 	circleCount.push(count<%= i %>);
 <% } %>
+
+//sdTimesをjsの配列に落とす
+var sdTimes = [];
+<% for(int i = 0; i < sdTimes.length; i++) { %>
+var sdTime<%= i %> = [];
+<% for(int j = 0; j < 5; j++) { %>
+	sdTime<%= i %>.push(<%= sdTimes[i][j] %>);
+<% } %>
+sdTimes.push(sdTime<%= i %>);
+<% } %>
+console.log(sdTimes);
+
 
 // キーパーソンの回答の○をandする
 // 1で全要素初期化し、その上からandしていく
@@ -429,9 +457,9 @@ function conditionCellColor(){
 }
 <% } %>
 
+
 // 全体表示の表にマウスオーバーでポップアップ出せるようにしたり
 // マウスアウトでポップアップしまったり
-// セルの色の初期設定をする
 // tr.lengthは1で、td.lengthは表の縦の数、cell.lengthは5限の5なので、最初のiはforである必要がない
 var tr = table.children;
 for(var i = 0; i < tr.length; i++){
@@ -439,15 +467,10 @@ for(var i = 0; i < tr.length; i++){
   for(var j = 1; j < td.length; j++){
     var cell = td[j].children;
     for(var k = 1; k < cell.length; k++){
-    	if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-    		cell[k].style.backgroundColor = "#FE9A2E";
-    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
-    		cell[k].style.backgroundColor = "#F4FA58";
-    	} else {
-
+    	if(sdTimes[j-1][k-1] != -1){
+    	      cell[k].onmouseover = cellMouseOver;
+    	      cell[k].onmouseout = cellMouseOut;
     	}
-      cell[k].onmouseover = cellMouseOver;
-      cell[k].onmouseout = cellMouseOut;
     }
   }
 }

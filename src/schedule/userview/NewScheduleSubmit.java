@@ -22,6 +22,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.tomcat.util.http.fileupload.FileItem;
 
 import schedule.model.Schedule;
+import schedule.model.ScheduleDate;
+import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
 import schedule.model.SessionConvert;
 import schedule.model.TargetTable;
@@ -61,9 +63,12 @@ public class NewScheduleSubmit extends HttpServlet {
 		SessionConvert sts = new SessionConvert(id, session);
 		Schedule schedule = sts.getSchedule();
 		new ScheduleTable().insert(schedule);
+
+		// 候補日程を保存
+		new ScheduleDateTable().insert(schedule, (ArrayList<ScheduleDate>)session.getAttribute("eventDates"));
 		// DBに対象者リストを保存
 		Answer answer = sts.getAnswer();
-		new AnswerTable().insert(answer);
+		new AnswerTable().insert(answer, new ScheduleDateTable().getDateList(id, schedule.getSenderEmail()));
 
 		// 添付ファイルをサーバー内に保存
 		String path = getServletContext().getRealPath("data");
@@ -113,8 +118,7 @@ public class NewScheduleSubmit extends HttpServlet {
 		//新規スケジュールで使ったsession attributeを削除
 		session.removeAttribute("eventName");
 		session.removeAttribute("eventContent");
-		session.removeAttribute("eventStartDate");
-		session.removeAttribute("eventEndDate");
+		session.removeAttribute("eventDates");
 		session.removeAttribute("targetEmails");
 		session.removeAttribute("eventDeadline");
 

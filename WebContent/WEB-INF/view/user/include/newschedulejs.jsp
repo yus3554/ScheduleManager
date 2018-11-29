@@ -40,8 +40,6 @@
 			} else {
 				email[0].value = "s152017@eecs.tottori-u.ac.jp";
 			}
-			form.eventStartDate.value = "" + start.getFullYear() + "-" + addZero(start.getMonth() + 1) + "-" + addZero(start.getDate());
-			form.eventEndDate.value = "" + end.getFullYear() + "-" + addZero(end.getMonth() + 1) + "-" + addZero(end.getDate());
 			form.eventDeadline.value = "" + deadline.getFullYear() + "/" + addZero(deadline.getMonth() + 1) + "/" + addZero(deadline.getDate())
 										+ " " + "00:00";
 		}
@@ -69,8 +67,7 @@
 			var blanktext = document.getElementById("blanktext");
 			if (form.eventName.value == "" ||
 				form.eventContent.value == "" ||
-				form.eventStartDate.value == "" ||
-				form.eventEndDate.value == "" ||
+				$("#dateDiv").html() == "" ||
 				form.eventDeadline.value == "") {
 				if(emailIndex <= 1){
 					if(email.value == ""){
@@ -176,3 +173,30 @@
 			}
 		}
 		condition(form.isEventCondition.checked);
+
+		$(function(){
+		  $('#date').datetimepicker({
+		    format:"Y/m/d",
+		    inline:true,
+		    timepicker:false,
+		    onChangeDateTime:function(dp,$input){
+		      addDate($input.val());
+		    }
+		  })
+		});
+
+		function addDate(date){
+		  var dateDivHtml = $("#dateDiv").html();
+		  var dateId = date.replace(/\//g, "-");
+		  var dateName = "@" + date;
+		  var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"date[]\" value=\"" + dateId + "\">" + date;
+		  for(var i = 1; i <= 5; i++){
+		    html += " <input type=\"checkbox\" value=\"" + i + "\" name=\"" + "#" + dateId + "[]" + "\" checked>" + i + "限 ";
+		  }
+		  html += "<input type=\"button\" value=\"削除\" onclick=\'deleteDiv(\"" + dateId + "\");\'>";
+		  $("#dateDiv").html(dateDivHtml + html +"</div>");
+		}
+
+		function deleteDiv(str){
+		  $("#" + str).remove();
+		}

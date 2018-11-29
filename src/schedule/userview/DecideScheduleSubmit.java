@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.NotifTable;
+import schedule.model.ScheduleDate;
 import schedule.model.ScheduleTable;
+import schedule.model.SendMail;
 import schedule.model.TargetTable;
 
 /**
@@ -48,21 +50,20 @@ public class DecideScheduleSubmit extends HttpServlet {
     	String senderEmail = (String)session.getAttribute("email");
 
     	// 取得したdateなどをnotifsテーブルに格納する
-    	LocalDate ld = LocalDate.parse((String)session.getAttribute("eventStartDate"));
+    	ArrayList<ScheduleDate> sdList = ((ArrayList<ScheduleDate>)session.getAttribute("eventDates"));
     	int[][] date = (int[][])session.getAttribute("date");
     	// 備考
     	String note = (String)session.getAttribute("note");
     	ArrayList<String> decideDates = new ArrayList<>();
     	String tempDecideDate = "";
-    	for(int i = 0; i < (long)session.getAttribute("dateLength") + 1; i++) {
+    	for(int i = 0; i < sdList.size(); i++) {
     		for(int j = 0; j < 5; j++) {
     			if( date[i][j] == 1 ){
-    				tempDecideDate += ld.toString() + " " + (j + 1) + "限";
+    				tempDecideDate += sdList.get(i).getDate() + " " + (j + 1) + "限";
     				decideDates.add(tempDecideDate);
     			}
     			tempDecideDate = "";
     		}
-    		ld = ld.plusDays(1);
     	}
 
     	// scheduletableに決定日時を格納
@@ -74,19 +75,31 @@ public class DecideScheduleSubmit extends HttpServlet {
     	// 対象者のrandomURLを取得
     	ArrayList<HashMap<String, String>> target = new TargetTable().getTargetList(id, senderEmail);
     	HashMap<String, String> targetHM = new HashMap<>();
-    	String[] randomURLs = new String[target.size() + 1];
+    	String[] randomURLs = new String[target.size()];
     	for(int i = 0; i < target.size(); i++) {
     		targetHM = target.get(i);
     		randomURLs[i] = targetHM.get("randomURL");
     	}
+
+    	// 要求者に決定完了メールを送る
+    	HashMap<String, String>  scheduleHM = new ScheduleTable().getSchedule(targetHM.get("id"), targetHM.get("senderEmail"));
+    	String subject = "[日時決定完了]" + scheduleHM.get("eventName");
+    	String content = "<html><body><br>" + scheduleHM.get("eventName") + "の日時が決定が完了しました。"
+    			+ "<br><br><hr align=\"left\" width=\"55%\"><br>"
+				+ "[決定日時]<br>"
+				+ scheduleHM.get("decideDate") + "<br><br>"
+				+ note
+				+ "<br><br><hr align=\"left\" width=\"55%\"><br>"
+				+ "<table><tr><th>イベント名：</th><td>" + scheduleHM.get("eventName") + "</td></tr>"
+				+ "<tr><th>イベント内容：</th><td>" + scheduleHM.get("eventContent") + "</td></tr>"
+				+ "</table></body></html>";
+    	new SendMail().send(subject, content, senderEmail);
 
     	// 日時を決定したので、リマインダーなど他の通知は消す
     	for(String url: randomURLs) {
     		new NotifTable().delete(url);
     	}
 
-    	// 要求者に決定の通知を行うため
-    	randomURLs[target.size()] = senderEmail;
     	// 日時の決定通知をインサート
     	new NotifTable().insert(randomURLs, nowTime, 2);
 

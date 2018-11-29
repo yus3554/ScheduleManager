@@ -9,6 +9,8 @@
 <script><%@include file="../../js/jquery-3.3.1.min.js" %></script>
 <script><%@include file="./include/jquery.datetimepicker.full.js" %></script>
 
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+
 <style>
 <%@include file="./include/jquery.datetimepicker.css"%>
 <%@include file="../../css/user.css" %>
@@ -58,8 +60,8 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr>
 			<th>候補日程</th>
 			<td>
-				<input type="date" name="eventStartDate"> 〜 <input type="date" name="eventEndDate"><br>
-				<textarea wrap="hard" maxlength="1000" rows="20" cols="70" form="newschedule" name="eventDate"></textarea>
+				<input type="" id="date"><br>
+				<div id="dateDiv"></div>
 			</td>
 			<td></td>
 		</tr>

@@ -7,6 +7,11 @@
 <title>Test</title>
 <style><%@include file="../../css/single.css" %></style>
 <%@include file="../include/font.jsp" %>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-datetimepicker@2.5.20/build/jquery.datetimepicker.full.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-datetimepicker@2.5.20/jquery.datetimepicker.css">
 </head>
 <body>
 	<%@include file="../include/header.jsp" %>
@@ -14,14 +19,16 @@
 		<div id="honbun">
         	<div id="test">
         	</div>
-        	<input type="button" value="サーバー通信テスト" onclick="ajaxTest();">
-			<a href="/ScheduleManager/Download/dghjfkljkmntbrkflkvjdghjfdghjfdghjfdghjfdghjfdghjfdghjfdghjfdghj/wolf-3818343_1920.jpg">ダウンロード</a>
-    	</div>
+			<input type="button" value="サーバー通信テスト" onclick="ajaxTest();">
+			<form>
+				<input type="" id="date"><br>
+				<div id="dateDiv"></div>
+			</form>
+		</div>
 	</main>
 <%@include file="../include/footer.jsp" %>
 
 <script>
-<%@include file="../../js/jquery-3.3.1.min.js" %>
 	var text = document.getElementById("test");
 	function ajaxTest() {
 
@@ -48,6 +55,33 @@
 		    }
 		  });
 
+		}
+
+	$(function(){
+		  $('#date').datetimepicker({
+		    format:"Y/m/d",
+		    inline:true,
+		    timepicker:false,
+		    onChangeDateTime:function(dp,$input){
+		      addDate($input.val());
+		    }
+		  })
+		});
+
+		function addDate(date){
+		  var dateDivHtml = $("#dateDiv").html();
+		  var dateId = date.replace(/\//g, "");
+		  var dateName = "@" + date;
+		  var html = "<div id=\"" + dateId + "\" name=\"" + dateName + "\">" + date;
+		  for(var i = 1; i <= 5; i++){
+		    html += " <input type=\"checkbox\" value=\"" + i + "\" name=\"" + "#" + dateId + "[]" + "\" checked>" + i + "限 ";
+		  }
+		  html += "<input type=\"button\" value=\"削除\" onclick=\'deleteDiv(\"" + dateId + "\");\'>";
+		  $("#dateDiv").html(dateDivHtml + html +"</div>");
+		}
+
+		function deleteDiv(str){
+		  $("#" + str).remove();
 		}
 </script>
 </body>

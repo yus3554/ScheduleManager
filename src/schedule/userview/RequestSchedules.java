@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetTable;
 
@@ -51,8 +52,6 @@ public class RequestSchedules extends HttpServlet {
     		request.setAttribute("id" + i, hm.get("id"));
     		request.setAttribute("eventName" + i, hm.get("eventName"));
     		request.setAttribute("eventContent" + i, hm.get("eventContent"));
-    		request.setAttribute("eventStartDate" + i, hm.get("eventStartDate"));
-    		request.setAttribute("eventEndDate" + i, hm.get("eventEndDate"));
     		request.setAttribute("eventDeadline" + i, hm.get("eventDeadline"));
     		request.setAttribute("decideDate" + i, hm.get("decideDate"));
 
