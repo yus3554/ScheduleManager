@@ -68,6 +68,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr id="email">
 			<th>対象者のアドレス</th>
 			<td>
+				<textarea id="targetEmailTextarea" rows="3" cols="50"></textarea><br>
 				<input type="checkbox" name="key" value="1">
 				<input type="email" size="32" name="targetEmail[]">
 				<input type="button" id="addButton" onclick="addEmail();" value="+">
@@ -113,9 +114,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	</main>
 <%@include file="../include/footer.jsp" %>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 	<%@include file="./include/logoutpopupjs.jsp" %>
 	<%@include file="./include/newschedulejs.jsp" %>
+
 	$("#eventDeadline").datetimepicker();
 	</script>
 </body>

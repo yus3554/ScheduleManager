@@ -22,7 +22,6 @@ public class AnswerUpdateFileDelete extends HttpServlet {
      */
     public AnswerUpdateFileDelete() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**

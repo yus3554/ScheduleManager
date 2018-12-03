@@ -58,6 +58,15 @@
 
 		function isSubmit(){
 			if(isBlank() && isOverEventName() && isOverEventContent() && isOverRemind()){
+			// テキストエリアのメアドを格納、改行で分けてる
+				var targetEmailTextarea = ($("#targetEmailTextarea").val()).split("\n");
+				for(var i in targetEmailTextarea){
+					$("<input>", {
+						type: 'hidden',
+						name: 'targetEmail[]',
+						value: targetEmailTextarea[i]
+					}).appendTo('#newschedule');
+				}
 				form.submit();
 			}
 		}

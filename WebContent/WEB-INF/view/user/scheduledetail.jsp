@@ -346,6 +346,9 @@ function colorSetting(){
 	settingPopup.style.visibility = "visible";
 }
 
+// ページを開いた時、多い順で色をあらかじめつけておく
+rankingCellColor();
+
 // セルの色変える
 var keyCheck = false;
 function apply(){
