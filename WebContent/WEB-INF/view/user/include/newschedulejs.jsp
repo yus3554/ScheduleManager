@@ -1,17 +1,15 @@
 <%@ page pageEncoding="UTF-8" %>
+<script>
 	// 最初は非表示
 		document.getElementById("blanktext").style.display = "none";
 		document.getElementById("overEventName").style.display = "none";
 		document.getElementById("overEventContent").style.display = "none";
 		document.getElementById("remindRemarks").style.display = "none";
 
-		var emailIndex = 1;
 		var remindIndex = 1;
 		var fileIndex = 1;
 		var form = document.forms.newschedule;
 		var table = document.getElementById("table");
-		var email = form.elements["targetEmail[]"];
-		var emailTr = document.getElementById("email");
 		var remindDate = form.elements["remindDate[]"];
 		var remindTime = form.elements["remindTime[]"];
 		var remindTr = document.getElementById("reminder");
@@ -21,8 +19,7 @@
 		// とりあえず
 		// 今から2日後を締め切り
 		var deadline = new Date(Date.now() + 2 * 24 * 60 * 60000);
-		var start = new Date(Date.now() + 4 * 24 * 60 * 60000);
-		var end = new Date(Date.now() + 9 * 24 * 60 * 60000);
+		var sampleDate = new Date(Date.now() + 4 * 24 * 60 * 60000);
 
 		function addZero(n){
 			if(n < 10){
@@ -35,41 +32,60 @@
 		// テスト用の自動入力ボタン
 		function AutoInput(){
 			form.eventName.value = "会議の開催日程について";
-			form.eventContent.value = "会議をします。";
-			if(emailIndex <= 1){
-				email.value = "s152017@eecs.tottori-u.ac.jp";
-			} else {
-				email[0].value = "s152017@eecs.tottori-u.ac.jp";
-			}
+			var sampleContent = "会議をします。";
+			form.eventContent.value = sampleContent + "\n\n"
+									+ sampleContent.repeat(5) + "\n"
+									+ sampleContent.repeat(3) + "\n"
+									+ sampleContent.repeat(2) + "\n"
+									+ sampleContent.repeat(1) + "\n\n"
+									+ sampleContent.repeat(3) + "\n"
+									+ sampleContent.repeat(2) + "\n"
+									+ sampleContent.repeat(1);
+			$("#targetEmailTextarea").val("s152017@eecs.tottori-u.ac.jp");
+			addDate("" + sampleDate.getFullYear() + "/" + addZero(sampleDate.getMonth() + 1) + "/" + addZero(sampleDate.getDate()));
 			form.eventDeadline.value = "" + deadline.getFullYear() + "/" + addZero(deadline.getMonth() + 1) + "/" + addZero(deadline.getDate())
 										+ " " + "00:00";
 		}
 
 		function AutoInputFuyukai(){
-			for(var i = 0; i < 4; i++){
-				addEmail();
-			}
-
-			email[0].value = "s152017@eecs.tottori-u.ac.jp"; // 太田
-			email[1].value = "s152119@eecs.tottori-u.ac.jp"; // 山田
-			email[2].value = "s132029@ike.tottori-u.ac.jp"; // 酒井
-			email[3].value = "s112052@ike.tottori-u.ac.jp"; // 松永
-			email[4].value = "takahashi@tottori-u.ac.jp"; // 高橋
+			var emailStr = "s152017@eecs.tottori-u.ac.jp\n"
+							+ "s152119@eecs.tottori-u.ac.jp\n"
+							+ "s132029@ike.tottori-u.ac.jp\n"
+							+ "s112052@ike.tottori-u.ac.jp\n"
+							+ "takahashi@tottori-u.ac.jp\n";
+			$("#targetEmailTextarea").val(emailStr);
 		}
 
 		function isSubmit(){
 			if(isBlank() && isOverEventName() && isOverEventContent() && isOverRemind()){
-			// テキストエリアのメアドを格納、改行で分けてる
-				var targetEmailTextarea = ($("#targetEmailTextarea").val()).split("\n");
-				for(var i in targetEmailTextarea){
-					$("<input>", {
-						type: 'hidden',
-						name: 'targetEmail[]',
-						value: targetEmailTextarea[i]
-					}).appendTo('#newschedule');
-				}
+				textAreaEmail();
 				form.submit();
 			}
+		}
+
+		// テキストエリアのメアドを格納、改行で分けてる、*が最初についたメアドをキーパーソンに
+		function textAreaEmail(){
+			var targetEmailTextarea = ($("#targetEmailTextarea").val()).split("\n");
+				for(var i in targetEmailTextarea){
+					if(targetEmailTextarea[i].slice(0, 1) == "*"){
+						$("<input>", {
+							type: 'hidden',
+							name: 'key[]',
+							value: i
+						}).appendTo('#newschedule');
+						$("<input>", {
+							type: 'hidden',
+							name: 'targetEmail[]',
+							value: targetEmailTextarea[i].slice(1)
+						}).appendTo('#newschedule');
+					} else {
+						$("<input>", {
+							type: 'hidden',
+							name: 'targetEmail[]',
+							value: targetEmailTextarea[i]
+						}).appendTo('#newschedule');
+					}
+				}
 		}
 
 		// 空欄があるかどうか、なくなったらsubmit
@@ -135,24 +151,12 @@
 			}
 		}
 
-		function addEmail(){
-			  emailIndex++;
-			  var newTr = document.createElement("tr");
-			  newTr.innerHTML = "<tr><td> "
-			  + "<input type=\"checkbox\" name=\"key\" value=\"" + emailIndex + "\"> "
-			  + "<input type=\"email\" size=\"32\" name=\"targetEmail[]\"> </td></tr>";
-			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd1"));
-			  emailTr.children[0].setAttribute("rowspan", emailIndex);
-			  emailTr.children[2].setAttribute("rowspan", emailIndex);
-			  email = form.elements["targetEmail[]"];
-		}
-
 		function addRemind(){
 			  remindIndex++;
 			  var newTr = document.createElement("tr");
 			  newTr.innerHTML = "<tr><td> "
-			  + "締め切りの <input type=\"number\" min=\"1\" max=\"30\" name=\"remindDate[]\">日前の "
-			  + "<input type=\"number\" min=\"0\" max=\"24\" name=\"remindTime[]\">時に再通知 </td></tr>";
+			  + "締め切りの <input type=\"number\" min=\"0\" max=\"30\" name=\"remindDate[]\">日前の "
+			  + "<input type=\"number\" min=\"0\" max=\"23\" name=\"remindTime[]\">時に再通知 </td></tr>";
 			  table.children[0].insertBefore(newTr, document.getElementById("beforeAdd2"));
 			  remindTr.children[0].setAttribute("rowspan", remindIndex);
 			  remindTr.children[2].setAttribute("rowspan", remindIndex);
@@ -210,3 +214,4 @@
 		function deleteDiv(str){
 		  $("#" + str).remove();
 		}
+</script>

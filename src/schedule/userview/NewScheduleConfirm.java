@@ -146,7 +146,7 @@ public class NewScheduleConfirm extends HttpServlet {
 								eventDates.add(new ScheduleDate(value));
 							break;
 							// キーパーソン
-						case "key":
+						case "key[]":
 							temp1Keys.add(value);
 							break;
 						case "targetEmail[]":
@@ -195,7 +195,7 @@ public class NewScheduleConfirm extends HttpServlet {
 			if(!tempTargetEmails.get(i).equals("") && tempTargetEmails.get(i) != null) {
 				targetEmails.add(tempTargetEmails.get(i));
 				for(int j = 0; j < temp1Keys.size(); j++) {
-					if(Integer.parseInt(temp1Keys.get(j)) == i + 1) {
+					if(Integer.parseInt(temp1Keys.get(j)) == i ) {
 						temp2Keys.add(times);
 					}
 				}

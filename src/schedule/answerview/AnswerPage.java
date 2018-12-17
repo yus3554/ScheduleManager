@@ -63,7 +63,7 @@ public class AnswerPage extends HttpServlet {
 			String targetEmail = targetHM.get("targetEmail");
 			String note = targetHM.get("note");
 			if(note != null) {
-				note.replace("<br>", "\n");
+				note = note.replace("<br>", "\n");
 			}
 			String id = targetHM.get("id");
 			String sendDate = targetHM.get("sendDate");

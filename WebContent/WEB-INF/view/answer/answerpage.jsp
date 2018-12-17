@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール回答</title>
 <style>
-	<%@include file="../../css/double.css" %>
+	<%@include file="../../css/single.css" %>
 	textarea {
     overflow: auto;
     max-height: 300px;
@@ -48,97 +48,160 @@
 	<%@include file="../include/header.jsp" %>
 	<main>
 	<div id="honbun">
-<h2>スケジュール回答</h2>
+		<h2>スケジュール回答</h2>
 
-	<h3>${ senderName }さんから${ targetEmail }さんへの入力要求</h3>
+		<h3>${ senderName }さんから${ targetEmail }さんへの入力要求</h3>
 
-	<% if(((String)request.getAttribute("isInput")).equals("0")) { %>
-	<h4>未回答</h4>
-	<% } else { %>
-	<h4>回答済（変更日時：${ sendDate }）</h4>
-	<% } %>
-	セルをクリックするごとに、×→○→△の順で変わります。<br>
+		<%
+			if (((String) request.getAttribute("isInput")).equals("0")) {
+		%>
+		<h4>未回答</h4>
+		<%
+			} else {
+		%>
+		<h4 style="color: red;">回答済（変更日時：${ sendDate }）</h4>
+		<%
+			}
+		%>
 
-	<form action="../AnswerPage/<%= session.getAttribute("randomURL") %>" method="post" id="answerForm" enctype="multipart/form-data">
-	<table id="table" border="2" cellpadding="10">
-		<tr>
-			<th>日付</th>
-			<th>1限</th>
-			<th>2限</th>
-			<th>3限</th>
-			<th>4限</th>
-			<th>5限</th>
-		</tr>
-		<% String[] times = {"first", "second", "third", "fourth", "fifth"}; %>
-		<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
-		<tr>
-			<th>
-				<%= request.getAttribute("date" + i) %>
-				<input type="hidden" name="date[]" value="<%= request.getAttribute("date" + i) %>">
-			</th>
-			<% for(int j = 0; j < times.length; j++) { %>
-			<td align="center" valign="top" id="<%= times[j] %>Td<%= i %>"><%
-			if( request.getAttribute(times[j] + i).equals("0") ){ %>×<%
-			} else if( request.getAttribute(times[j] + i).equals("1") ){ %>△<%
-			} else if( request.getAttribute(times[j] + i).equals("2") ){ %>○<%
-			} else if( request.getAttribute(times[j] + i).equals("-1") ){ %><% } %></td>
-			<input type="hidden" name="<%= times[j] %>[]" value="">
+		<hr>
+		<table border="1">
+			<h3>イベント内容</h3>
+			<tr>
+				<th>イベント名：</th>
+				<td>${ eventName }</td>
+			</tr>
+			<tr>
+				<th>イベント内容：</th>
+				<td>${ eventContent }</td>
+			</tr>
+			<%
+				if ((boolean) request.getAttribute("isInputInform")) {
+			%>
+			<tr>
+				<th>回答人数</th>
+				<td>${ targetNum }人中/${ inputCount }人</td>
+			</tr>
 			<% } %>
-		</tr>
-		<% } %>
-	</table>
-	<h4>添付ファイル</h4>
-	<div id="uploadedFileNameList">
-	<% int fileNameIndex = 0; %>
-	<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("uploadFileNameList")).iterator(); i.hasNext();) { %>
-	<% String fileName = i.next(); %>
-	<a href="/ScheduleManager/Download/${ randomURL }/<%= fileName %>"><%= fileName %></a>
-	<input type="button" id="<%= fileName %>" value="削除"
-	onclick="deleteFile('/ScheduleManager/AnswerUpdateFileDelete', {'fileName':this.id, 'randomURL':'${ randomURL }'});"><br>
-	<% } %>
-	</div>
-	<br><input type="file" name="files" multiple><br>
-	<h4>備考</h4>
-	<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note" id="note">${ note }</textarea>200字まで<br>
+		</table>
+		<hr>
+		<h3>回答</h3>
+		クリックするごとに、×→○→△の順で変わります。<br>
 
-	<div id="saveload"></div>
-	<% if(request.getAttribute("isInput").equals("0")) { %>
-	<input type="button" id="submitButton" value="送信" onclick="answerSubmit();"/>
-	<% } else { %>
-	<input type="button" id="submitButton" value="修正" onclick="answerSubmit();"/>
-	<% } %>
-	<input type="button" value="一時保存" onclick="save();"/>
-	<input type="button" value="一時保存反映" onclick="load();"/>
-	</form>
+		<form action="../AnswerPage/<%=session.getAttribute("randomURL")%>"
+			method="post" id="answerForm" enctype="multipart/form-data">
+			<table id="table" border="2" cellpadding="10">
+				<tr>
+					<th>日付</th>
+					<th>1限</th>
+					<th>2限</th>
+					<th>3限</th>
+					<th>4限</th>
+					<th>5限</th>
+				</tr>
+				<%
+					String[] times = { "first", "second", "third", "fourth", "fifth" };
+				%>
+				<%
+					for (int i = 0; i < (int) session.getAttribute("answersLength"); i++) {
+				%>
+				<tr>
+					<th><%=request.getAttribute("date" + i)%> <input type="hidden"
+						name="date[]" value="<%=request.getAttribute("date" + i)%>"></th>
+					<%
+						for (int j = 0; j < times.length; j++) {
+					%>
+					<td align="center" valign="top" id="<%=times[j]%>Td<%=i%>">
+						<%
+							if (request.getAttribute(times[j] + i).equals("0")) {
+						%>×<%
+							} else if (request.getAttribute(times[j] + i).equals("1")) {
+						%>△<%
+							} else if (request.getAttribute(times[j] + i).equals("2")) {
+						%>○<%
+							} else if (request.getAttribute(times[j] + i).equals("-1")) {
+						%> <%
+							}
+						%>
+					</td>
+					<input type="hidden" name="<%=times[j]%>[]" value="">
+					<%
+						}
+					%>
+				</tr>
+				<%
+					}
+				%>
+			</table>
+			<h4>添付ファイル</h4>
+			<div id="uploadedFileNameList">
+				<%
+					int fileNameIndex = 0;
+				%>
+				<%
+					for (Iterator<String> i = ((ArrayList<String>) request.getAttribute("uploadFileNameList")).iterator(); i
+							.hasNext();) {
+				%>
+				<%
+					String fileName = i.next();
+				%>
+				<a href="/ScheduleManager/Download/${ randomURL }/<%= fileName %>"><%=fileName%></a>
+				<input type="button" id="<%= fileName %>" value="削除"
+					onclick="deleteFile('/ScheduleManager/AnswerUpdateFileDelete', {'fileName':this.id, 'randomURL':'${ randomURL }'});"><br>
+				<%
+					}
+				%>
+			</div>
+			<br> <input type="file" name="files" multiple><br>
+			<h4>備考</h4>
+			<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note"
+				id="note">${ note }</textarea>
+			200字まで<br>
 
-	</div>
-	<div id="honbun2">
-	<table>
-		<h3>イベント内容</h3>
-		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
-		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
-		<% if((boolean)request.getAttribute("isInputInform")) { %>
-		<tr><th>回答人数</th><td>${ targetNum }人中/${ inputCount }人</td></tr>
-		<% } %>
-	</table>
+			<div id="saveload"></div>
+			何度でも回答の修正が可能です<br>
+			<%
+				if (request.getAttribute("isInput").equals("0")) {
+			%>
+			<input type="button" id="submitButton" value="送信"
+				onclick="answerSubmit();" /> <input type="button" value="一時保存"
+				onclick="save();" /> <input type="button" value="一時保存反映"
+				onclick="load();" />
+			<%
+				} else {
+			%>
+			<input type="button" id="submitButton" value="修正"
+				onclick="answerSubmit();" />
+			<%
+				}
+			%>
+			<%
+				if (((String) request.getAttribute("isInput")).equals("0")) {
+			%>
+			未回答
+			<%
+				} else {
+			%>
+			<font color="red">回答済（変更日時：${ sendDate }）</font>
+			<%
+				}
+			%>
+		</form>
+
 	</div>
 	</main>
-	<div id="submitPopup">
-        	回答の送信が完了しました。
-    </div>
-    <div id="grayPanel"></div>
-    <%@include file="../include/footer.jsp" %>
+	<%@include file="../include/footer.jsp"%>
 
 	<script><%@include file="../../js/jquery-3.3.1.min.js"%></script>
 	<script>
 		$("#saveload").hide();
 		var table = document.getElementById("table");
 		var cellclick = function(){
-			if(this.innerHTML == "×"){
+			if(this.innerHTML.trim() == "×"){
 				this.innerHTML = "○";
-			} else if(this.innerHTML == "△"){
+			} else if(this.innerHTML.trim() == "△"){
 				this.innerHTML = "×";
-			} else if(this.innerHTML == "○"){
+			} else if(this.innerHTML.trim() == "○"){
 				this.innerHTML = "△";
 			}
 		}
@@ -159,19 +222,18 @@
 			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
 			<% for(int j = 0; j < times.length; j++){ %>
 				var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
-				if( <%= times[j] %>tdText == "×"){
+				if( <%= times[j] %>tdText.trim() == "×"){
 					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("0");
-				} else if( <%= times[j] %>tdText == "△" ){
+				} else if( <%= times[j] %>tdText.trim() == "△" ){
 					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("1");
-				} else if( <%= times[j] %>tdText == "○" ){
+				} else if( <%= times[j] %>tdText.trim() == "○" ){
 					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("2");
 				} else {
 					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("-1");
 				}
 			<% } %>
 			<% } %>
-			submitConfirm();
-			//form.submit();
+			form.submit();
 		}
 
 		// 一時保存
@@ -221,35 +283,6 @@
 			form.submit();
 		}
 
-		// 送信完了ポップアップ
-		var submitPopup = document.getElementById("submitPopup");
-	var grayPanel = document.getElementById("grayPanel");
-	var submitPopupWidth = submitPopup.clientWidth;
-	var submitPopupHeight = submitPopup.clientHeight;
-
-	function submitConfirm(){
-		var w_height = $(window).height();
-		var w_width = $(window).width();
-		var scroll_height = $(window).scrollTop();
-		submitPopup.style.left = (w_width - submitPopupWidth) / 2 + "px";
-		submitPopup.style.top = scroll_height + (w_height - submitPopupHeight) / 2 + "px";
-		submitPopup.style.visibility = "visible";
-		grayPanel.style.display = "block";
-	}
-
-	function submitCancel(){
-		submitPopup.style.visibility = "hidden";
-		grayPanel.style.display = "none";
-	}
-
-	// 全体のクリックイベントを取得して、settingPopup以外をクリックしたらsettingPopupを隠す
-	$(document).on('click touchend', function(event) {
-		  if (!$(event.target).closest('div#submitPopup').length) {
-			  submitCancel();
-		  } else if($(event.target).closest('#submitButton').length){
-			  submitConfirm();
-		  }
-	});
 	</script>
 
 </body>

@@ -40,7 +40,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	再度、入力してください。</p>
 
 	<form id="newschedule" name="newschedule" enctype="multipart/form-data" action="./NewScheduleConfirm" method="post">
-	<table id="table">
+	<table cellspacing="0" id="table">
 		<tr>
 			<th>イベント名</th>
 			<td><input type="text" maxlength="50" size="50" name="eventName"></td>
@@ -63,19 +63,20 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 				<input type="" id="date"><br>
 				<div id="dateDiv"></div>
 			</td>
-			<td></td>
+			<td>日付をクリックして入力してください。</td>
 		</tr>
 		<tr id="email">
 			<th>対象者のアドレス</th>
 			<td>
-				<textarea id="targetEmailTextarea" rows="3" cols="50"></textarea><br>
-				<input type="checkbox" name="key" value="1">
-				<input type="email" size="32" name="targetEmail[]">
-				<input type="button" id="addButton" onclick="addEmail();" value="+">
+				<textarea id="targetEmailTextarea" rows="5" cols="50"></textarea>
 			</td>
-			<td>キーパーソンにはチェックを入れてください。</td>
+			<td>アドレスを改行で分けて入力してください。<br>キーパーソンには最初に*をつけてください。</td>
 		</tr>
-		<tr id="beforeAdd1"><th>入力締切日時</th><td><input id="eventDeadline" name="eventDeadline" autocomplete="off"></td><td></td></tr>
+		<tr id="beforeAdd1">
+			<th>入力締切日時</th>
+			<td><input id="eventDeadline" name="eventDeadline" autocomplete="off"></td>
+			<td></td>
+		</tr>
 		<tr id="reminder">
 			<th>リマインダー設定</th>
 			<td>
@@ -94,6 +95,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 				<input type="number" min="1" name="eventConditionDenom">分の
 				<input type="number" min="1" name="eventConditionNumer">以上
 			</td>
+			<td></td>
 		</tr>
 		<tr id="file">
 			<th>添付ファイル</th>
@@ -101,6 +103,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 				<input type="file" name="files" multiple>
 				<input type="button" id="addButton" onclick="addFile();" value="+">
 			</td>
+			<td></td>
 		</tr>
 	</table>
 		<input type="checkbox" name="isInputInform" value="true">回答者が現在の回答人数を分かるようにする<br>
@@ -114,9 +117,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	</main>
 <%@include file="../include/footer.jsp" %>
 
+
+<%@include file="./include/newschedulejs.jsp" %>
 <script type="text/javascript">
 	<%@include file="./include/logoutpopupjs.jsp" %>
-	<%@include file="./include/newschedulejs.jsp" %>
 
 	$("#eventDeadline").datetimepicker();
 	</script>
