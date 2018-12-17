@@ -28,10 +28,10 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	<h2>新規スケジュールの確認</h2>
 
 	<table>
-		<tr><th>イベント名：</th><td>${ eventName }</td></tr>
-		<tr><th>イベント内容：</th><td>${ eventContent }</td></tr>
+		<tr><th>イベント名</th><td>${ eventName }</td></tr>
+		<tr><th>イベント内容</th><td>${ eventContent }</td></tr>
 		<tr>
-			<th>候補日程：</th>
+			<th>候補日程</th>
 			<td>
 				<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
 				<table>
@@ -61,7 +61,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			</td>
 		</tr>
 		<% } %>
-		<tr><th>入力締切日時：</th><td>${ eventDeadline }</td></tr>
+		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
 		<% int remindDatesSize = ((ArrayList<int[]>)session.getAttribute("remindDates")).size(); %>
 		<tr>
 			<th rowspan="<%= remindDatesSize %>">リマインダー日時：</th>
@@ -79,7 +79,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		</tr>
 		<% } %>
 		<tr>
-			<th>開催条件：</th>
+			<th>開催条件</th>
 			<td>
 			<% if ((boolean)session.getAttribute("isEventCondition")) { %>
 				${ eventConditionDenom }分の${ eventConditionNumer }以上

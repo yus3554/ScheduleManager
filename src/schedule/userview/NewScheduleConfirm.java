@@ -22,6 +22,7 @@ import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
+import schedule.model.HtmlEscape;
 import schedule.model.ScheduleDate;
 
 
@@ -126,10 +127,10 @@ public class NewScheduleConfirm extends HttpServlet {
 					} else {
 						switch(name) {
 						case "eventName":
-							eventName = value;
+							eventName = HtmlEscape.htmlEscape(value);
 							break;
 						case "eventContent":
-							eventContent = value;
+							eventContent = HtmlEscape.htmlEscape(value);
 							eventContent = eventContent.replace("\n", "");
 							eventContent = eventContent.replace("\r", "<br>");
 							eventContent = eventContent.replace("\r\n", "<br>");
@@ -150,7 +151,7 @@ public class NewScheduleConfirm extends HttpServlet {
 							temp1Keys.add(value);
 							break;
 						case "targetEmail[]":
-							tempTargetEmails.add(value);
+							tempTargetEmails.add(HtmlEscape.htmlEscape(value));
 							break;
 						case "remindDate[]":
 							remindDatesTemp1.add(value);

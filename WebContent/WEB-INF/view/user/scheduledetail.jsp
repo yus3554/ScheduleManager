@@ -84,32 +84,17 @@ td:empty {
 
 	<table>
 		<tr><th>イベント名</th><td>${ eventName }</td></tr>
-		<tr><th>イベント内容</th><td>${ eventContent }</td></tr>
 		<% if( request.getAttribute("decideDate") != null) {%>
-		<tr><th>決定日時</th><td>${ decideDate }<br><br>[備考]<br>${ note }</td></tr>
+		<tr>
+			<th>決定日時</th>
+			<td>
+				${ decideDate }
+				<% if(((String)request.getAttribute("note")).length() != 0){ %>
+					<h4>備考</h4>${ note }
+				<% } %>
+			</td>
+		</tr>
 		<% } %>
-		<tr>
-			<th>候補日程</th>
-			<td>
-				<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)request.getAttribute("eventDates"); %>
-				<table>
-					<% for(ScheduleDate sd : sdList) { %>
-						<%= sd.toString() %>
-					<% } %>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<th>開催条件</th>
-			<td>
-			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
-				${ eventConditionDenom }分の${ eventConditionNumer }以上
-			<% } else { %>
-				なし
-			<% } %>
-			</td>
-		</tr>
-		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
 		<tr>
 			<th>
 				全体の回答状況<br>（○の数）
@@ -186,6 +171,18 @@ td:empty {
 			</td>
 		</tr>
 		<% } %>
+		<tr><th>イベント内容</th><td>${ eventContent }</td></tr>
+		<tr>
+			<th>開催条件</th>
+			<td>
+			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
+				${ eventConditionDenom }分の${ eventConditionNumer }以上
+			<% } else { %>
+				なし
+			<% } %>
+			</td>
+		</tr>
+		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
 	</table>
 	<div id="popup">
       <p>

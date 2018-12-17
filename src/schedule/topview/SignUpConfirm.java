@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import schedule.model.HtmlEscape;
+
 /**
  * Servlet implementation class SignUp
  */
@@ -34,9 +36,9 @@ public class SignUpConfirm extends HttpServlet {
 		// postされてきた情報をエンコード
 		request.setCharacterEncoding("utf-8");
 		// requestの"name"パラメータを取得
-		String name = (String) request.getParameter("userNameSignUp");
-		String email = (String) request.getParameter("emailSignUp");
-		String pass = (String) request.getParameter("passwordSignUp");
+		String name = HtmlEscape.htmlEscape((String) request.getParameter("userNameSignUp"));
+		String email = HtmlEscape.htmlEscape((String) request.getParameter("emailSignUp"));
+		String pass = HtmlEscape.htmlEscape((String) request.getParameter("passwordSignUp"));
 
 		session.setAttribute("userNameSignUp", name);
 		session.setAttribute("emailSignUp", email);

@@ -118,24 +118,21 @@ public class NewScheduleSubmit extends HttpServlet {
 
 		// 調整者に通知
     	String subject = "[日程要求送信完了]" + schedule.getEventName();
-    	String content = "<html><body><br>" + schedule.getEventName() + "の送信が完了しました。"
-    			+ "<br><br><hr align=\"left\" width=\"55%\"><br>"
-				+ "[対象者]<br>";
     	String targetListStr = "";
     	for(HashMap<String, String> targetHM : targetList) {
     		targetListStr += targetHM.get("targetEmail") + "<br>";
     	}
-		content += targetListStr + "<br>"
-				+ "<br><br><hr align=\"left\" width=\"55%\"><br>"
-				+ "<table><tr><th>イベント名：</th><td>" + schedule.getEventName() + "</td></tr>"
-				+ "<tr><th>イベント内容：</th><td>" + schedule.getEventContent() + "</td></tr>"
-				+ "<tr><th>候補日程：</th><td>" + schedule.getEventDeadline() + "</td></tr>"
-				+ "<tr><th>締め切り：</th><td>";
-		String dateStr = "";
+    	String dateStr = "";
 		for(ScheduleDate sd : new ScheduleDateTable().getDateList(id, schedule.getSenderEmail())) {
-			dateStr += sd.toString() + "<br>";
+			dateStr += sd.toString();
 		}
-		content += dateStr + "</td></tr>"
+		String content = "<html><body><br>「" + schedule.getEventName() + "」の送信が完了しました。"
+    			+ "<hr align=\"left\" width=\"55%\">"
+				+ "<table border=\"1\" cellspacing=\"0\"><tr><th>イベント名</th><td>" + schedule.getEventName() + "</td></tr>"
+				+ "<tr><th>イベント内容</th><td>" + schedule.getEventContent() + "</td></tr>"
+				+ "<tr><th>対象者</th><td>" + targetListStr + "</td></tr>"
+				+ "<tr><th>候補日程</th><td>" + dateStr + "</td></tr>"
+				+ "<tr><th>締め切り</th><td>" + schedule.getEventDeadline() + "</td></tr>"
 				+ "</table></body></html>";
     	new SendMail().send(subject, content, senderEmail);
 

@@ -19,6 +19,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import schedule.model.HtmlEscape;
+
 /**
  * サーブレット実行クラス LoginCheck
  * ログインチェック
@@ -40,8 +42,9 @@ public class LoginCheck extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		String email = (String) request.getParameter("email");
-		String pass = (String) request.getParameter("password");
+
+		String email = HtmlEscape.htmlEscape((String) request.getParameter("email"));
+		String pass = HtmlEscape.htmlEscape((String) request.getParameter("password"));
 
 		// sessionを取得
 		HttpSession session = request.getSession(false);

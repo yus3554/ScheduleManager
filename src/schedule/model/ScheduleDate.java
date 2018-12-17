@@ -39,13 +39,11 @@ public class ScheduleDate {
 	}
 
 	public String toString() {
-		String timeStr = "</td>";
+		String timeStr = " ";
 		for(int i = 0; i < time.length; i++) {
 			if(time[i] == 0)
-				timeStr += "<td>" + (i + 1) + "限</td>";
-			else
-				timeStr += "<td></td>";
+				timeStr += "" + (i + 1) + "限 ";
 		}
-		return "<tr><td>" + date + timeStr + "</tr>";
+		return date + timeStr + "<br>";
 	}
 }
