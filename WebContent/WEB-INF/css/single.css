@@ -23,12 +23,17 @@ h1 a {
 	text-decoration: none;
 }
 
+h1 a:hover{
+	color: #ffffff;
+	text-decoration: none;
+}
+
 main {
 	display: grid;
 	min-height: 500px;
 }
 
-table, td, th { border: 1px #000000 solid; }
+th {text-align:center;}
 
 #description {
 	font-size: 15px;

@@ -19,6 +19,27 @@
   background: url('data:image/svg+xml,<svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><line fill="none" stroke="#000000" stroke-width="0.2" stroke-miterlimit="10" x1="0" y1="0" x2="10" y2="10"/></svg>') no-repeat;
   background-size: 100%;
     }
+    #submitPopup {
+  visibility: hidden;
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+  border: #6495ed 3px ridge;
+  position: absolute;
+  z-index: 2;
+   text-align: center;
+}
+#grayPanel{
+	background : #000;
+	opacity  : 0.5;
+	width : 100%;
+	height : 120%;
+	position : fixed;
+	top : 0;
+	left : 0;
+	display : none;
+	z-index : 1;
+}
 </style>
 <%@include file="../include/font.jsp" %>
 </head>
@@ -82,9 +103,9 @@
 
 	<div id="saveload"></div>
 	<% if(request.getAttribute("isInput").equals("0")) { %>
-	<input type="button" value="送信" onclick="answerSubmit();"/>
+	<input type="button" id="submitButton" value="送信" onclick="answerSubmit();"/>
 	<% } else { %>
-	<input type="button" value="修正" onclick="answerSubmit();"/>
+	<input type="button" id="submitButton" value="修正" onclick="answerSubmit();"/>
 	<% } %>
 	<input type="button" value="一時保存" onclick="save();"/>
 	<input type="button" value="一時保存反映" onclick="load();"/>
@@ -102,6 +123,10 @@
 	</table>
 	</div>
 	</main>
+	<div id="submitPopup">
+        	回答の送信が完了しました。
+    </div>
+    <div id="grayPanel"></div>
     <%@include file="../include/footer.jsp" %>
 
 	<script><%@include file="../../js/jquery-3.3.1.min.js"%></script>
@@ -145,7 +170,8 @@
 				}
 			<% } %>
 			<% } %>
-			form.submit();
+			submitConfirm();
+			//form.submit();
 		}
 
 		// 一時保存
@@ -194,6 +220,36 @@
 			// submit
 			form.submit();
 		}
+
+		// 送信完了ポップアップ
+		var submitPopup = document.getElementById("submitPopup");
+	var grayPanel = document.getElementById("grayPanel");
+	var submitPopupWidth = submitPopup.clientWidth;
+	var submitPopupHeight = submitPopup.clientHeight;
+
+	function submitConfirm(){
+		var w_height = $(window).height();
+		var w_width = $(window).width();
+		var scroll_height = $(window).scrollTop();
+		submitPopup.style.left = (w_width - submitPopupWidth) / 2 + "px";
+		submitPopup.style.top = scroll_height + (w_height - submitPopupHeight) / 2 + "px";
+		submitPopup.style.visibility = "visible";
+		grayPanel.style.display = "block";
+	}
+
+	function submitCancel(){
+		submitPopup.style.visibility = "hidden";
+		grayPanel.style.display = "none";
+	}
+
+	// 全体のクリックイベントを取得して、settingPopup以外をクリックしたらsettingPopupを隠す
+	$(document).on('click touchend', function(event) {
+		  if (!$(event.target).closest('div#submitPopup').length) {
+			  submitCancel();
+		  } else if($(event.target).closest('#submitButton').length){
+			  submitConfirm();
+		  }
+	});
 	</script>
 
 </body>

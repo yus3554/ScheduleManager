@@ -17,6 +17,7 @@
 		var remindTr = document.getElementById("reminder");
 		var fileTr = document.getElementById("file");
 
+
 		// とりあえず
 		// 今から2日後を締め切り
 		var deadline = new Date(Date.now() + 2 * 24 * 60 * 60000);

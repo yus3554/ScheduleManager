@@ -82,7 +82,7 @@ public class DecideScheduleSubmit extends HttpServlet {
     	}
 
     	// 要求者に決定完了メールを送る
-    	HashMap<String, String>  scheduleHM = new ScheduleTable().getSchedule(targetHM.get("id"), targetHM.get("senderEmail"));
+    	HashMap<String, String>  scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
     	String subject = "[日時決定完了]" + scheduleHM.get("eventName");
     	String content = "<html><body><br>" + scheduleHM.get("eventName") + "の日時が決定が完了しました。"
     			+ "<br><br><hr align=\"left\" width=\"55%\"><br>"

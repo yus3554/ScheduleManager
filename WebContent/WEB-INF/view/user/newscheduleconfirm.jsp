@@ -112,8 +112,8 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 
 <script>
 <%@include file="../../js/jquery-3.3.1.min.js" %>
-</script>
 <%@include file="./include/logoutpopupjs.jsp" %>
+</script>
 
 </body>
 </html>
