@@ -22,11 +22,11 @@
 					<table class="table border-bottom">
 						<tr>
 							<th>名前</th>
-							<td>${ userName }</td>
+							<td>${ userNameSignUp }</td>
 						</tr>
 						<tr>
 							<th>メールアドレス</th>
-							<td>${ email }</td>
+							<td>${ emailSignUp }</td>
 						</tr>
 						<tr>
 							<th>パスワード</th>

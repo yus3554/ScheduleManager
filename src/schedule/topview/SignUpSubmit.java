@@ -40,9 +40,9 @@ public class SignUpSubmit extends HttpServlet {
 		HttpSession session = request.getSession(false);
 
 		// sessionから新規アカウント情報を取得
-		String userName = (String)session.getAttribute("userName");
-		String email = (String)session.getAttribute("email");
-		String pass = (String)session.getAttribute("password");
+		String userName = (String)session.getAttribute("userNameSignUp");
+		String email = (String)session.getAttribute("emailSignUp");
+		String pass = (String)session.getAttribute("passwordSignUp");
 
 		// 回答ページのリンクに使うポート番号などを含むアドレス
 		String address = "";
@@ -90,10 +90,10 @@ public class SignUpSubmit extends HttpServlet {
 		}
 
 		// sessionから新規アカウント情報を削除
-		session.removeAttribute("userName");
-		session.removeAttribute("email");
-		session.removeAttribute("password");
-		session.removeAttribute("passwordHidden");
+		session.removeAttribute("userNameSignUp");
+		session.removeAttribute("emailSignUp");
+		session.removeAttribute("passwordSignUp");
+		session.removeAttribute("passwordHiddenSignUp");
 
 		// リクエストをviewに飛ばす
 		RequestDispatcher dispatcher = request.getRequestDispatcher(view);

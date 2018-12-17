@@ -27,23 +27,23 @@
 						<fieldset>
 							<div class="form-group">
 								<label>名前</label> <input type="text" placeholder="名前"
-									class="form-control" name="userName" required>
+									class="form-control" name="userNameSignUp" required>
 								<div class="invalid-feedback">名前の入力は必須です</div>
 							</div>
 							<div class="form-group">
 								<label>メールアドレス</label> <input type="email" placeholder="メールアドレス"
-									class="form-control" name="email" required>
+									class="form-control" name="emailSignUp" required>
 								<div class="invalid-feedback">メールアドレスが正しく入力されていません</div>
 							</div>
 							<div class="form-group">
 								<label>パスワード</label> <input type="password" placeholder="パスワード"
-									class="form-control" id="password-input" name="password" required>
+									class="form-control" id="password-input" name="passwordSignUp" required>
 								<div class="invalid-feedback">パスワードの入力は必須です</div>
 							</div>
 							<div class="form-group">
 								<label>確認用パスワード</label> <input type="password"
 									placeholder="パスワードの確認" class="form-control"
-									id="password-confirmation-input" name="confirmPassword" required>
+									id="password-confirmation-input" name="confirmPasswordSignUp" required>
 								<div class="invalid-feedback">確認用パスワードが入力されていないか一致しません</div>
 							</div>
 							<a class="btn btn-outline-secondary" href="./TopPage" role="button">戻る</a>
@@ -94,10 +94,10 @@
 
 		// テスト用の自動入力ボタン
 		function newAutoInput() {
-			form.userName.value = "名無し";
-			form.email.value = "nanashi@test.com";
-			form.password.value = "aaaa";
-			form.confirmPassword.value = "aaaa";
+			form.userNameSignUp.value = "名無し";
+			form.emailSignUp.value = "nanashi@test.com";
+			form.passwordSignUp.value = "aaaa";
+			form.confirmPasswordSignUp.value = "aaaa";
 		}
 	</script>
 </body>

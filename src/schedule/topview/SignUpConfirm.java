@@ -34,13 +34,13 @@ public class SignUpConfirm extends HttpServlet {
 		// postされてきた情報をエンコード
 		request.setCharacterEncoding("utf-8");
 		// requestの"name"パラメータを取得
-		String name = (String) request.getParameter("userName");
-		String email = (String) request.getParameter("email");
-		String pass = (String) request.getParameter("password");
+		String name = (String) request.getParameter("userNameSignUp");
+		String email = (String) request.getParameter("emailSignUp");
+		String pass = (String) request.getParameter("passwordSignUp");
 
-		session.setAttribute("userName", name);
-		session.setAttribute("email", email);
-		session.setAttribute("password", pass);
+		session.setAttribute("userNameSignUp", name);
+		session.setAttribute("emailSignUp", email);
+		session.setAttribute("passwordSignUp", pass);
 
 		// jspを指定
 		String view = "/WEB-INF/view/auth/signupconfirm.jsp";
