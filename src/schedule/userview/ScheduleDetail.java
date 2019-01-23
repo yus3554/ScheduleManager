@@ -167,10 +167,6 @@ public class ScheduleDetail extends HttpServlet {
 		// 新規スケジュールの対象者アドレスのグループ化的
 		// jsを別ファイルに
 
-		// データベースの変更
-		// scheduleDatesTableが増えた
-		// ビルドパスで、tomcat内にjavax.mailを入れる必要があるので、研究室のパソコンにぶち込む
-
 
 		// リストの長さをrequestに格納
 		request.setAttribute("targetListLength", targetListLength);

@@ -5,7 +5,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール管理</title>
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+	integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP"
+	crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <style><%@include file="./css/single.css" %></style>
 <%@include file="./view/include/font.jsp" %>
@@ -45,11 +50,21 @@
 
 					<form id="loginform" name="loginform" action="./LoginCheck" method="post">
 						<fieldset>
-							<div class="form-group">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="far fa-envelope"></i>
+									</span>
+								</div>
 								<input type="email" placeholder="メールアドレス" class="form-control"
 									name="email">
 							</div>
-							<div class="form-group">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="fas fa-key"></i>
+									</span>
+								</div>
 								<input type="password" placeholder="パスワード" class="form-control"
 									name="password">
 							</div>

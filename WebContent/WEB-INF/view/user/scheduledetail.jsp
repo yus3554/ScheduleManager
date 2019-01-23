@@ -82,7 +82,7 @@ td:empty {
       <p><a href="../RequestSchedules">スケジュール一覧に戻る</a></p>
 	<h2>${ eventName }</h2>
 
-	<table>
+	<table border="1">
 		<tr><th>イベント名</th><td>${ eventName }</td></tr>
 		<% if( request.getAttribute("decideDate") != null) {%>
 		<tr>

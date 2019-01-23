@@ -14,11 +14,6 @@
 	<%@include file="../include/header.jsp" %>
 	<main>
 	<div id="honbun">
-
-	<!-- 空欄がある状態でsubmitしたら表示 -->
-	<p id="blanktext">確認パスワードが異なります。<br>
-	再度、入力してください。</p>
-
 		<div class="mt-3 container">
 			<div class="row">
 				<div class="col-sm-6 col-md-4">
@@ -86,9 +81,6 @@
 								});
 					}, false);
 		})();
-
-		// 最初は非表示
-		document.getElementById("blanktext").style.display = "none";
 
 		var form = document.forms.signup;
 

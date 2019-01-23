@@ -5,6 +5,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Schedule List</title>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <style>
 	<%@include file="../../css/user.css" %>
 	table th{
@@ -26,30 +28,32 @@
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
-      <p><a href="./UserPage">ユーザーページに戻る</a></p>
 
-	<table>
-		<thead>
+	<table class="table table-bordered">
+		<thead class="thead-light">
 		<tr>
-			<th>日時決定</th>
 			<th>イベント名</th>
 			<th>イベント内容</th>
-			<th>入力締切日</th>
+			<th>回答締切日</th>
 			<th>回答人数</th>
 			<th>削除</th>
 		</tr>
 		</thead>
 		<tbody>
 	<% for (int i = (int) request.getAttribute("listLength") - 1; i >= 0; i--) { %>
+		<% if( request.getAttribute("decideDate" + i) != null) {%>
+		<tr class="table-active">
+		<% } else { %>
 		<tr>
-			<td><% if( request.getAttribute("decideDate" + i) != null) {%>○<% } %></td>
+		<% } %>
 			<td>
+				<% if( request.getAttribute("decideDate" + i) != null) {%>[日時決定済] <% } %>
 				<a href="./RequestSchedules/<%= request.getAttribute("id" + i) %>">
 					<%= request.getAttribute("eventName" + i) %>
 				</a>
 			</td>
 			<td>
-				<% String eventContent = (String)request.getAttribute("eventContent" + i); %>
+				<% String eventContent = ((String)request.getAttribute("eventContent" + i)).replace("<br>", "  "); %>
 				<% if( eventContent.length() <= 15 ) { %>
 				<%= eventContent %>
 				<% } else { %>

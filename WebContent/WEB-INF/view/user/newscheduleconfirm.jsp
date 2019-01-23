@@ -7,6 +7,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>新規スケジュールの確認</title>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <style>
 <%@include file="../../css/user.css" %>
 nav #new{
@@ -25,25 +27,28 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 	<main>
 	<%@include file="./include/nav.jsp" %>
 	<div id="honbun">
-	<h2>新規スケジュールの確認</h2>
+	<h4 class="border-bottom">新規日程要求</h4>
 
-	<table>
+	<table class="table border-bottom">
 		<tr><th>イベント名</th><td>${ eventName }</td></tr>
 		<tr><th>イベント内容</th><td>${ eventContent }</td></tr>
 		<tr>
 			<th>候補日程</th>
 			<td>
 				<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
-				<table>
+				<table style="border-style:solid">
+				<thead class="thead-light"><tr><th>日付</th><td>1限</td><td>2限</td><td>3限</td><td>4限</td><td>5限</td></tr></thead>
+				<tbody>
 				<% for(ScheduleDate sd : sdList){ %>
 					<%= sd.toString() %>
 				<% } %>
+				</tbody>
 				</table>
 			</td>
 		</tr>
 		<% int addressNum = ((ArrayList<String>)session.getAttribute("targetEmails")).size(); %>
 		<tr>
-			<th rowspan="<%= addressNum %>">対象者のアドレス：</th>
+			<th rowspan="<%= addressNum %>">対象者のアドレス</th>
 			<td>
 				<%= ((ArrayList<String>)session.getAttribute("targetEmails")).get(0) %>
 				<% if(((ArrayList<Boolean>)session.getAttribute("keys")).get(0)){ %>
@@ -64,7 +69,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
 		<% int remindDatesSize = ((ArrayList<int[]>)session.getAttribute("remindDates")).size(); %>
 		<tr>
-			<th rowspan="<%= remindDatesSize %>">リマインダー日時：</th>
+			<th rowspan="<%= remindDatesSize %>">リマインダー日時</th>
 			<td>
 				締め切り日時の<%= ((ArrayList<int[]>)session.getAttribute("remindDates")).get(0) %>日前の
 				<%= ((ArrayList<int[]>)session.getAttribute("remindTimes")).get(0) %>時
@@ -90,7 +95,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		</tr>
 		<% if((int)session.getAttribute("fileNum") != -1) { %>
 			<tr>
-				<th rowspan="<%= (int)session.getAttribute("fileNum") + 1 %>">添付ファイル：</th>
+				<th rowspan="<%= (int)session.getAttribute("fileNum") + 1 %>">添付ファイル</th>
 				<td>${ fileName0 }</td>
 			</tr>
 			<% for(int i = 1; i < (int)session.getAttribute("fileNum") + 1 ; i++) { %>
@@ -104,7 +109,8 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 
 	以上の内容でよろしいでしょうか？
 	<form action="./NewScheduleSubmit" method="post">
-		<input type="submit" value="送信"><input type="button" onClick="javascript:history.back();" value="戻る">
+		<button type="button" class="btn btn-outline-secondary" onClick="javascript:history.back();">戻る</button>
+		<button type="submit" class="btn btn-primary">送信</button>
 	</form>
 	</div>
 	</main>
