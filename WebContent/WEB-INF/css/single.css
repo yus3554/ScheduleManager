@@ -29,6 +29,7 @@ h1 a:hover{
 }
 
 main {
+	font-family: "M PLUS 1p";
 	display: grid;
 	min-height: 500px;
 }
