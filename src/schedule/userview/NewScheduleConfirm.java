@@ -194,8 +194,9 @@ public class NewScheduleConfirm extends HttpServlet {
 		// とりあえず空欄を抜いて、空欄に合わせてキーパーソン内の添字を変更
 		int times = 0;
 		for(int i = 0; i < tempTargetEmails.size(); i++) {
-			if(!tempTargetEmails.get(i).equals("") && tempTargetEmails.get(i) != null) {
-				targetEmails.add(tempTargetEmails.get(i));
+			String tempEmail = tempTargetEmails.get(i);
+			if(!tempEmail.equals("") && tempEmail != null && !targetEmails.contains(tempEmail)) {
+				targetEmails.add(tempEmail);
 				for(int j = 0; j < temp1Keys.size(); j++) {
 					if(Integer.parseInt(temp1Keys.get(j)) == i ) {
 						temp2Keys.add(times);

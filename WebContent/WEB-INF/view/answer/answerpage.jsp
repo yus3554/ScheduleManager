@@ -75,6 +75,10 @@
 				<th>イベント内容：</th>
 				<td>${ eventContent }</td>
 			</tr>
+			<tr>
+				<th>回答締め切り：</th>
+				<td>${ eventDeadline }</td>
+			</tr>
 			<%
 				if ((boolean) request.getAttribute("isInputInform")) {
 			%>

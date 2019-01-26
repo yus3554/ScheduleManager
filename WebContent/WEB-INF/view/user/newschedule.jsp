@@ -32,6 +32,7 @@
 <style><%@include file="../../css/user.css" %></style>
 <script><%@include file="./include/bootstrap-datetimepicker.min.js" %></script>
 <%@include file="../include/font.jsp" %>
+<script><%@include file="./include/bootstrap-maxlength.js"%></script>
 
 <style>
 .custom-file-input:lang(ja) ~ .custom-file-label::after {
@@ -61,14 +62,14 @@
 						class="needs-validation" novalidate>
 						<fieldset>
 							<div class="form-group">
-								<label>イベント名</label> <input type="text" placeholder="イベント名"
+								<label>イベント名</label> <input type="text" maxlength="50"
 									class="form-control" name="eventName" required>
 								<div class="invalid-feedback">イベント名の入力は必須です</div>
 								<p class="help-block">※50文字まで</p>
 							</div>
 							<div class="form-group">
 								<label>イベント内容</label>
-								<textarea wrap="hard" maxlength="1000" rows="10"
+								<textarea wrap="hard" maxlength="1000" rows="10" id="eventContent"
 									class="form-control" form="newschedule" name="eventContent"
 									required></textarea>
 								<div class="invalid-feedback">イベント内容の入力は必須です</div>

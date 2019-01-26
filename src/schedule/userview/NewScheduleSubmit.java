@@ -131,7 +131,8 @@ public class NewScheduleSubmit extends HttpServlet {
 				+ "<table border=\"1\" cellspacing=\"0\"><tr><th>イベント名</th><td>" + schedule.getEventName() + "</td></tr>"
 				+ "<tr><th>イベント内容</th><td>" + schedule.getEventContent() + "</td></tr>"
 				+ "<tr><th>対象者</th><td>" + targetListStr + "</td></tr>"
-				+ "<tr><th>候補日程</th><td>" + dateStr + "</td></tr>"
+				+ "<tr><th>候補日程</th><td><table border=\"1\" cellspacing=\"0\">"
+				+ "<tr><th>日付</th><td>1限</td><td>2限</td><td>3限</td><td>4限</td><td>5限</td></tr>" + dateStr + "</table></td></tr>"
 				+ "<tr><th>締め切り</th><td>" + schedule.getEventDeadline() + "</td></tr>"
 				+ "</table></body></html>";
     	new SendMail().send(subject, content, senderEmail);

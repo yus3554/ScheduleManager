@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>スケジュール管理</title>
+<title>日程調整システム</title>
 <link rel="stylesheet"
 	href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -30,7 +30,7 @@
 </head>
 <body>
 	<%@include file="./view/include/header.jsp" %>
-		<div id="description">スケジュールを調整・管理できるWebサイトです。</div>
+		<div id="description">日程調整を管理できるWebサイトです。</div>
 	<main>
 	<div id="honbun">
 

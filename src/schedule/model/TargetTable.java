@@ -78,7 +78,7 @@ public class TargetTable {
 		return url;
 	}
 
-	// randomURLからアドレスを取り出す
+	// randomURLから取り出す
 	public HashMap<String, String> getTarget(String randomURL) {
 		DataSource dataSource = null;
 		Connection conn = null;

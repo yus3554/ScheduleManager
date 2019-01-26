@@ -101,7 +101,7 @@
 								<label>入力締切日時</label>
 								<div class="input-group">
 									<input id="eventDeadline" class="form-control" name="eventDeadline" required
-										autocomplete="off">
+										>
 									<div class="input-group-append">
 										<span class="input-group-text"> <i
 											class="fas fa-calendar-alt"></i>

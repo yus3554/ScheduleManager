@@ -23,6 +23,10 @@
 						$("#date-feedback").addClass("d-block");
 						event.preventDefault();
 						event.stopPropagation();
+					} else {
+						$("#date").removeClass("is-invalid");
+						$("#date").addClass("is-valid");
+						$("#date-feedback").removeClass("d-block");
 					}
 					form.classList.add('was-validated');
 					textAreaEmail();
@@ -42,6 +46,11 @@
 		});
 		$("#date").on("dp.change", function(e) {
 			addDate(e.date.format("YYYY/MM/DD"));
+			if(submitFlg){
+				$("#date").removeClass("is-invalid");
+				$("#date").addClass("is-valid");
+				$("#date-feedback").removeClass("d-block");
+			}
 		});
 		$("#eventDeadline").datetimepicker({
 			dayViewHeaderFormat : "YYYY MMMM",
@@ -49,6 +58,17 @@
 			sideBySide : true
 		});
 	});
+
+	$('input[name="eventName"]').maxlength({
+		alwaysShow: true,
+		warningClass: "label label-success",
+        limitReachedClass: "label label-danger"
+    });
+	$('textarea#eventContent').maxlength({
+		alwaysShow: true,
+		warningClass: "label label-success",
+        limitReachedClass: "label label-danger"
+    });
 
 	function dateReset() {
 		$("#dateDiv").html("");

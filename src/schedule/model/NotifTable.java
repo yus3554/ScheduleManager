@@ -52,6 +52,37 @@ public class NotifTable {
 		}
 	}
 
+	public void insert(String randomURL, String notifTime, int type) {
+		DataSource dataSource = null;
+		Connection conn = null;
+		try {
+			InitialContext context = new InitialContext();
+			// lookupのjdbc/以下がテーブル名 WebContent/META-INF/context.xmlと合わせる
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/notifs");
+			conn = dataSource.getConnection();
+
+			String sql = "insert into notifs values (?, ?, ?);";
+			PreparedStatement patmt = conn.prepareStatement(sql);
+
+			patmt.setString(1, randomURL);
+			patmt.setString(2, notifTime);
+			patmt.setInt(3, type);
+
+			patmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	// 現在の時間を入れてnotifリストを返す
 	public ArrayList<HashMap<String, String>> getNotifList(String nowTime) {
 		ArrayList<HashMap<String, String>> notifs = new ArrayList<>();

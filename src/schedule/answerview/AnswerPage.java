@@ -3,6 +3,7 @@ package schedule.answerview;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 import schedule.model.AnswerTable;
+import schedule.model.NotifTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
@@ -78,6 +80,7 @@ public class AnswerPage extends HttpServlet {
 			HashMap<String, String> scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
 			request.setAttribute("eventName", scheduleHM.get("eventName"));
 			request.setAttribute("eventContent", scheduleHM.get("eventContent"));
+			request.setAttribute("eventDeadline", scheduleHM.get("eventDeadline"));
 
 			// 対象者全てをidとsenderEmailを使って取得
 			ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
@@ -220,6 +223,28 @@ public class AnswerPage extends HttpServlet {
 		LocalDateTime ldt = LocalDateTime.now();
 
 		new TargetTable().isInputUpdate(randomURL, note, ldt.toString());
+
+		// 全員回答しているかの確認
+		// していたらnotifTableに追加
+		// randomURLから対象者を取得し、スケジュールのidとsenderEmailを取得
+		HashMap<String, String> targetHM = new TargetTable().getTarget(randomURL);
+		String id = targetHM.get("id");
+		String senderEmail = targetHM.get("senderEmail");
+		// idとsenderEmailから対象者リストを取得
+		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, senderEmail);
+		int inputNum = 0;
+		// リストをforし、入力してあったらinputNumを1増やす
+		for(HashMap<String, String> hm : targetList) {
+			if(Integer.parseInt(hm.get("isInput")) == 1) {
+				inputNum++;
+			}
+		}
+		// 全員回答していたら通知
+		if(targetList.size() == inputNum) {
+			String nowTime = ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			new NotifTable().insert(randomURL, nowTime, 3);
+		}
+
 
 		doGet(request, response);
 	}

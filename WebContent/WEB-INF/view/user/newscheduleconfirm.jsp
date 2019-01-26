@@ -109,7 +109,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 
 	以上の内容でよろしいでしょうか？
 	<form action="./NewScheduleSubmit" method="post">
-		<button type="button" class="btn btn-outline-secondary" onClick="javascript:history.back();">戻る</button>
+		<button type="button" class="btn btn-outline-secondary" onClick="history.back();">戻る</button>
 		<button type="submit" class="btn btn-primary">送信</button>
 	</form>
 	</div>
