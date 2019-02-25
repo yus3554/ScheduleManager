@@ -24,7 +24,9 @@ import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 import schedule.model.AnswerTable;
+import schedule.model.DeleteScheduleTable;
 import schedule.model.NotifTable;
+import schedule.model.RequestAttachmentTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
@@ -58,16 +60,28 @@ public class AnswerPage extends HttpServlet {
 		// 対象者の情報を取得
 		HashMap<String, String> targetHM = new TargetTable().getTarget(randomURL);
 
-		// idキーがあるならば回答ページを表示
-		if(targetHM.containsKey("id")) {
 
+		// 削除済みならそのページを表示
+		String deleteTitle = new DeleteScheduleTable().getDeleteTitle(randomURL);
+		if( deleteTitle != null ) {
+			request.setAttribute("deleteTitle", deleteTitle);
+			// jspを指定
+			String view = "/WEB-INF/view/answer/deletepage.jsp";
+			RequestDispatcher dispatcher = request.getRequestDispatcher(view);
+
+			dispatcher.forward(request, response);
+		}
+		// idキーがあるならば回答ページを表示
+		else if(targetHM.containsKey("id")) {
 			String senderEmail = targetHM.get("senderEmail");
+			request.setAttribute("senderEmail", senderEmail);
 			String targetEmail = targetHM.get("targetEmail");
 			String note = targetHM.get("note");
 			if(note != null) {
 				note = note.replace("<br>", "\n");
 			}
 			String id = targetHM.get("id");
+			request.setAttribute("id", id);
 			String sendDate = targetHM.get("sendDate");
 
 			request.setAttribute("senderName", new UserTable().getName(senderEmail));
@@ -81,6 +95,15 @@ public class AnswerPage extends HttpServlet {
 			request.setAttribute("eventName", scheduleHM.get("eventName"));
 			request.setAttribute("eventContent", scheduleHM.get("eventContent"));
 			request.setAttribute("eventDeadline", scheduleHM.get("eventDeadline"));
+
+			// 日程調整者からの添付ファイルを取得
+			ArrayList<String> requestFileNameList = new RequestAttachmentTable().getFileNames(id, senderEmail);
+			request.setAttribute("requestFileNameList", requestFileNameList);
+			boolean isRequestFile = false;
+			if (requestFileNameList != null && requestFileNameList.size() != 0) {
+				isRequestFile = true;
+			}
+			request.setAttribute("isRequestFile", isRequestFile);
 
 			// 対象者全てをidとsenderEmailを使って取得
 			ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));

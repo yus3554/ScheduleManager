@@ -17,9 +17,8 @@ import javax.servlet.http.HttpSession;
 //import org.apache.tomcat.jdbc.pool.DataSource;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
-import schedule.model.HtmlEscape;
 
 /**
  * サーブレット実行クラス LoginCheck
@@ -43,8 +42,8 @@ public class LoginCheck extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 
-		String email = HtmlEscape.htmlEscape((String) request.getParameter("email"));
-		String pass = HtmlEscape.htmlEscape((String) request.getParameter("password"));
+		String email = StringEscapeUtils.escapeHtml4((String) request.getParameter("email"));
+		String pass = StringEscapeUtils.escapeHtml4((String) request.getParameter("password"));
 
 		// sessionを取得
 		HttpSession session = request.getSession(false);
@@ -82,7 +81,6 @@ public class LoginCheck extends HttpServlet {
 	 * @return name
 	 */
 	protected String authUser(String email, String pass){
-		/* 取りあえずユーザー名とパスワードが入力されていれば認証する */
 		DataSource dataSource = null;
 		Connection conn = null;
 		try {

@@ -17,9 +17,11 @@ import schedule.model.ScheduleTable;
 import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
 import schedule.model.AnswerTable;
+import schedule.model.DeleteScheduleTable;
 import schedule.model.RequestAttachmentTable;
 import schedule.model.ScheduleDateTable;
 import schedule.model.NotifTable;
+import schedule.model.RemindDateTable;
 
 /**
  * Servlet implementation class ScheduleDeleteExecute
@@ -71,6 +73,7 @@ public class ScheduleDeleteExecute extends HttpServlet {
 
     	if(session.getAttribute("deleteConfirm") != "") {
 
+    		new DeleteScheduleTable().insert(randomURLs, new ScheduleTable().getSchedule(id, email).get("eventName"));
     		new ScheduleTable().delete(id, email);
     		for(int i = 0; i < targetListLength; i++) {
         		new AnswerTable().delete(randomURLs[i]);
@@ -80,6 +83,7 @@ public class ScheduleDeleteExecute extends HttpServlet {
     		new ScheduleDateTable().delete(id, email);
     		new TargetTable().delete(id, email);
     		new RequestAttachmentTable().delete(id, email);
+    		new RemindDateTable().delete(id, email);
     	}
 
     	// jspを指定

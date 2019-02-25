@@ -67,19 +67,17 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		</tr>
 		<% } %>
 		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
-		<% int remindDatesSize = ((ArrayList<int[]>)session.getAttribute("remindDates")).size(); %>
+		<% int remindDateTimesSize = ((ArrayList<int[]>)session.getAttribute("remindDateTimes")).size(); %>
 		<tr>
-			<th rowspan="<%= remindDatesSize %>">リマインダー日時</th>
+			<th rowspan="<%= remindDateTimesSize %>">リマインダー日時</th>
 			<td>
-				締め切り日時の<%= ((ArrayList<int[]>)session.getAttribute("remindDates")).get(0) %>日前の
-				<%= ((ArrayList<int[]>)session.getAttribute("remindTimes")).get(0) %>時
+				<%= ((ArrayList<int[]>)session.getAttribute("remindDateTimes")).get(0) %>
 			</td>
 		</tr>
-		<% for(int i = 1; i < remindDatesSize ; i++) { %>
+		<% for(int i = 1; i < remindDateTimesSize ; i++) { %>
 		<tr>
 			<td>
-				締め切り日時の<%= ((ArrayList<int[]>)session.getAttribute("remindDates")).get(i) %>日前の
-				<%= ((ArrayList<int[]>)session.getAttribute("remindTimes")).get(i) %>時
+				<%= ((ArrayList<int[]>)session.getAttribute("remindDateTimes")).get(i) %>
 			</td>
 		</tr>
 		<% } %>
@@ -105,6 +103,7 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			<% } %>
 		<% } %>
 	</table>
+	締め切りを過ぎた際にリマインダーを送る : <%= (boolean)session.getAttribute("isRemindDeadline") ? "有効" : "無効" %><br>
 	回答者が現在の回答人数を分かるようにする：<%= (boolean)session.getAttribute("isInputInform") ? "有効" : "無効" %><br><br>
 
 	以上の内容でよろしいでしょうか？

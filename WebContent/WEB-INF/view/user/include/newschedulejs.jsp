@@ -17,16 +17,18 @@
 						event.stopPropagation();
 					}
 					// 候補日程のvalidation
-					if ($("#dateDiv").html() == "") {
-						$("#date").removeClass("is-valid");
-						$("#date").addClass("is-invalid");
-						$("#date-feedback").addClass("d-block");
-						event.preventDefault();
-						event.stopPropagation();
-					} else {
-						$("#date").removeClass("is-invalid");
-						$("#date").addClass("is-valid");
-						$("#date-feedback").removeClass("d-block");
+					if(dateFlg == 1) {
+						if ($("#dateDiv1").html() == "") {
+							$("#date1").removeClass("is-valid");
+							$("#date1").addClass("is-invalid");
+							$("#date-feedback").addClass("d-block");
+							event.preventDefault();
+							event.stopPropagation();
+						} else {
+							$("#date1").removeClass("is-invalid");
+							$("#date1").addClass("is-valid");
+							$("#date-feedback").removeClass("d-block");
+						}
 					}
 					form.classList.add('was-validated');
 					textAreaEmail();
@@ -36,28 +38,78 @@
 
 	})();
 
+	function formatDate (date, format) {
+		  format = format.replace(/yyyy/g, date.getFullYear());
+		  format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+		  format = format.replace(/dd/g, ('0' + date.getDate()).slice(-2));
+		  format = format.replace(/HH/g, ('0' + date.getHours()).slice(-2));
+		  format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
+		  format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
+		  format = format.replace(/SSS/g, ('00' + date.getMilliseconds()).slice(-3));
+		  return format;
+		}
+
+	var todayDate = new Date().getDate();
+	// datetime用の変数
+	var datetimeStr = formatDate(new Date, "yyyy/MM/dd HH:mm");
 	$(function() {
-		$('#date').datetimepicker({
+		$('#date1').datetimepicker({
 			dayViewHeaderFormat : "YYYY MMMM",
 			format : 'YYYY/MM/DD',
 			useCurrent : false,
 			inline : true,
-			sideBySide : true
+			sideBySide : true,
+			minDate : new Date()
 		});
-		$("#date").on("dp.change", function(e) {
-			addDate(e.date.format("YYYY/MM/DD"));
+		$("#date1").on("dp.change", function(e) {
+			addDate(e.date.format("YYYY/MM/DD"), 1);
 			if(submitFlg){
-				$("#date").removeClass("is-invalid");
-				$("#date").addClass("is-valid");
+				$("#date1").removeClass("is-invalid");
+				$("#date1").addClass("is-valid");
+				$("#date-feedback").removeClass("d-block");
+			}
+		});
+		$('#date2').datetimepicker({
+			dayViewHeaderFormat : "YYYY MMMM",
+			useCurrent : false,
+			stepping : 15,
+			inline : true,
+			sideBySide : true,
+			minDate : new Date()
+		});
+		$("#date2").on("dp.change", function(e) {
+			datetimeStr = e.date.format("YYYY/MM/DD HH:mm");
+			if(submitFlg){
+				$("#date2").removeClass("is-invalid");
+				$("#date2").addClass("is-valid");
 				$("#date-feedback").removeClass("d-block");
 			}
 		});
 		$("#eventDeadline").datetimepicker({
 			dayViewHeaderFormat : "YYYY MMMM",
 			useCurrent : false,
-			sideBySide : true
+			sideBySide : true,
+			minDate : new Date()
+		});
+		$("#eventDeadline").on("dp.change", function(e) {
+			var deadline = new Date(e.date);
+			var defaultRemind = new Date(deadline.setDate(deadline.getDate() - 1));
+			defaultRemind = new Date(deadline.setHours(12));
+			defaultRemind = new Date(deadline.setMinutes(0));
+			$("#defaultRemind").val(formatDate(defaultRemind, "yyyy/MM/dd HH:mm"));
 		});
 	});
+
+	function remindDateTimePicker(){
+		$('input[name="remindDateTime[]"]').datetimepicker({
+			dayViewHeaderFormat : "YYYY MMMM",
+			useCurrent : false,
+			sideBySide : true,
+			minDate : new Date(),
+			maxDate : new Date(new Date().setDate(todayDate + 30))
+		});
+	}
+	remindDateTimePicker();
 
 	$('input[name="eventName"]').maxlength({
 		alwaysShow: true,
@@ -70,24 +122,72 @@
         limitReachedClass: "label label-danger"
     });
 
+	function Reset(){
+		dateReset();
+	}
 	function dateReset() {
 		$("#dateDiv").html("");
 	}
 
 	var target = document.getElementById("dateDiv");
 
-	function addDate(date) {
-		var dateDivHtml = $("#dateDiv").html();
-		var dateId = date.replace(/\//g, "-");
-		var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"date[]\" value=\"" + dateId + "\">"
-				+ date;
-		for (var i = 1; i <= 5; i++) {
-			html += " <input type=\"checkbox\" value=\"" + i + "\" name=\"" + "#" + dateId + "[]" + "\" checked>"
-					+ i + "限 ";
+	var dateFlg = 1; // 時間割と時分 1なら時間割, 2なら時分
+
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		  var activated_tab = e.target // activated tab
+		  var previous_tab = e.relatedTarget // previous tab
+
+		  dateFlg = parseInt(activated_tab.href.slice(-1));
+		  if(dateFlg == 2){
+			  $("#dateDiv1").html("");
+			  $("#datetime").prop('required',true);
+		  } else {
+			  $("#datetime").val("");
+			  $("#datetime").prop('required',false);
+		  }
+		  $("#dateFlg").val(dateFlg);
+	});
+
+	// 時分の追加ボタン
+	function addDateTime(){
+		addDate(datetimeStr, 2);
+	}
+	// 時分の削除ボタン
+	function deleteDateTime(){
+		var text = $("#datetime").val().replace(/\r\n|\r/g, "\n");
+		if(text.lastIndexOf("\n") != -1){
+			$("#datetime").val(text.slice(0, text.lastIndexOf("\n")));
+		} else {
+			$("#datetime").val("");
 		}
-		html += "<input type=\"button\" value=\"削除\" onclick=\'deleteDiv(\""
-				+ dateId + "\");\'>";
-		$("#dateDiv").html(dateDivHtml + html + "</div>");
+	}
+
+	// typeが1なら時間割, 2なら時分
+	function addDate(date, type) {
+		if(type == 1){
+			var dateId = date.replace(/\//g, "-");
+			dateId = dateId.replace(/\s+/g, "");
+			var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"date[]\" value=\"" + dateId + "\">"
+					+ date;
+			if(type == 1){
+				for (var i = 1; i <= 5; i++) {
+					html += " <input type=\"checkbox\" value=\"" + i + "\" name=\"" + "#" + dateId + "[]" + "\" checked>"
+							+ i + "限 ";
+				}
+			} else {
+				html += "〜 ";
+			}
+			html += "<input type=\"button\" value=\"削除\" onclick=\'deleteDiv(\""
+					+ dateId + "\");\'>";
+
+			$("#dateDiv1").html($("#dateDiv1").html() + html + "</div>");
+		} else {
+			var text = $("#datetime").val();
+			if(text != ""){
+				text += "\n";
+			}
+			$("#datetime").val(text + date + "〜");
+		}
 	}
 
 	function deleteDiv(str) {
@@ -97,6 +197,7 @@
 	// とりあえず
 	// 今から2日後を締め切り
 	var deadline = new Date(Date.now() + 2 * 24 * 60 * 60000);
+	var remindDate = new Date(Date.now() + 1 * 24 * 60 * 60000);
 	var sampleDate = new Date(Date.now() + 4 * 24 * 60 * 60000);
 
 	function addZero(n) {
@@ -134,24 +235,17 @@
 
 	// テスト用の自動入力ボタン
 	function AutoInput() {
-		$("#newschedule [name=eventName]").val("会議の開催日程について");
-		var sampleContent = "会議をします。";
-		$("#newschedule [name=eventContent]").val(
-				sampleContent + "\n\n" + sampleContent.repeat(5) + "\n"
-						+ sampleContent.repeat(3) + "\n"
-						+ sampleContent.repeat(2) + "\n"
-						+ sampleContent.repeat(1) + "\n\n"
-						+ sampleContent.repeat(3) + "\n"
-						+ sampleContent.repeat(2) + "\n"
-						+ sampleContent.repeat(1));
-		$("#targetEmailTextarea").val("s152017@eecs.tottori-u.ac.jp");
-		addDate("" + sampleDate.getFullYear() + "/"
-				+ addZero(sampleDate.getMonth() + 1) + "/"
-				+ addZero(sampleDate.getDate()));
+		$("#newschedule [name=eventName]").val("[デモ用]会議の開催日程について");
+		var sampleContent = "太田です。\n\n会議の日程を決めようと思いますので、ご都合の良い日時の回答をお願いします。\n\nよろしくお願いします。";
+		$("#newschedule [name=eventContent]").val(sampleContent);
+		$("#targetEmailTextarea").val("s152017@eecs.tottori-u.ac.jp\na@example.com\nb@example.com");
 		$("#eventDeadline").val(
 				"" + deadline.getFullYear() + "/"
 						+ addZero(deadline.getMonth() + 1) + "/"
 						+ addZero(deadline.getDate()) + " " + "00:00");
+		$("#defaultRemind").val("" + remindDate.getFullYear() + "/"
+				+ addZero(remindDate.getMonth() + 1) + "/"
+				+ addZero(remindDate.getDate()) + " " + "00:00");
 	}
 
 	function AutoInputFuyukai() {
@@ -165,10 +259,12 @@
 
 	function addRemind() {
 		var newDiv = document.createElement("div");
-		newDiv.innerHTML = "締め切りの <input type=\"number\" class=\"form-control\" min=\"0\" max=\"30\" name=\"remindDate[]\">日前の "
-				+ "<input type=\"number\" class=\"form-control\" min=\"0\" max=\"23\" name=\"remindTime[]\">時に再通知";
-		newDiv.setAttribute("class", "col-sm-10 col-md-7 form-inline");
-		$("#reminder")[0].appendChild(newDiv);
+		newDiv.innerHTML = "<input class=\"form-control\" name=\"remindDateTime[]\" autocomplete=\"off\">"
+					+ "<div class=\"input-group-append\"> <span class=\"input-group-text\"> <i class=\"fas fa-calendar-alt\"></i>"
+					+ "</span> </div>";
+		newDiv.setAttribute("class", "input-group");
+		$("#addButton").before(newDiv);
+		remindDateTimePicker();
 	}
 
 	// 開催条件のチェックを入れると数字を入れられるようになる
@@ -188,50 +284,7 @@
 	}
 	condition($("#condition").prop("checked"));
 
-	$('.custom-file-input').on('change', handleFileSelect);
-	function handleFileSelect(evt) {
-		$('#preview').remove();// 繰り返し実行時の処理
-		$(this).parents('.input-group').after('<div id="preview"></div>');
-		var files = evt.target.files;
-
-		for (var i = 0, f; f = files[i]; i++) {
-
-			var reader = new FileReader();
-
-			reader.onload = (function(theFile) {
-				return function(e) {
-					if (theFile.type.match('image.*')) {
-						var $html = [
-								'<div class="d-inline-block mr-1 mt-1"><img class="img-thumbnail" src="',
-								e.target.result,
-								'" title="',
-								escape(theFile.name),
-								'" style="height:100px;" /><div class="small text-muted text-center">',
-								escape(theFile.name), '</div></div>' ].join('');// 画像では画像のプレビューとファイル名の表示
-					} else {
-						var $html = [
-								'<div class="d-inline-block mr-1"><span class="small">',
-								escape(theFile.name), '</span></div>' ]
-								.join('');//画像以外はファイル名のみの表示
-					}
-
-					$('#preview').append($html);
-				};
-			})(f);
-
-			reader.readAsDataURL(f);
-		}
-
-		$(this).next('.custom-file-label')
-				.html(+files.length + '個のファイルを選択しました');
+	function addFiles(){
+		    $('#addFileBefore').before('<input type="file" class="form-control-file" name="files[]" multiple>');
 	}
-
-	//ファイルの取消
-	$('.reset').click(
-			function() {
-				$(this).parent().prev().children('.custom-file-label').html(
-						'ファイル選択...');
-				$('.custom-file-input').val('');
-				$('#preview').remove('');
-			})
 </script>

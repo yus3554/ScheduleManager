@@ -2,6 +2,8 @@ package schedule.userview;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,6 +34,7 @@ import schedule.model.Answer;
 import schedule.model.AnswerTable;
 import schedule.model.RequestAttachmentTable;
 import schedule.model.NotifTable;
+import schedule.model.RemindDateTable;
 
 /**
  * Servlet implementation class NewScheduleSubmit
@@ -95,25 +98,40 @@ public class NewScheduleSubmit extends HttpServlet {
 		// 初回の通知なのでtypeは0
 		new NotifTable().insert(randomURL, nowTime, 0);
 
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 		// 再送の通知
-		String deadline = (String)session.getAttribute("eventDeadline");
-		String deadlineDateStr = deadline.split(" ")[0];
-		String deadlineDateTimeStr = deadline.split(" ")[1];
-		LocalDate deadlineDate = LocalDate.parse(deadlineDateStr, DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-		LocalDateTime deadlineDateTime =
-				deadlineDate.atTime(Integer.parseInt(deadlineDateTimeStr.split(":")[0]), Integer.parseInt(deadlineDateTimeStr.split(":")[1]), 0);
-		// 再送日程を取得
-		ArrayList<Integer> remindDates = (ArrayList<Integer>)session.getAttribute("remindDates");
-		ArrayList<Integer> remindTimes = (ArrayList<Integer>)session.getAttribute("remindTimes");
-		for(int i = 0; i < remindDates.size(); i++) {
-			// 指定したリマインダー日時を設定
-			LocalDateTime notifTime = deadlineDateTime.minusDays(remindDates.get(i));
-			notifTime = notifTime.with(LocalTime.of(remindTimes.get(i), 0));
-			// notifTimeとldtを比べてnotifTimeが前なら通知は行わない
-			if(ldt.isBefore(notifTime)) {
+		ArrayList<String> remindDateTimes = (ArrayList<String>)session.getAttribute("remindDateTimes");
+		String remindDateTime = "";
+		for(int i = 0; i < remindDateTimes.size(); i++) {
+			if(!remindDateTimes.get(i).equals("")) {
 				// 再送の通知なのでtypeは1
-				new NotifTable().insert(randomURL, notifTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), 1);
+				try {
+					remindDateTime = sdf2.format(sdf1.parse(remindDateTimes.get(i)));
+				} catch (ParseException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+				}
+				new NotifTable().insert(randomURL, remindDateTime, 1);
 			}
+		}
+
+		// remindDatesに保存
+		new RemindDateTable().insert(id, senderEmail, remindDateTimes);
+
+		// 締め切り時のリマインダー
+		if((boolean)session.getAttribute("isRemindDeadline")) {
+			String deadline = (String)session.getAttribute("eventDeadline");
+			String deadlineDateTime = "";
+			try {
+				deadlineDateTime = sdf2.format(sdf1.parse(deadline));
+			} catch (ParseException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+			}
+			// 締め切り時の通知なのでtypeは4
+			new NotifTable().insert(randomURL, deadlineDateTime, 4);
 		}
 
 		// 調整者に通知

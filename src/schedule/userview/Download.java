@@ -39,10 +39,38 @@ public class Download extends HttpServlet {
 		// urlからrandomURLやfileNameを取得
     	// 1文字目には"\"が入っているので2文字目からを代入
     	String url = request.getPathInfo().substring(1);
-    	String randomURL = url.substring(0, 64);
-    	String fileName = url.substring(65);
+    	// targetかrequestのどっちか
+    	int isTR = 0;
+    	if( url.indexOf("/") == 6 ) { // target
+    		isTR = 0;
+    		url = url.substring(7);
+    	} else if (url.indexOf("/") == 7) { // request
+    		isTR = 1;
+    		url = url.substring(8);
+    	} else {
+    		isTR = -1;
+    	}
 
-    	InputStream is = new TargetAttachmentTable().getFile(randomURL, fileName);
+    	InputStream is = null;
+    	String fileName = "";
+
+    	// target
+    	if(isTR == 0) {
+    		String randomURL = url.substring(0, 64);
+    		fileName = url.substring(65);
+
+    		is = new TargetAttachmentTable().getFile(randomURL, fileName);
+    	}
+    	// request
+    	if(isTR == 1) {
+    		String id = url.substring(0, 23);
+    		String senderEmail = url.substring(24, 24 + (url.substring(24)).indexOf("/"));
+    		fileName = url.substring(24 + (url.substring(24)).indexOf("/") + 1);
+    		System.out.println("fileName : " + fileName);
+
+    		is = new RequestAttachmentTable().getFile(id, senderEmail, fileName);
+    	}
+
     	if(is != null) {
     		String encodedFilename = URLEncoder.encode(fileName, "UTF-8");
     		response.setHeader("Content-Disposition","attachment;" + "filename*=\"UTF-8''" + encodedFilename + "\"");
@@ -57,6 +85,7 @@ public class Download extends HttpServlet {
     			}
     		}
     	} else {
+        	response.setContentType("text/html; charset=UTF-8");
     		PrintWriter pw = response.getWriter();
     		pw.println("ファイルが存在しません。");
     	}

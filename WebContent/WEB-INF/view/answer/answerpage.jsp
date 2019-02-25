@@ -7,6 +7,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>スケジュール回答</title>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/garlic.js/1.4.2/garlic.min.js"></script>
 <style>
 	<%@include file="../../css/single.css" %>
 	textarea {
@@ -39,6 +43,10 @@
 	left : 0;
 	display : none;
 	z-index : 1;
+}
+#notSend{
+	display: none;
+	color: red;
 }
 </style>
 <%@include file="../include/font.jsp" %>
@@ -80,6 +88,19 @@
 				<td>${ eventDeadline }</td>
 			</tr>
 			<%
+				if ((boolean) request.getAttribute("isRequestFile")) {
+			%>
+			<tr>
+				<th>添付ファイル</th>
+				<td>
+					<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("requestFileNameList")).iterator(); i.hasNext();) { %>
+					<% String fileName = i.next(); %>
+					<a href="/ScheduleManager/Download/request/${ id }/${ senderEmail }/<%= fileName %>"><%= fileName %></a><br>
+					<% } %>
+				</td>
+			</tr>
+			<% } %>
+			<%
 				if ((boolean) request.getAttribute("isInputInform")) {
 			%>
 			<tr>
@@ -90,6 +111,9 @@
 		</table>
 		<hr>
 		<h3>回答</h3>
+		<div id="notSend">
+			回答・修正ボタンを押さないと、反映されません。
+		</div>
 		クリックするごとに、×→○→△の順で変わります。<br>
 
 		<form action="../AnswerPage/<%=session.getAttribute("randomURL")%>"
@@ -115,8 +139,7 @@
 					<%
 						for (int j = 0; j < times.length; j++) {
 					%>
-					<td align="center" valign="top" id="<%=times[j]%>Td<%=i%>">
-						<%
+					<td align="center" valign="top" id="<%=times[j]%>Td<%=i%>"><%
 							if (request.getAttribute(times[j] + i).equals("0")) {
 						%>×<%
 							} else if (request.getAttribute(times[j] + i).equals("1")) {
@@ -124,10 +147,9 @@
 							} else if (request.getAttribute(times[j] + i).equals("2")) {
 						%>○<%
 							} else if (request.getAttribute(times[j] + i).equals("-1")) {
-						%> <%
+						%><%
 							}
-						%>
-					</td>
+						%></td>
 					<input type="hidden" name="<%=times[j]%>[]" value="">
 					<%
 						}
@@ -140,23 +162,20 @@
 			<h4>添付ファイル</h4>
 			<div id="uploadedFileNameList">
 				<%
-					int fileNameIndex = 0;
-				%>
-				<%
 					for (Iterator<String> i = ((ArrayList<String>) request.getAttribute("uploadFileNameList")).iterator(); i
 							.hasNext();) {
 				%>
 				<%
 					String fileName = i.next();
 				%>
-				<a href="/ScheduleManager/Download/${ randomURL }/<%= fileName %>"><%=fileName%></a>
+				<a href="/ScheduleManager/Download/target/${ randomURL }/<%= fileName %>"><%=fileName%></a>
 				<input type="button" id="<%= fileName %>" value="削除"
 					onclick="deleteFile('/ScheduleManager/AnswerUpdateFileDelete', {'fileName':this.id, 'randomURL':'${ randomURL }'});"><br>
 				<%
 					}
 				%>
 			</div>
-			<br> <input type="file" name="files" multiple><br>
+			<br> <input type="file" name="files" id="files" multiple><br>
 			<h4>備考</h4>
 			<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note"
 				id="note">${ note }</textarea>
@@ -198,9 +217,15 @@
 
 	<script><%@include file="../../js/jquery-3.3.1.min.js"%></script>
 	<script>
+	// 反映されてませんの表示
+	function notSend(){
+		$("#notSend").show();
+	}
+
 		$("#saveload").hide();
 		var table = document.getElementById("table");
 		var cellclick = function(){
+			notSend();
 			if(this.innerHTML.trim() == "×"){
 				this.innerHTML = "○";
 			} else if(this.innerHTML.trim() == "△"){
@@ -287,6 +312,19 @@
 			form.submit();
 		}
 
+		// 備考が変更された時に反映されません的な
+		$('#note').change(function() {
+		    notSend();
+		});
+		// 添付ファイルが変更された時に反映されません的な
+		$(function() {
+			$('#files').on("change", function() {
+				var file = this.files[0];
+				if (file != null) {
+					notSend();
+				}
+			});
+		});
 	</script>
 
 </body>

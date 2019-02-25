@@ -39,6 +39,7 @@ public class ClientAnswer extends HttpServlet {
 		// urlからrandomURLを取得
 		// 1文字目には"\"が入っているので2文字目からを代入
 		String randomURL = request.getPathInfo().substring(1);
+		request.setAttribute("randomURL", randomURL);
 
 		// sessionを取得
 		HttpSession session = request.getSession(false);

@@ -78,8 +78,8 @@
 					</div>
 				</div>
 			</div>
+						<input type="button" onclick="loginAutoInput();" value="デモ用入力ボタン">
 		</div>
-		<input type="button" value="test" onclick="loginAutoInput();">
 	</div>
 
 	</main>

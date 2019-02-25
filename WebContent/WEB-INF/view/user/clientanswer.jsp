@@ -76,10 +76,9 @@
 	</table>
 	<h4>添付ファイル</h4>
 	<div id="uploadedFileNameList">
-	<% int fileNameIndex = 0; %>
 	<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("uploadFileNameList")).iterator(); i.hasNext();) { %>
 	<% String fileName = i.next(); %>
-	<a href="/ScheduleManager/Download/${ randomURL }/<%= fileName %>"><%= fileName %></a><br>
+	<a href="/ScheduleManager/Download/target/${ randomURL }/<%= fileName %>"><%= fileName %></a><br>
 	<% } %>
 	</div>
 	<h4>備考</h4>

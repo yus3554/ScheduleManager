@@ -2,9 +2,8 @@ package schedule.userview;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,14 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
-import schedule.model.HtmlEscape;
+import schedule.model.DateComparator;
 import schedule.model.ScheduleDate;
 
 
@@ -59,17 +58,17 @@ public class NewScheduleConfirm extends HttpServlet {
 		String eventContent = "";
 		String eventDeadline = "";
 		ArrayList<ScheduleDate> eventDates = new ArrayList<>();
+		String datetimeTemp = "";
+		ArrayList<String> datetime = new ArrayList<>();
+		int dateFlg = 1;
 		ArrayList<String> temp1Keys = new ArrayList<>();
 		ArrayList<Integer> temp2Keys = new ArrayList<>();
 		ArrayList<Boolean> keys = new ArrayList<>();
 		ArrayList<String> tempTargetEmails = new ArrayList<>();
 		ArrayList<String> targetEmails = new ArrayList<>();
-		ArrayList<String> remindDatesTemp1 = new ArrayList<>();
-		ArrayList<String> remindTimesTemp1 = new ArrayList<>();
-		ArrayList<Integer> remindDatesTemp2 = new ArrayList<>();
-		ArrayList<Integer> remindTimesTemp2 = new ArrayList<>();
-		ArrayList<Integer> remindDates = new ArrayList<>();
-		ArrayList<Integer> remindTimes = new ArrayList<>();
+		ArrayList<String> remindDateTimesTemp = new ArrayList<>();
+		ArrayList<String> remindDateTimes = new ArrayList<>();
+		boolean isRemindDeadline = false;
 		boolean isEventCondition = false;
 		int eventConditionNumer = 1;
 		int eventConditionDenom = 1;
@@ -82,8 +81,7 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.removeAttribute("targetEmails");
 		session.removeAttribute("keys");
 		session.removeAttribute("eventDeadline");
-		session.removeAttribute("remindDates");
-		session.removeAttribute("remindTimes");
+		session.removeAttribute("remindDateTimes");
 		if( session.getAttribute("fileNum") != null ) {
 			for(int i = 0; i <= (int)session.getAttribute("fileNum"); i++) {
 				session.removeAttribute("fileName" + i);
@@ -128,10 +126,10 @@ public class NewScheduleConfirm extends HttpServlet {
 					} else {
 						switch(name) {
 						case "eventName":
-							eventName = HtmlEscape.htmlEscape(value);
+							eventName = StringEscapeUtils.escapeHtml4(value);
 							break;
 						case "eventContent":
-							eventContent = HtmlEscape.htmlEscape(value);
+							eventContent = StringEscapeUtils.escapeHtml4(value);
 							eventContent = eventContent.replace("\n", "");
 							eventContent = eventContent.replace("\r", "<br>");
 							eventContent = eventContent.replace("\r\n", "<br>");
@@ -147,18 +145,24 @@ public class NewScheduleConfirm extends HttpServlet {
 							if( b )
 								eventDates.add(new ScheduleDate(value));
 							break;
+						case "datetime":
+							datetimeTemp = value;
+							break;
+						case "dateFlg":
+							dateFlg = Integer.parseInt(value);
+							break;
 							// キーパーソン
 						case "key[]":
 							temp1Keys.add(value);
 							break;
 						case "targetEmail[]":
-							tempTargetEmails.add(HtmlEscape.htmlEscape(value));
+							tempTargetEmails.add(StringEscapeUtils.escapeHtml4(value));
 							break;
-						case "remindDate[]":
-							remindDatesTemp1.add(value);
+						case "remindDateTime[]":
+							remindDateTimesTemp.add(value);
 							break;
-						case "remindTime[]":
-							remindTimesTemp1.add(value);
+						case "isRemindDeadline":
+							isRemindDeadline = Boolean.valueOf(value);
 							break;
 						case "eventDeadline":
 							eventDeadline = value;
@@ -191,6 +195,10 @@ public class NewScheduleConfirm extends HttpServlet {
     		  e.printStackTrace();
     	}
 
+		// 候補日程のソート
+		DateComparator dc = new DateComparator();
+		Collections.sort(eventDates, dc);
+
 		// とりあえず空欄を抜いて、空欄に合わせてキーパーソン内の添字を変更
 		int times = 0;
 		for(int i = 0; i < tempTargetEmails.size(); i++) {
@@ -221,25 +229,15 @@ public class NewScheduleConfirm extends HttpServlet {
 			eventConditionNumer = 1;
 		}
 
-		// リマインダーの日時両方あったら入れる
-		for(int i = 0; i < Math.max(remindDatesTemp1.size(), remindTimesTemp1.size()); i++) {
-			if(remindDatesTemp1.get(i) != null && remindTimesTemp1.get(i) != null) {
-				if(!remindDatesTemp1.get(i).equals("") && !remindTimesTemp1.get(i).equals("")){
-					if((Integer.parseInt(remindDatesTemp1.get(i)) >= 0 && Integer.parseInt(remindTimesTemp1.get(i)) >= 0)
-							&& (Integer.parseInt(remindDatesTemp1.get(i)) <= 30 && Integer.parseInt(remindTimesTemp1.get(i)) < 24)) {
-						remindDatesTemp2.add(Integer.parseInt(remindDatesTemp1.get(i)));
-						remindTimesTemp2.add(Integer.parseInt(remindTimesTemp1.get(i)));
-					}
-				}
-			}
-		}
 		// リマインダーの被りがあったらいれない
-		for(int i = 0; i < remindDatesTemp2.size(); i++) {
-			if(!remindDates.contains(remindDatesTemp2.get(i)) || !remindTimes.contains(remindTimesTemp2.get(i))){
-				remindDates.add(remindDatesTemp2.get(i));
-				remindTimes.add(remindTimesTemp2.get(i));
+		for(int i = 0; i < remindDateTimesTemp.size(); i++) {
+			if(!remindDateTimes.contains(remindDateTimesTemp.get(i)) || !remindDateTimes.contains(remindDateTimesTemp.get(i))){
+				remindDateTimes.add(remindDateTimesTemp.get(i));
 			}
 		}
+
+		System.out.println(dateFlg);
+		System.out.println(datetimeTemp);
 
 		// 取得した要素をsessionに保存
 		session.setAttribute("eventName", eventName);
@@ -248,8 +246,8 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.setAttribute("targetEmails", targetEmails);
 		session.setAttribute("keys", keys);
 		session.setAttribute("fileNum", fileNum);
-		session.setAttribute("remindDates", remindDates);
-		session.setAttribute("remindTimes", remindTimes);
+		session.setAttribute("remindDateTimes", remindDateTimes);
+		session.setAttribute("isRemindDeadline", isRemindDeadline);
 		session.setAttribute("eventDeadline", eventDeadline);
 		session.setAttribute("isEventCondition", isEventCondition);
 		session.setAttribute("eventConditionNumer", eventConditionNumer);

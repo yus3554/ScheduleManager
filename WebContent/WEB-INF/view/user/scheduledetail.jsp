@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ page import="java.util.ArrayList" %>
+     <%@ page import="java.util.Iterator" %>
     <%@ page import="schedule.model.ScheduleDate" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -138,15 +139,13 @@ td:empty {
 		<% int targetListLength = (int) request.getAttribute("targetListLength"); %>
 		<tr>
 			<th rowspan="<%= targetListLength %>">
-				各対象者の回答状況
+				各対象者の回答状況<br>(キーパーソンにはチェック)
 			</th>
 			<td>
+				<input type="checkbox" name="key[]" value="0" <% if( request.getAttribute("key0").equals("1")){ %>checked<% } %>>
 				<a href="../ClientAnswer/<%= request.getAttribute("randomURL0") %>">
 					<%= request.getAttribute("targetEmail0") %>
 				</a>
-				<% if( request.getAttribute("key0").equals("1")){ %>
-				(キーパーソン)
-				<% } %>
 				<% if( request.getAttribute("isInput0").equals("0")){ %>
 				[未回答]
 				<% } else { %>
@@ -157,12 +156,10 @@ td:empty {
 		<% for (int i = 1; i < targetListLength; i++) { %>
 		<tr>
 			<td>
+				<input type="checkbox" name="key[]" value="<%= i %>" <% if( request.getAttribute("key" + i).equals("1")){ %>checked<% } %>>
 				<a href="../ClientAnswer/<%= request.getAttribute("randomURL" + i) %>">
 					<%= request.getAttribute("targetEmail" + i) %>
 				</a>
-				<% if( request.getAttribute("key" + i).equals("1")){ %>
-				(キーパーソン)
-				<% } %>
 				<% if( request.getAttribute("isInput" + i).equals("0")){ %>
 				[未回答]
 				<% } else { %>
@@ -183,6 +180,27 @@ td:empty {
 			</td>
 		</tr>
 		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
+		<% if ((boolean) request.getAttribute("isRemindDates")) { %>
+		<tr>
+			<th>リマインダー日時</th>
+			<td>
+				<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("remindDates")).iterator(); i.hasNext();) { %>
+				<%= i.next() %><br>
+				<% } %>
+			</td>
+		</tr>
+		<% } %>
+		<% if ((boolean) request.getAttribute("isRequestFile")) { %>
+		<tr>
+			<th>添付ファイル</th>
+			<td>
+				<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("requestFileNameList")).iterator(); i.hasNext();) { %>
+				<% String fileName = i.next(); %>
+				<a href="/ScheduleManager/Download/request/${ id }/${ senderEmail }/<%= fileName %>"><%= fileName %></a><br>
+				<% } %>
+			</td>
+		</tr>
+		<% } %>
 	</table>
 	<div id="popup">
       <p>
@@ -274,30 +292,41 @@ var sdTime<%= i %> = [];
 <% } %>
 sdTimes.push(sdTime<%= i %>);
 <% } %>
-console.log(sdTimes);
 
 
 // キーパーソンの回答の○をandする
-// 1で全要素初期化し、その上からandしていく
+// 2で全要素初期化し、その上からandしていく
 var keyAnswers = [[2, 2, 2, 2, 2]];
-for(var i = 1; i < circleCount.length; i++){
-	keyAnswers.push([2, 2, 2, 2, 2]);
-}
-//targetAnswersは対象者達、サイズは対象者の人数
-var keyPerson = [];
-<% for(int i = 0; i < (int) request.getAttribute("targetListLength"); i++){ %>
-	<% if( request.getAttribute("key" + i).equals("1") ) { %>
-		keyPerson.push(<%= i %>);
-	<% } %>
-<% } %>
-for(var i = 0; i < keyPerson.length; i++){
-	var keyAnswer = targetsAnswers[keyPerson[i]];
-	for(var j = 0; j < circleCount.length; j++){
-		for(var k = 0; k < 5; k++){
-			keyAnswers[j][k] = (keyAnswers[j][k] == 2 && (keyAnswers[j][k] == keyAnswer[j][k])) ? 2 : 0;
-		}
+function keyAnswersInit(){
+	keyAnswers = [[2, 2, 2, 2, 2]];
+	for(var i = 1; i < circleCount.length; i++){
+		keyAnswers.push([2, 2, 2, 2, 2]);
 	}
 }
+keyAnswersInit();
+function keyPersonInit(){
+	keyPerson = [];
+	$('input[name="key[]"]:checked').each(function() {
+	    keyPerson.push(parseInt($(this).val()));
+	  });
+	for(var i = 0; i < keyPerson.length; i++){
+		var keyAnswer = targetsAnswers[keyPerson[i]];
+		for(var j = 0; j < circleCount.length; j++){
+			for(var k = 0; k < 5; k++){
+				keyAnswers[j][k] = (keyAnswers[j][k] == 2 && (keyAnswers[j][k] == keyAnswer[j][k])) ? 2 : 0;
+			}
+		}
+	}
+	console.log(keyAnswers);
+}
+keyPersonInit();
+
+
+//targetAnswersは対象者達、サイズは対象者の人数
+$('input[name="key[]"]').change(function() {
+	keyAnswersInit();
+	keyPersonInit();
+});
 
 // ポップアップを最初は表示させない
 popup.style.display = "none";

@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.AnswerTable;
+import schedule.model.RemindDateTable;
+import schedule.model.RequestAttachmentTable;
 import schedule.model.ScheduleDate;
 import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
@@ -67,6 +69,24 @@ public class ScheduleDetail extends HttpServlet {
 		request.setAttribute("eventConditionNumer", condition == null ? null : condition.split("/")[0]);
 		// 分母
 		request.setAttribute("eventConditionDenom", condition == null ? null : condition.split("/")[1]);
+
+		// 日程調整者からの添付ファイルを取得
+		ArrayList<String> requestFileNameList = new RequestAttachmentTable().getFileNames(id, senderEmail);
+		request.setAttribute("requestFileNameList", requestFileNameList);
+		boolean isRequestFile = false;
+		if (requestFileNameList != null && requestFileNameList.size() != 0) {
+			isRequestFile = true;
+		}
+		request.setAttribute("isRequestFile", isRequestFile);
+
+		// リマインダー日時を取得
+		ArrayList<String> remindDates = new RemindDateTable().getRemindDates(id, senderEmail);
+		request.setAttribute("remindDates", remindDates);
+		boolean isRemindDates = false;
+		if (remindDates != null && remindDates.size() != 0) {
+			isRemindDates = true;
+		}
+		request.setAttribute("isRemindDates", isRemindDates);
 
 		// 対象者全てをidとsenderEmailを使って取得
 		ArrayList<HashMap<String, String>> targetList = new TargetTable().getTargetList(id, (String)session.getAttribute("email"));
@@ -157,16 +177,6 @@ public class ScheduleDetail extends HttpServlet {
 			targetsAnswers.add(answers);
 		}
 		request.setAttribute("targetsAnswers", targetsAnswers);
-
-		//TODO 全体の回答状況を動的に、三角とか丸とか変えられるようにする
-		// あとは、全体のところのセルを押すと日程決定のメールを送れるようにする
-		// 不正なIDやrandamURLに対するエラーページ（一応やった）
-		// SSL関係の証明書とかの勉強
-		// 退会ページ
-		// 登録状況変更
-		// 新規スケジュールの対象者アドレスのグループ化的
-		// jsを別ファイルに
-
 
 		// リストの長さをrequestに格納
 		request.setAttribute("targetListLength", targetListLength);
