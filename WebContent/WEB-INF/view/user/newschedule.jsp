@@ -108,7 +108,7 @@
 									class="form-control" form="newschedule"
 									></textarea>
 									</div>
-									<input type="hidden" id="dateFlg" value="1" name="dateFlg">
+									<input type="hidden" id="dateType" value="1" name="dateType">
 							</div>
 
 							<div id="date-feedback" class="invalid-feedback">候補日程の入力は必須です</div>

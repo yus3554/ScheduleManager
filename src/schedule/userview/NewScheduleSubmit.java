@@ -32,6 +32,8 @@ import schedule.model.SessionConvert;
 import schedule.model.TargetTable;
 import schedule.model.Answer;
 import schedule.model.AnswerTable;
+import schedule.model.DatetimeAnswerTable;
+import schedule.model.DatetimeDateTable;
 import schedule.model.RequestAttachmentTable;
 import schedule.model.NotifTable;
 import schedule.model.RemindDateTable;
@@ -63,20 +65,27 @@ public class NewScheduleSubmit extends HttpServlet {
 		LocalDateTime ldt = LocalDateTime.now();
 		String id = ldt.toString();
 
+		String senderEmail = (String)session.getAttribute("email");
+
 		// DBにスケジュールを保存
 		SessionConvert sts = new SessionConvert(id, session);
 		Schedule schedule = sts.getSchedule();
 		new ScheduleTable().insert(schedule);
 
 		// 候補日程を保存
-		new ScheduleDateTable().insert(schedule, (ArrayList<ScheduleDate>)session.getAttribute("eventDates"));
-		// DBに対象者リストを保存
+		// 時間割
 		Answer answer = sts.getAnswer();
-		new AnswerTable().insert(answer, new ScheduleDateTable().getDateList(id, schedule.getSenderEmail()));
+		if((int)session.getAttribute("dateType") == 1) {
+			new ScheduleDateTable().insert(schedule, (ArrayList<ScheduleDate>)session.getAttribute("eventDates"));
+			// DBに対象者リストを保存
+			new AnswerTable().insert(answer, new ScheduleDateTable().getDateList(id, senderEmail));
+		} else { // 時分
+			new DatetimeDateTable().insert(id, senderEmail, (ArrayList<String>)session.getAttribute("datetime"));
+			new DatetimeAnswerTable().insert(answer, new DatetimeDateTable().getDates(id, senderEmail));
+		}
 
 		// 添付ファイルをサーバー内に保存
 		String path = getServletContext().getRealPath("data");
-		String senderEmail = (String)session.getAttribute("email");
 		int fileNum = (int)session.getAttribute("fileNum");
 		for(int i = 0; i <= fileNum; i++) {
 			String fileName = (String)session.getAttribute("fileName" + i);
@@ -140,18 +149,25 @@ public class NewScheduleSubmit extends HttpServlet {
     	for(HashMap<String, String> targetHM : targetList) {
     		targetListStr += targetHM.get("targetEmail") + "<br>";
     	}
-    	String dateStr = "";
-		for(ScheduleDate sd : new ScheduleDateTable().getDateList(id, schedule.getSenderEmail())) {
-			dateStr += sd.toString();
-		}
 		String content = "<html><body><br>「" + schedule.getEventName() + "」の送信が完了しました。"
     			+ "<hr align=\"left\" width=\"55%\">"
 				+ "<table border=\"1\" cellspacing=\"0\"><tr><th>イベント名</th><td>" + schedule.getEventName() + "</td></tr>"
 				+ "<tr><th>イベント内容</th><td>" + schedule.getEventContent() + "</td></tr>"
-				+ "<tr><th>対象者</th><td>" + targetListStr + "</td></tr>"
-				+ "<tr><th>候補日程</th><td><table border=\"1\" cellspacing=\"0\">"
-				+ "<tr><th>日付</th><td>1限</td><td>2限</td><td>3限</td><td>4限</td><td>5限</td></tr>" + dateStr + "</table></td></tr>"
-				+ "<tr><th>締め切り</th><td>" + schedule.getEventDeadline() + "</td></tr>"
+				+ "<tr><th>対象者</th><td>" + targetListStr + "</td></tr><tr><th>候補日程</th><td>";
+		if(schedule.getDateType() == 1) {
+			String dateStr = "";
+			for(ScheduleDate sd : new ScheduleDateTable().getDateList(id, schedule.getSenderEmail())) {
+				dateStr += sd.toString();
+			}
+			content += "<table border=\"1\" cellspacing=\"0\">"
+					+ "<tr><th>日付</th><td>1限</td><td>2限</td><td>3限</td><td>4限</td><td>5限</td></tr>" + dateStr + "</table>";
+		} else {
+			ArrayList<String> datetime = (ArrayList<String>)session.getAttribute("datetime");
+			for(int i = 0; i < datetime.size(); i++) {
+				content += datetime.get(i) + "〜<br>";
+			}
+		}
+		content += "</td></tr><tr><th>締め切り</th><td>" + schedule.getEventDeadline() + "</td></tr>"
 				+ "</table></body></html>";
     	new SendMail().send(subject, content, senderEmail);
 

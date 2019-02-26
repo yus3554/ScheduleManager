@@ -44,26 +44,38 @@
 				<th>開催日時 : </th>
 				<td>
 					<table id="table" border="2" cellpadding="10">
-						<tr>
-							<th>日付</th>
-							<th>1限</th>
-							<th>2限</th>
-							<th>3限</th>
-							<th>4限</th>
-							<th>5限</th>
-						</tr>
-						<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
-						<% for(int i = 0; i < sdList.size(); i++) { %>
-						<tr>
-							<th>
-								<%= sdList.get(i).getDate() %>
-							</th>
-							<% for(int j = 0; j < 5; j++) { %>
-							<td><% if(sdList.get(i).getTime(j) != -1) {
-							%><input type="checkbox" name="date" value="<%= i %>,<%= j %>"><%
-									} %></td>
+					<% if ((int)session.getAttribute("dateType") == 1) { %>
+							<tr>
+								<th>日付</th>
+								<th>1限</th>
+								<th>2限</th>
+								<th>3限</th>
+								<th>4限</th>
+								<th>5限</th>
+							</tr>
+							<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
+							<% for(int i = 0; i < sdList.size(); i++) { %>
+							<tr>
+								<th>
+									<%= sdList.get(i).getDate() %>
+								</th>
+								<% for(int j = 0; j < 5; j++) { %>
+								<td><% if(sdList.get(i).getTime(j) != -1) {
+								%><input type="checkbox" name="date" value="<%= i %>,<%= j %>"><%
+										} %></td>
+								<% } %>
+							</tr>
 							<% } %>
-						</tr>
+						<% } else { %>
+							<% ArrayList<String> datetime = (ArrayList<String>)session.getAttribute("datetime"); %>
+							<% for(int i = 0; i < datetime.size(); i++) { %>
+							<tr>
+								<th>
+									<%= datetime.get(i) %>
+								</th>
+								<td><input type="checkbox" name="date" value="<%= i %>"></td>
+							</tr>
+							<% } %>
 						<% } %>
 					</table>
 				</td>

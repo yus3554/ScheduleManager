@@ -44,6 +44,7 @@
 				<th>開催日時 : </th>
 				<td>
 					<table id="table" border="2" cellpadding="10">
+					<% if ((int)session.getAttribute("dateType") == 1) { %>
 						<tr>
 							<th>日付</th>
 							<th>1限</th>
@@ -66,6 +67,18 @@
 							<% } %>
 						</tr>
 						<% } %>
+					<% } else { %>
+						<% ArrayList<String> datetime = (ArrayList<String>)session.getAttribute("datetime"); %>
+						<% int[] date = (int[])session.getAttribute("date"); %>
+						<% for(int i = 0; i < datetime.size(); i++) { %>
+							<tr>
+								<th>
+									<%= datetime.get(i) %>
+								</th>
+								<td><% if( date[i] == 1 ){%>●<% } %></td>
+							</tr>
+						<% } %>
+					<% } %>
 					</table>
 				</td>
 			</tr>

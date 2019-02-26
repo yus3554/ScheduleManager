@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import schedule.model.DatetimeDateTable;
 import schedule.model.ScheduleDate;
 import schedule.model.ScheduleDateTable;
 import schedule.model.ScheduleTable;
@@ -48,8 +49,17 @@ public class DecideSchedule extends HttpServlet {
     	// idとsenderEmailを入れてscheduleを取得
     	HashMap<String, String> scheduleHM = new HashMap<String, String>();
     	scheduleHM = new ScheduleTable().getSchedule(id, senderEmail);
-    	ArrayList<ScheduleDate> sdList = new ScheduleDateTable().getDateList(id, senderEmail);
-    	session.setAttribute("eventDates", sdList);
+
+    	int dateType = Integer.parseInt(scheduleHM.get("dateType"));
+    	session.setAttribute("dateType", dateType);
+
+    	if(dateType == 1) {
+    		ArrayList<ScheduleDate> sdList = new ScheduleDateTable().getDateList(id, senderEmail);
+    		session.setAttribute("eventDates", sdList);
+    	} else {
+    		ArrayList<String> datetime = new DatetimeDateTable().getDates(id, senderEmail);
+    		session.setAttribute("datetime", datetime);
+    	}
 
     	// scheduleをrequestに格納
     	session.setAttribute("id", scheduleHM.get("id"));

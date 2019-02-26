@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ page import="java.util.ArrayList" %>
+    <%@ page import="java.util.HashMap" %>
      <%@ page import="java.util.Iterator" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -51,6 +52,7 @@
 
 	<p><a href="../RequestSchedules/${ id }">スケジュール詳細に戻る</a></p>
 
+	<% if( (int)request.getAttribute("dateType") == 1) { %>
 	<table border="2">
 		<tr>
 			<th>日付</th>
@@ -74,6 +76,22 @@
 		</tr>
 		<% } %>
 	</table>
+	<% } else { %>
+		<table border="2">
+		<% ArrayList<HashMap<String, String>> answers = (ArrayList<HashMap<String, String>>)request.getAttribute("answers"); %>
+		<% for(int i = 0; i < (int)request.getAttribute("answersLength"); i++){ %>
+			<tr>
+				<th><%= answers.get(i).get("date") %></th>
+				<% int answer = Integer.parseInt(answers.get(i).get("answer")); %>
+				<td align="center" valign="top"><%
+				if( answer == 0 ){  %>×<% } %><%
+				if(answer == 1) {%>△<% } %><%
+				if(answer == 2) { %>○<% } %><%
+				if(answer == -1) { %><% }%></td>
+			</tr>
+		<% } %>
+		</table>
+	<% } %>
 	<h4>添付ファイル</h4>
 	<div id="uploadedFileNameList">
 	<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("uploadFileNameList")).iterator(); i.hasNext();) { %>

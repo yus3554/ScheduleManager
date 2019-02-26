@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import schedule.model.AnswerTable;
+import schedule.model.DatetimeAnswerTable;
+import schedule.model.DatetimeDateTable;
 import schedule.model.ScheduleTable;
 import schedule.model.TargetAttachmentTable;
 import schedule.model.TargetTable;
@@ -71,23 +73,31 @@ public class ClientAnswer extends HttpServlet {
 
 		// arraylistでanswersを取得する
 		// randomURLを使ってselect
-		ArrayList<HashMap<String, String>> answers = new ArrayList<>();
-		answers = new AnswerTable().getEmailAnswers(randomURL);
-
+		int dateType = Integer.parseInt(scheduleHM.get("dateType"));
+		request.setAttribute("dateType", dateType);
 		// scheduleListの数を取得
-		int answersLength = answers.size();
+		int answersLength = 0;
+		if( dateType == 1) {
+			ArrayList<HashMap<String, String>> answers = new ArrayList<>();
+			answers = new AnswerTable().getEmailAnswers(randomURL);
+			answersLength = answers.size();
 
-		HashMap<String, String> answerHM = new HashMap<>();
+			HashMap<String, String> answerHM = new HashMap<>();
 
-		// 0番目からrequestにスケジュールを格納
-		for(int i = 0; i < answersLength; i++) {
-			answerHM = answers.get(i);
-			request.setAttribute("date" + i, answerHM.get("date"));
-			request.setAttribute("first" + i, answerHM.get("first"));
-			request.setAttribute("second" + i, answerHM.get("second"));
-			request.setAttribute("third" + i, answerHM.get("third"));
-			request.setAttribute("fourth" + i, answerHM.get("fourth"));
-			request.setAttribute("fifth" + i, answerHM.get("fifth"));
+			// 0番目からrequestにスケジュールを格納
+			for(int i = 0; i < answersLength; i++) {
+				answerHM = answers.get(i);
+				request.setAttribute("date" + i, answerHM.get("date"));
+				request.setAttribute("first" + i, answerHM.get("first"));
+				request.setAttribute("second" + i, answerHM.get("second"));
+				request.setAttribute("third" + i, answerHM.get("third"));
+				request.setAttribute("fourth" + i, answerHM.get("fourth"));
+				request.setAttribute("fifth" + i, answerHM.get("fifth"));
+			}
+		} else {
+			ArrayList<HashMap<String, String>> answers = new DatetimeAnswerTable().getEmailAnswers(randomURL);
+			answersLength = answers.size();
+			request.setAttribute("answers", answers);
 		}
 
 		// リストの長さをrequestに格納

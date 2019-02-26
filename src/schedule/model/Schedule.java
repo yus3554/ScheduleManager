@@ -10,9 +10,10 @@ public class Schedule {
 	private int eventConditionNumer;
 	private int eventConditionDenom;
 	private boolean isInputInform;
+	private int dateType;
 
 	public Schedule(String id, String eventName, String eventContent, String eventDeadline, String senderEmail,
-			boolean isEventCondition, int eventConditionNumer, int eventConditionDenom, boolean isInputInform) {
+			boolean isEventCondition, int eventConditionNumer, int eventConditionDenom, boolean isInputInform, int dateType) {
 		this.id = id;
 		this.eventName = eventName;
 		this.eventContent = eventContent;
@@ -22,6 +23,7 @@ public class Schedule {
 		this.eventConditionNumer = eventConditionNumer;
 		this.eventConditionDenom = eventConditionDenom;
 		this.isInputInform = isInputInform;
+		this.dateType = dateType;
 	}
 
 	public String getId() {
@@ -52,4 +54,7 @@ public class Schedule {
 		return isInputInform;
 	}
 
+	public int getDateType() {
+		return dateType;
+	}
 }

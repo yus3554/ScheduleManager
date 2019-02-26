@@ -40,16 +40,29 @@ public class DecideScheduleConfirm extends HttpServlet {
     	// sessionを取得
     	HttpSession session = request.getSession(false);
 
-    	int dateLength = ((ArrayList<ScheduleDate>)session.getAttribute("eventDates")).size();
-    	int[][] date = new int[dateLength][5];
+    	int dateType = (int)session.getAttribute("dateType");
 
-    	String[] dateIndex = request.getParameterValues("date");
+    	if(dateType == 1) {
+	    	int dateLength = ((ArrayList<ScheduleDate>)session.getAttribute("eventDates")).size();
+	    	int[][] date = new int[dateLength][5];
 
-    	for(int i = 0; i < dateIndex.length; i++) {
-    		String[] splitDateIndex = dateIndex[i].split(",", 0);
-    		date[Integer.parseInt(splitDateIndex[0])][Integer.parseInt(splitDateIndex[1])] = 1;
+	    	String[] dateIndex = request.getParameterValues("date");
+
+	    	for(int i = 0; i < dateIndex.length; i++) {
+	    		String[] splitDateIndex = dateIndex[i].split(",", 0);
+	    		date[Integer.parseInt(splitDateIndex[0])][Integer.parseInt(splitDateIndex[1])] = 1;
+	    	}
+	    	session.setAttribute("date", date);
+    	} else {
+    		int dateLength = ((ArrayList<String>)session.getAttribute("datetime")).size();
+    		int[] date = new int[dateLength];
+
+    		String[] dateIndex = request.getParameterValues("date");
+    		for(int i = 0; i < dateIndex.length; i++) {
+	    		date[Integer.parseInt(dateIndex[i])] = 1;
+	    	}
+	    	session.setAttribute("date", date);
     	}
-    	session.setAttribute("date", date);
 
     	String note = request.getParameter("note");
     	note = note.replace("\n", "");

@@ -35,15 +35,22 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr>
 			<th>候補日程</th>
 			<td>
-				<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
-				<table style="border-style:solid">
-				<thead class="thead-light"><tr><th>日付</th><td>1限</td><td>2限</td><td>3限</td><td>4限</td><td>5限</td></tr></thead>
-				<tbody>
-				<% for(ScheduleDate sd : sdList){ %>
-					<%= sd.toString() %>
+				<% if( (int)session.getAttribute("dateType") == 1 ) { %>
+					<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
+					<table style="border-style:solid">
+					<thead class="thead-light"><tr><th>日付</th><td>1限</td><td>2限</td><td>3限</td><td>4限</td><td>5限</td></tr></thead>
+					<tbody>
+					<% for(ScheduleDate sd : sdList){ %>
+						<%= sd.toString() %>
+					<% } %>
+					</tbody>
+					</table>
+				<% } else { %>
+					<% ArrayList<String> datetimes = (ArrayList<String>)session.getAttribute("datetime"); %>
+					<% for(String datetime : datetimes){ %>
+						<%= datetime %>〜<br>
+					<% } %>
 				<% } %>
-				</tbody>
-				</table>
 			</td>
 		</tr>
 		<% int addressNum = ((ArrayList<String>)session.getAttribute("targetEmails")).size(); %>

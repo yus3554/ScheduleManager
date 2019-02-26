@@ -50,21 +50,36 @@ public class DecideScheduleSubmit extends HttpServlet {
     	String senderEmail = (String)session.getAttribute("email");
 
     	// 取得したdateなどをnotifsテーブルに格納する
-    	ArrayList<ScheduleDate> sdList = ((ArrayList<ScheduleDate>)session.getAttribute("eventDates"));
-    	int[][] date = (int[][])session.getAttribute("date");
+    	int dateType = (int)session.getAttribute("dateType");
+    	String tempDecideDate = "";
+    	ArrayList<String> decideDates = new ArrayList<>();
+
+    	if(dateType == 1) {
+    		ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates");
+    		int[][] date = (int[][])session.getAttribute("date");
+    		for(int i = 0; i < sdList.size(); i++) {
+        		for(int j = 0; j < 5; j++) {
+        			if( date[i][j] == 1 ){
+        				tempDecideDate += sdList.get(i).getDate() + " " + (j + 1) + "限";
+        				decideDates.add(tempDecideDate);
+        			}
+        			tempDecideDate = "";
+        		}
+        	}
+    	} else {
+    		ArrayList<String> datetime = (ArrayList<String>)session.getAttribute("datetime");
+    		int[] date = (int[])session.getAttribute("date");
+    		for(int i = 0; i < datetime.size(); i++) {
+        			if( date[i] == 1 ){
+        				tempDecideDate += datetime.get(i) + "〜";
+        				decideDates.add(tempDecideDate);
+        			}
+        			tempDecideDate = "";
+        	}
+    	}
     	// 備考
     	String note = (String)session.getAttribute("note");
-    	ArrayList<String> decideDates = new ArrayList<>();
-    	String tempDecideDate = "";
-    	for(int i = 0; i < sdList.size(); i++) {
-    		for(int j = 0; j < 5; j++) {
-    			if( date[i][j] == 1 ){
-    				tempDecideDate += sdList.get(i).getDate() + " " + (j + 1) + "限";
-    				decideDates.add(tempDecideDate);
-    			}
-    			tempDecideDate = "";
-    		}
-    	}
+
 
     	// scheduletableに決定日時を格納
     	new ScheduleTable().updateDecideDate(id, senderEmail, decideDates, note);

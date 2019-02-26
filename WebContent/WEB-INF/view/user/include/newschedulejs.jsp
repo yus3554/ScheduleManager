@@ -17,7 +17,7 @@
 						event.stopPropagation();
 					}
 					// 候補日程のvalidation
-					if(dateFlg == 1) {
+					if(dateType == 1) {
 						if ($("#dateDiv1").html() == "") {
 							$("#date1").removeClass("is-valid");
 							$("#date1").addClass("is-invalid");
@@ -131,21 +131,21 @@
 
 	var target = document.getElementById("dateDiv");
 
-	var dateFlg = 1; // 時間割と時分 1なら時間割, 2なら時分
+	var dateType = 1; // 時間割と時分 1なら時間割, 2なら時分
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 		  var activated_tab = e.target // activated tab
 		  var previous_tab = e.relatedTarget // previous tab
 
-		  dateFlg = parseInt(activated_tab.href.slice(-1));
-		  if(dateFlg == 2){
+		  dateType = parseInt(activated_tab.href.slice(-1));
+		  if(dateType == 2){
 			  $("#dateDiv1").html("");
 			  $("#datetime").prop('required',true);
 		  } else {
 			  $("#datetime").val("");
 			  $("#datetime").prop('required',false);
 		  }
-		  $("#dateFlg").val(dateFlg);
+		  $("#dateType").val(dateType);
 	});
 
 	// 時分の追加ボタン

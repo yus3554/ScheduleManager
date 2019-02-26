@@ -2,8 +2,13 @@ package schedule.userview;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,7 +65,7 @@ public class NewScheduleConfirm extends HttpServlet {
 		ArrayList<ScheduleDate> eventDates = new ArrayList<>();
 		String datetimeTemp = "";
 		ArrayList<String> datetime = new ArrayList<>();
-		int dateFlg = 1;
+		int dateType = 1;
 		ArrayList<String> temp1Keys = new ArrayList<>();
 		ArrayList<Integer> temp2Keys = new ArrayList<>();
 		ArrayList<Boolean> keys = new ArrayList<>();
@@ -148,8 +153,8 @@ public class NewScheduleConfirm extends HttpServlet {
 						case "datetime":
 							datetimeTemp = value;
 							break;
-						case "dateFlg":
-							dateFlg = Integer.parseInt(value);
+						case "dateType":
+							dateType = Integer.parseInt(value);
 							break;
 							// キーパーソン
 						case "key[]":
@@ -230,19 +235,34 @@ public class NewScheduleConfirm extends HttpServlet {
 		}
 
 		// リマインダーの被りがあったらいれない
-		for(int i = 0; i < remindDateTimesTemp.size(); i++) {
-			if(!remindDateTimes.contains(remindDateTimesTemp.get(i)) || !remindDateTimes.contains(remindDateTimesTemp.get(i))){
-				remindDateTimes.add(remindDateTimesTemp.get(i));
-			}
-		}
+		remindDateTimes = new ArrayList<>(new HashSet<>(remindDateTimesTemp));
 
-		System.out.println(dateFlg);
-		System.out.println(datetimeTemp);
+		// datetimeを配列に
+		datetimeTemp = datetimeTemp.replace("\r", "\n");
+		datetimeTemp = datetimeTemp.replace("\r\n", "\n");
+		// 重複なくす
+		ArrayList<String> dtTemp1 = new ArrayList<>(new HashSet<>(Arrays.asList(datetimeTemp.split("\n", 0))));
+		// ""があったら消す
+		dtTemp1.removeIf(a->{ return a.equals("");});
+		ArrayList<LocalDateTime> dtTemp2 = new ArrayList<>();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+		for(String s : dtTemp1) {
+			String temp = s.substring(0, s.length() - 1);
+			try {
+				dtTemp2.add(LocalDateTime.parse(temp, dtf));
+			} catch (DateTimeParseException e) {}
+		}
+		Collections.sort(dtTemp2);
+		for(LocalDateTime l : dtTemp2) {
+			datetime.add(l.format(dtf));
+		}
 
 		// 取得した要素をsessionに保存
 		session.setAttribute("eventName", eventName);
 		session.setAttribute("eventContent", eventContent);
 		session.setAttribute("eventDates", eventDates);
+		session.setAttribute("dateType", dateType);
+		session.setAttribute("datetime", datetime);
 		session.setAttribute("targetEmails", targetEmails);
 		session.setAttribute("keys", keys);
 		session.setAttribute("fileNum", fileNum);

@@ -118,6 +118,8 @@
 
 		<form action="../AnswerPage/<%=session.getAttribute("randomURL")%>"
 			method="post" id="answerForm" enctype="multipart/form-data">
+			<% String[] times = { "first", "second", "third", "fourth", "fifth" }; %>
+			<% if( (int)session.getAttribute("dateType") == 1) { %>
 			<table id="table" border="2" cellpadding="10">
 				<tr>
 					<th>日付</th>
@@ -127,9 +129,6 @@
 					<th>4限</th>
 					<th>5限</th>
 				</tr>
-				<%
-					String[] times = { "first", "second", "third", "fourth", "fifth" };
-				%>
 				<%
 					for (int i = 0; i < (int) session.getAttribute("answersLength"); i++) {
 				%>
@@ -159,6 +158,28 @@
 					}
 				%>
 			</table>
+			<% } else { %>
+				<table id="table" border="2" cellpadding="10">
+				<% for (int i = 0; i < (int) session.getAttribute("answersLength"); i++) { %>
+				<tr>
+					<th><%=request.getAttribute("date" + i)%> <input type="hidden"
+						name="date[]" value="<%=request.getAttribute("date" + i)%>"></th>
+					<td align="center" valign="top" id="answerTd<%=i%>"><%
+							if (request.getAttribute("answer" + i).equals("0")) {
+						%>×<%
+							} else if (request.getAttribute("answer" + i).equals("1")) {
+						%>△<%
+							} else if (request.getAttribute("answer" + i).equals("2")) {
+						%>○<%
+							} else if (request.getAttribute("answer" + i).equals("-1")) {
+						%><%
+							}
+						%></td>
+					<input type="hidden" name="answer[]" value="">
+				</tr>
+				<% } %>
+				</table>
+			<% } %>
 			<h4>添付ファイル</h4>
 			<div id="uploadedFileNameList">
 				<%
@@ -238,9 +259,9 @@
 		var tr = table.children;
 		for(var i = 0; i < tr.length; i++){
 			var td = tr[i].children;
-			for(var j = 1; j < td.length; j++){
+			for(var j = 0; j < td.length; j++){
 				var cell = td[j].children;
-				for(var k = 1; k < cell.length; k++){
+				for(var k = 0; k < cell.length; k++){
 					cell[k].onclick = cellclick;
 				}
 			}
@@ -249,45 +270,33 @@
 		function answerSubmit(){
 			var form = document.getElementById("answerForm");
 			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
-			<% for(int j = 0; j < times.length; j++){ %>
-				var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
-				if( <%= times[j] %>tdText.trim() == "×"){
-					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("0");
-				} else if( <%= times[j] %>tdText.trim() == "△" ){
-					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("1");
-				} else if( <%= times[j] %>tdText.trim() == "○" ){
-					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("2");
-				} else {
-					$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("-1");
-				}
-			<% } %>
+				<% if((int)session.getAttribute("dateType") == 1) { %>
+					<% for(int j = 0; j < times.length; j++){ %>
+						var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
+						if( <%= times[j] %>tdText.trim() == "×"){
+							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("0");
+						} else if( <%= times[j] %>tdText.trim() == "△" ){
+							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("1");
+						} else if( <%= times[j] %>tdText.trim() == "○" ){
+							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("2");
+						} else {
+							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("-1");
+						}
+					<% } %>
+				<% } else { %>
+					var answerTdText = document.getElementById("answerTd<%= i %>").innerHTML;
+					if( answerTdText.trim() == "×"){
+						$('input[name="answer[]"]').eq(<%= i %>).val("0");
+					} else if( answerTdText.trim() == "△" ){
+						$('input[name="answer[]"]').eq(<%= i %>).val("1");
+					} else if( answerTdText.trim() == "○" ){
+						$('input[name="answer[]"]').eq(<%= i %>).val("2");
+					} else {
+						$('input[name="answer[]"]').eq(<%= i %>).val("-1");
+					}
+				<% } %>
 			<% } %>
 			form.submit();
-		}
-
-		// 一時保存
-		function save(){
-			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
-			<% for(int j = 0; j < times.length; j++){ %>
-				var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
-				localStorage.setItem("<%= times[j] + i %>", <%= times[j] %>tdText);
-			<% } %>
-			<% } %>
-			localStorage.setItem("note", $("#note").val());
-			$("#saveload").html("一時保存しました。");
-			$("#saveload").show();
-		}
-
-		// 一時保存の反映
-		function load(){
-			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
-			<% for(int j = 0; j < times.length; j++){ %>
-				document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML = localStorage.getItem("<%= times[j] + i %>");
-			<% } %>
-			<% } %>
-			$("#note").val(localStorage.getItem("note"));
-			$("#saveload").html("一時保存を反映しました。");
-			$("#saveload").show();
 		}
 
 		// ファイル削除

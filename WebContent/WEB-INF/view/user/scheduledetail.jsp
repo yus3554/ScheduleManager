@@ -113,27 +113,42 @@ td:empty {
 			<td>
 			<input type="button" id="settingButton" value="セル色付け設定" style="float:right;">
 			<a href="./DecideSchedule/${ id }">対象者に日時の決定を送信する</a>
-				<table id="table" border="2">
-					<tr>
-						<th>日付</th>
-						<th>1限</th>
-						<th>2限</th>
-						<th>3限</th>
-						<th>4限</th>
-						<th>5限</th>
-					</tr>
-					<% int[][] counts = (int[][])request.getAttribute("counts"); %>
-					<% int[][] sdTimes = (int[][])request.getAttribute("sdTimes"); %>
-					<% ArrayList<ArrayList<int[]>> targetsAnswers = (ArrayList<ArrayList<int[]>>)request.getAttribute("targetsAnswers"); %>
-					<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
-					<tr>
-						<th><%= request.getAttribute("date" + i)%></th>
-						<% for(int j = 0; j < 5; j++) { %>
-						<td align="center" valign="top"><% if( sdTimes[i][j] != -1 ){ %><%= counts[i][j] %><% } %></td>
+				<% ArrayList<ArrayList<int[]>> targetsDateAnswers = new ArrayList<>(); %>
+
+				<% if((int)request.getAttribute("dateType") == 1){ %>
+					<table id="table" border="2">
+						<tr>
+							<th>日付</th>
+							<th>1限</th>
+							<th>2限</th>
+							<th>3限</th>
+							<th>4限</th>
+							<th>5限</th>
+						</tr>
+						<% int[][] dateCounts = (int[][])request.getAttribute("counts"); %>
+						<% int[][] sdTimes = (int[][])request.getAttribute("sdTimes"); %>
+						<% targetsDateAnswers = (ArrayList<ArrayList<int[]>>)request.getAttribute("targetsAnswers"); %>
+						<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
+						<tr>
+							<th><%= request.getAttribute("date" + i)%></th>
+							<% for(int j = 0; j < 5; j++) { %>
+							<td align="center" valign="top"><% if( sdTimes[i][j] != -1 ){ %><%= dateCounts[i][j] %><% } %></td>
+							<% } %>
+						</tr>
 						<% } %>
-					</tr>
+					</table>
+				<% } else { %>
+					<table id="table" border="2">
+					<% ArrayList<String> datetime = (ArrayList<String>)request.getAttribute("datetime"); %>
+					<% int[] datetimeCounts = (int[])request.getAttribute("counts"); %>
+					<% for(int i = 0; i < datetime.size(); i++){ %>
+						<tr>
+							<th><%= datetime.get(i) %></th>
+							<td align="center" valign="top"><%= datetimeCounts[i] %></td>
+						</tr>
 					<% } %>
-				</table>
+					</table>
+				<% } %>
 			</td>
 		</tr>
 		<% int targetListLength = (int) request.getAttribute("targetListLength"); %>
@@ -252,13 +267,14 @@ var colorForm = document.getElementById("cellColor");
 // そのポップアップのラジオボタンのリスト
 var radioNodeList = colorForm.rank;
 
+<% if((int)request.getAttribute("dateType") == 1){ %>
 // ポップアップで使うtargetAnswerをjavaから受け取り、javascriptの変数に格納
 var targetsAnswers = [];
 // targetAnswersは対象者達、サイズは対象者の人数
-<% for(int i = 0; i < targetsAnswers.size(); i++ ) { %>
+<% for(int i = 0; i < targetsDateAnswers.size(); i++ ) { %>
 	var target<%= i %> = [];
 	// targetAnswerはそれぞれの対象者、サイズは候補日程の日数
-	<% ArrayList<int[]> targetAnswer = targetsAnswers.get(i); %>
+	<% ArrayList<int[]> targetAnswer = targetsDateAnswers.get(i); %>
 	<% for(int j = 0; j < targetAnswer.size(); j++) { %>
 		var answer<%= i %><%= j %> = [];
 		// k < 5は1から5限の5
@@ -275,15 +291,17 @@ var targetsAnswers = [];
 var circleCount = [];
 var maxcount = <%= (int)request.getAttribute("max") %>;
 var maxcount_1 = <%= (int)request.getAttribute("max_1") %>;
+<% int[][] dateCounts = (int[][])request.getAttribute("counts"); %>
 <% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
 	var count<%= i %> = [];
 	<% for(int j = 0; j < 5; j++) { %>
-		count<%= i %>.push(<%= counts[i][j] %>);
+		count<%= i %>.push(<%= dateCounts[i][j] %>);
 	<% } %>
 	circleCount.push(count<%= i %>);
 <% } %>
 
 //sdTimesをjsの配列に落とす
+<% int[][] sdTimes = (int[][])request.getAttribute("sdTimes"); %>
 var sdTimes = [];
 <% for(int i = 0; i < sdTimes.length; i++) { %>
 var sdTime<%= i %> = [];
@@ -328,10 +346,6 @@ $('input[name="key[]"]').change(function() {
 	keyPersonInit();
 });
 
-// ポップアップを最初は表示させない
-popup.style.display = "none";
-settingPopup.style.visibility = "hidden";
-
 // セルにマウスカーソルを重ねた時
 var cellMouseOver = function(){
 	<% for(int i = 0; i < targetListLength; i++) { %>
@@ -357,19 +371,6 @@ var cellMouseOver = function(){
   popup.style.left = window.pageXOffset + coordinates.left + width + 15 + "px";
   popup.style.top = window.pageYOffset + coordinates.top  + "px";
   popup.style.display = "inline-block";
-}
-
-// セルからマウスカーソルを離した時
-var cellMouseOut = function(){
-  popup.style.display = "none";
-}
-
-// セルのいろ変えるポップアップを表示
-function colorSetting(){
-	var buttonPoint = settingButton.getBoundingClientRect();
-	settingPopup.style.top = window.pageYOffset + buttonPoint.top + settingButton.clientHeight + "px";
-	settingPopup.style.left = window.pageXOffset + buttonPoint.left + settingButton.clientWidth - settingPopup.offsetWidth + "px";
-	settingPopup.style.visibility = "visible";
 }
 
 // ページを開いた時、多い順で色をあらかじめつけておく
@@ -502,6 +503,26 @@ for(var i = 0; i < tr.length; i++){
     	}
     }
   }
+}
+
+<% } %>
+
+
+//ポップアップを最初は表示させない
+popup.style.display = "none";
+settingPopup.style.visibility = "hidden";
+
+//セルからマウスカーソルを離した時
+var cellMouseOut = function(){
+  popup.style.display = "none";
+}
+
+// セルのいろ変えるポップアップを表示
+function colorSetting(){
+	var buttonPoint = settingButton.getBoundingClientRect();
+	settingPopup.style.top = window.pageYOffset + buttonPoint.top + settingButton.clientHeight + "px";
+	settingPopup.style.left = window.pageXOffset + buttonPoint.left + settingButton.clientWidth - settingPopup.offsetWidth + "px";
+	settingPopup.style.visibility = "visible";
 }
 
 // 全体のクリックイベントを取得して、settingPopup以外をクリックしたらsettingPopupを隠す

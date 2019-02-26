@@ -24,6 +24,7 @@ import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 import schedule.model.AnswerTable;
+import schedule.model.DatetimeAnswerTable;
 import schedule.model.DeleteScheduleTable;
 import schedule.model.NotifTable;
 import schedule.model.RequestAttachmentTable;
@@ -121,27 +122,47 @@ public class AnswerPage extends HttpServlet {
 				request.setAttribute("inputCount", inputCount);
 			}
 
-			ArrayList<HashMap<String, String>> answers = new ArrayList<>();
-			answers = new AnswerTable().getEmailAnswers(randomURL);
-
 			// 既にアップロードされた添付ファイルの名前を取得
 			ArrayList<String> uploadFileNameList = new TargetAttachmentTable().getFileNames(randomURL);
 			request.setAttribute("uploadFileNameList", uploadFileNameList);
 
-			// scheduleListの数を取得
-			int answersLength = answers.size();
+			int dateType = Integer.parseInt(scheduleHM.get("dateType"));
+			session.setAttribute("dateType", dateType);
 
-			HashMap<String, String> answerHM = new HashMap<>();
+			ArrayList<HashMap<String, String>> answers = new ArrayList<>();
+			int answersLength = 0;
 
-			// 0番目からrequestにスケジュールを格納
-			for(int i = 0; i < answersLength; i++) {
-				answerHM = answers.get(i);
-				request.setAttribute("date" + i, answerHM.get("date"));
-				request.setAttribute("first" + i, answerHM.get("first"));
-				request.setAttribute("second" + i, answerHM.get("second"));
-				request.setAttribute("third" + i, answerHM.get("third"));
-				request.setAttribute("fourth" + i, answerHM.get("fourth"));
-				request.setAttribute("fifth" + i, answerHM.get("fifth"));
+			if( dateType == 1 ) {
+				answers = new AnswerTable().getEmailAnswers(randomURL);
+
+				// scheduleListの数を取得
+				answersLength = answers.size();
+
+				HashMap<String, String> answerHM = new HashMap<>();
+
+				// 0番目からrequestにスケジュールを格納
+				for(int i = 0; i < answersLength; i++) {
+					answerHM = answers.get(i);
+					request.setAttribute("date" + i, answerHM.get("date"));
+					request.setAttribute("first" + i, answerHM.get("first"));
+					request.setAttribute("second" + i, answerHM.get("second"));
+					request.setAttribute("third" + i, answerHM.get("third"));
+					request.setAttribute("fourth" + i, answerHM.get("fourth"));
+					request.setAttribute("fifth" + i, answerHM.get("fifth"));
+				}
+			} else {
+				answers = new DatetimeAnswerTable().getEmailAnswers(randomURL);
+
+				answersLength = answers.size();
+
+				HashMap<String, String> answerHM = new HashMap<>();
+
+				// 0番目からrequestにスケジュールを格納
+				for(int i = 0; i < answersLength; i++) {
+					answerHM = answers.get(i);
+					request.setAttribute("date" + i, answerHM.get("date"));
+					request.setAttribute("answer" + i, answerHM.get("answer"));
+				}
 			}
 
 			// リストの長さをsessionに格納
@@ -184,6 +205,7 @@ public class AnswerPage extends HttpServlet {
 		ArrayList<String> third = new ArrayList<>();
 		ArrayList<String> fourth = new ArrayList<>();
 		ArrayList<String> fifth = new ArrayList<>();
+		ArrayList<String> answer = new ArrayList<>();
 		String note = "";
 
 		int fileNum = 0;
@@ -223,6 +245,9 @@ public class AnswerPage extends HttpServlet {
 					case "fifth[]":
 						fifth.add(value);
 						break;
+					case "answer[]":
+						answer.add(value);
+						break;
 					case "note":
 						note = value;
 						break;
@@ -241,7 +266,11 @@ public class AnswerPage extends HttpServlet {
 		note = note.replace("\r\n", "<br>");
 
 		// dbと接続して上のデータを使ってupdateする
-		new AnswerTable().update(randomURL, date, first, second, third, fourth, fifth);
+		if((int)session.getAttribute("dateType") == 1) {
+			new AnswerTable().update(randomURL, date, first, second, third, fourth, fifth);
+		} else {
+			new DatetimeAnswerTable().update(randomURL, date, answer);
+		}
 
 		LocalDateTime ldt = LocalDateTime.now();
 

@@ -26,7 +26,8 @@ public class SessionConvert {
 				(boolean)session.getAttribute("isEventCondition"),
 				(int)session.getAttribute("eventConditionNumer"),
 				(int)session.getAttribute("eventConditionDenom"),
-				(boolean)session.getAttribute("isInputInform"));
+				(boolean)session.getAttribute("isInputInform"),
+				(int)session.getAttribute("dateType"));
 		return schedule;
 	}
 
