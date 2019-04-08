@@ -25,7 +25,6 @@ import javax.servlet.http.HttpSession;
 				"/NewScheduleSubmit",
 				"/RequestSchedules",
 				"/RequestSchedules/*",
-				"/ScheduleDetail",
 				"/ScheduleDeleteConfirm",
 				"/ScheduleDeleteExecute",
 				"/ClientAnswer",

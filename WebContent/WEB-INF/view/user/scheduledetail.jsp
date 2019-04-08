@@ -67,9 +67,9 @@ table th{
   z-index: 1;
 }
 td:empty {
-  background: url('data:image/svg+xml,<svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><line fill="none" stroke="#000000" stroke-width="0.2" stroke-miterlimit="10" x1="0" y1="0" x2="10" y2="10"/></svg>') no-repeat;
-  background-size: 100%;
-    }
+    background: url('data:image/svg+xml;charset=utf8,%3csvg%20preserveAspectRatio%3d%22none%22%20xmlns%3d%22http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%22%20viewBox%3d%220%200%2010%2010%22%3e%3cline%20fill%3d%22none%22%20stroke%3d%22%23000000%22%20stroke%2dwidth%3d%220%2e2%22%20stroke%2dmiterlimit%3d%2210%22%20x1%3d%2210%22%20y1%3d%220%22%20x2%3d%220%22%20y2%3d%2210%22%2f%3e%3c%2fsvg%3e') no-repeat;
+    background-size: 100%;
+}
 </style>
 <%@include file="../include/font.jsp" %>
 </head>
@@ -112,10 +112,16 @@ td:empty {
 			</th>
 			<td>
 			<input type="button" id="settingButton" value="セル色付け設定" style="float:right;">
-			<a href="./DecideSchedule/${ id }">対象者に日時の決定を送信する</a>
-				<% ArrayList<ArrayList<int[]>> targetsDateAnswers = new ArrayList<>(); %>
+			<form id="form" action="./DecideSchedule/${ id }" method="post">
+			<% if ( request.getAttribute("decideDate") != null ) { %>
+				<a href="#" onclick="decideSchedule();">決定日時を修正する</a>
+			<% } else { %>
+				<a href="#" onclick="decideSchedule();">対象者に日時の決定を送信する</a>
+			<% } %>
+			</form>
+				<% int dateType = (int)request.getAttribute("dateType"); %>
 
-				<% if((int)request.getAttribute("dateType") == 1){ %>
+				<% if(dateType == 1){ // 時間割%>
 					<table id="table" border="2">
 						<tr>
 							<th>日付</th>
@@ -125,9 +131,8 @@ td:empty {
 							<th>4限</th>
 							<th>5限</th>
 						</tr>
-						<% int[][] dateCounts = (int[][])request.getAttribute("counts"); %>
-						<% int[][] sdTimes = (int[][])request.getAttribute("sdTimes"); %>
-						<% targetsDateAnswers = (ArrayList<ArrayList<int[]>>)request.getAttribute("targetsAnswers"); %>
+						<% int[][] dateCounts = (int[][])session.getAttribute("counts"); %>
+						<% int[][] sdTimes = (int[][])session.getAttribute("sdTimes"); %>
 						<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
 						<tr>
 							<th><%= request.getAttribute("date" + i)%></th>
@@ -140,7 +145,7 @@ td:empty {
 				<% } else { %>
 					<table id="table" border="2">
 					<% ArrayList<String> datetime = (ArrayList<String>)request.getAttribute("datetime"); %>
-					<% int[] datetimeCounts = (int[])request.getAttribute("counts"); %>
+					<% int[] datetimeCounts = (int[])session.getAttribute("counts"); %>
 					<% for(int i = 0; i < datetime.size(); i++){ %>
 						<tr>
 							<th><%= datetime.get(i) %></th>
@@ -184,16 +189,6 @@ td:empty {
 		</tr>
 		<% } %>
 		<tr><th>イベント内容</th><td>${ eventContent }</td></tr>
-		<tr>
-			<th>開催条件</th>
-			<td>
-			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
-				${ eventConditionDenom }分の${ eventConditionNumer }以上
-			<% } else { %>
-				なし
-			<% } %>
-			</td>
-		</tr>
 		<tr><th>入力締切日時</th><td>${ eventDeadline }</td></tr>
 		<% if ((boolean) request.getAttribute("isRemindDates")) { %>
 		<tr>
@@ -211,13 +206,13 @@ td:empty {
 			<td>
 				<% for(Iterator<String> i = ((ArrayList<String>)request.getAttribute("requestFileNameList")).iterator(); i.hasNext();) { %>
 				<% String fileName = i.next(); %>
-				<a href="/ScheduleManager/Download/request/${ id }/${ senderEmail }/<%= fileName %>"><%= fileName %></a><br>
+				<a href="/ScheduleManager/Download/request/${ id }/${ email }/<%= fileName %>"><%= fileName %></a><br>
 				<% } %>
 			</td>
 		</tr>
 		<% } %>
 	</table>
-	<div id="popup">
+	<div id="popup" style="visibility:hidden;">
       <p>
       	<table>
       		<% for(int i = 0; i < targetListLength; i++) { %>
@@ -229,16 +224,13 @@ td:empty {
       	</table>
       </p>
     </div>
-	<div id="settingPopup">
+	<div id="settingPopup" style="visibility:hidden;">
 	  	[セルの色付け]<br>
 		<form id="cellColor">
 			<input type="radio" name="rank" value="ranking" checked>多い順<br>
 			<input type="radio" name="rank" value="over">○の数が<input type="number" min="1" max="<%= targetListLength %>" id="num" value="1" required>以上<br>
-			<% if ((boolean)request.getAttribute("isEventCondition")) { %>
-			<input type="radio" name="rank" value="condition">開催条件<br>
-			<% } %>
-			<span style="float:right;"><input type="checkbox" name="key" value="key">キーパーソン有り</span>
-			<input type="button" value="適用" onclick="apply()">
+			<span style="float:right;"><input type="checkbox" name="key">キーパーソン有り</span>
+			<input type="button" value="更新" onclick="apply()">
 			<input type="text" name="dummy" style="display:none;">
 		</form>
 	</div>
@@ -250,289 +242,299 @@ td:empty {
 <%@include file="../../js/jquery-3.3.1.min.js" %>
 <%@include file="./include/logoutpopupjs.jsp" %>
 
-// 全体表示のテーブル
-var table = document.getElementById("table");
-// テーブルにマウスかざすと誰がどんな回答しているかわかるポップアップ
-var popup = document.getElementById("popup");
-// ポップアップ内のテーブルのtd
-var popupTd = document.getElementsByClassName("popupTd");
-// セルの色を変えるポップアップ
-var settingPopup = document.getElementById("settingPopup");
-// そのポップアップのボタン
-var settingButton = document.getElementById("settingButton");
-// そのポップアップの〇〇以上のセルを色付けるやつの〇〇を入れるinput text
-var numText = document.getElementById("num");
-// そのポップアップのラジオボタンとかテキストのフォーム
-var colorForm = document.getElementById("cellColor");
-// そのポップアップのラジオボタンのリスト
-var radioNodeList = colorForm.rank;
+	<%--------------------------------- 対象者の回答をjsの変数に格納 ---------------------------------%>
 
-<% if((int)request.getAttribute("dateType") == 1){ %>
-// ポップアップで使うtargetAnswerをjavaから受け取り、javascriptの変数に格納
-var targetsAnswers = [];
-// targetAnswersは対象者達、サイズは対象者の人数
-<% for(int i = 0; i < targetsDateAnswers.size(); i++ ) { %>
-	var target<%= i %> = [];
-	// targetAnswerはそれぞれの対象者、サイズは候補日程の日数
-	<% ArrayList<int[]> targetAnswer = targetsDateAnswers.get(i); %>
-	<% for(int j = 0; j < targetAnswer.size(); j++) { %>
-		var answer<%= i %><%= j %> = [];
-		// k < 5は1から5限の5
-		<% int[] answer = targetAnswer.get(j); %>
-		<% for(int k = 0; k < 5; k++) { %>
-			answer<%= i %><%= j %>.push(<%= answer[k] %>);
+	var targetsAnswers = [];
+	<% ArrayList<ArrayList<int[]>> targetsDateAnswers = (ArrayList<ArrayList<int[]>>)request.getAttribute("targetsAnswers"); %>
+
+	// 時間割
+	<% if( dateType == 1 ) {%>
+		// targetAnswersは対象者達、サイズは対象者の人数
+
+		<% for(int i = 0; i < targetsDateAnswers.size(); i++ ) { %>
+			var target<%= i %> = [];
+			// targetAnswerはそれぞれの対象者、サイズは候補日程の日数
+			<% ArrayList<int[]> targetAnswer = targetsDateAnswers.get(i); %>
+			<% for(int j = 0; j < targetAnswer.size(); j++) { %>
+				var answer<%= i %><%= j %> = [];
+				// k < 5は1から5限の5
+				<% int[] answer = targetAnswer.get(j); %>
+				<% for(int k = 0; k < 5; k++) { %>
+					answer<%= i %><%= j %>.push(<%= answer[k] %>);
+				<% } %>
+				target<%= i %>.push(answer<%= i %><%= j %>);
+			<% } %>
+			targetsAnswers.push(target<%= i %>);
 		<% } %>
-		target<%= i %>.push(answer<%= i %><%= j %>);
+
+	// 時分
+	<% } else { %>
+		<% for(int i = 0; i < targetsDateAnswers.size(); i++ ) { %>
+
+			var target<%= i %> = [];
+			// targetAnswerはそれぞれの対象者、サイズは候補日程の日数
+			<% ArrayList<int[]> targetAnswer = targetsDateAnswers.get(i); %>
+			<% for(int j = 0; j < targetAnswer.size(); j++) { %>
+				target<%= i %>.push(<%= targetAnswer.get(j) %>);
+			<% } %>
+			targetsAnswers.push(target<%= i %>);
+		<% } %>
 	<% } %>
-	targetsAnswers.push(target<%= i %>);
-<% } %>
 
-// 丸の数のjava側のcount配列と最大値、最大値-1をjavascriptの変数に格納
-var circleCount = [];
-var maxcount = <%= (int)request.getAttribute("max") %>;
-var maxcount_1 = <%= (int)request.getAttribute("max_1") %>;
-<% int[][] dateCounts = (int[][])request.getAttribute("counts"); %>
-<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
-	var count<%= i %> = [];
-	<% for(int j = 0; j < 5; j++) { %>
-		count<%= i %>.push(<%= dateCounts[i][j] %>);
+	<%--------------------------------- 丸の数をとか最大値とかをjsの変数に格納 ---------------------------------%>
+
+	var circleCount = [];
+	var maxcount = <%= (int)request.getAttribute("max") %>;
+	var maxcount_1 = <%= (int)request.getAttribute("max_1") %>;
+	// 時間割
+	<% if( dateType == 1 ) {%>
+		<% int[][] dateCounts = (int[][])session.getAttribute("counts"); %>
+		<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
+			var count<%= i %> = [];
+			<% for(int j = 0; j < 5; j++) { %>
+				count<%= i %>.push(<%= dateCounts[i][j] %>);
+			<% } %>
+			circleCount.push(count<%= i %>);
+		<% } %>
+	// 時分
+	<% } else { %>
+		<% int[] dateCounts = (int[])session.getAttribute("counts"); %>
+		<% for(int i = 0; i < (int)request.getAttribute("countLength"); i++) { %>
+			circleCount.push(<%= dateCounts[i] %>);
+		<% } %>
 	<% } %>
-	circleCount.push(count<%= i %>);
-<% } %>
 
-//sdTimesをjsの配列に落とす
-<% int[][] sdTimes = (int[][])request.getAttribute("sdTimes"); %>
-var sdTimes = [];
-<% for(int i = 0; i < sdTimes.length; i++) { %>
-var sdTime<%= i %> = [];
-<% for(int j = 0; j < 5; j++) { %>
-	sdTime<%= i %>.push(<%= sdTimes[i][j] %>);
-<% } %>
-sdTimes.push(sdTime<%= i %>);
-<% } %>
+	<%--------------------------------- 日時が存在しているかをjsの変数に格納 ---------------------------------%>
 
+	<% if( dateType == 1 ) {%>
+		<% int[][] sdTimes = (int[][])session.getAttribute("sdTimes"); %>
+		var sdTimes = [];
+		<% for(int i = 0; i < sdTimes.length; i++) { %>
+			var sdTime<%= i %> = [];
+			<% for(int j = 0; j < 5; j++) { %>
+				sdTime<%= i %>.push(<%= sdTimes[i][j] %>);
+			<% } %>
+			sdTimes.push(sdTime<%= i %>);
+		<% } %>
+	<% } %>
 
-// キーパーソンの回答の○をandする
-// 2で全要素初期化し、その上からandしていく
-var keyAnswers = [[2, 2, 2, 2, 2]];
-function keyAnswersInit(){
-	keyAnswers = [[2, 2, 2, 2, 2]];
-	for(var i = 1; i < circleCount.length; i++){
-		keyAnswers.push([2, 2, 2, 2, 2]);
-	}
-}
-keyAnswersInit();
-function keyPersonInit(){
-	keyPerson = [];
-	$('input[name="key[]"]:checked').each(function() {
-	    keyPerson.push(parseInt($(this).val()));
-	  });
-	for(var i = 0; i < keyPerson.length; i++){
-		var keyAnswer = targetsAnswers[keyPerson[i]];
-		for(var j = 0; j < circleCount.length; j++){
-			for(var k = 0; k < 5; k++){
-				keyAnswers[j][k] = (keyAnswers[j][k] == 2 && (keyAnswers[j][k] == keyAnswer[j][k])) ? 2 : 0;
+	<%--------------------------------- キーパーソンを変数に格納 ---------------------------------%>
+
+	// キーパーソンの回答の○をandする
+	// 2で全要素初期化し、その上からandしていく
+	<% if( dateType == 1 ) {%>
+		var keyAnswers = [[2, 2, 2, 2, 2]];
+		function keyAnswersInit(){
+			keyAnswers = [[2, 2, 2, 2, 2]];
+			for(var i = 1; i < circleCount.length; i++){
+				keyAnswers.push([2, 2, 2, 2, 2]);
+			}
+		}
+	<% } else { %>
+		var keyAnswers = [2];
+		function keyAnswersInit(){
+			keyAnswers = [2];
+			for(var i = 1; i < circleCount.length; i++){
+				keyAnswers.push(2);
+			}
+		}
+	<% } %>
+	keyAnswersInit();
+
+	function keyPersonInit(){
+		keyPerson = [];
+		$('input[name="key[]"]:checked').each(function() {
+		    keyPerson.push(parseInt($(this).val()));
+		  });
+		for(var i = 0; i < keyPerson.length; i++){
+			var keyAnswer = targetsAnswers[keyPerson[i]];
+			for(var j = 0; j < circleCount.length; j++){
+				<% if( dateType == 1 ) {%>
+					for(var k = 0; k < 5; k++){
+						keyAnswers[j][k] = (keyAnswers[j][k] == 2 && (keyAnswers[j][k] == keyAnswer[j][k])) ? 2 : 0;
+					}
+				<% } else { %>
+					keyAnswers[j] = (keyAnswers[j] == 2 && (keyAnswers[j] == keyAnswer[j])) ? 2 : 0;
+				<% } %>
 			}
 		}
 	}
-	console.log(keyAnswers);
-}
-keyPersonInit();
-
-
-//targetAnswersは対象者達、サイズは対象者の人数
-$('input[name="key[]"]').change(function() {
-	keyAnswersInit();
 	keyPersonInit();
-});
 
-// セルにマウスカーソルを重ねた時
-var cellMouseOver = function(){
-	<% for(int i = 0; i < targetListLength; i++) { %>
-		// 未回答
-		<% if( request.getAttribute("isInput" + i).equals("0")){ %>
-			popupTd[<%= i %>].innerHTML = "未回答";
-		<% } else { %>
-			var targetAnswer<%= i %> = targetsAnswers[<%= i %>][this.parentNode.rowIndex - 1][this.cellIndex - 1];
-			if ( targetAnswer<%= i %> == 0 ) {
-				popupTd[<%= i %>].innerHTML = "×";
-			} else if ( targetAnswer<%= i %> == 1 ){
-				popupTd[<%= i %>].innerHTML = "△";
-			} else {
-				popupTd[<%= i %>].innerHTML = "○";
-			}
+	$('input[name="key[]"]').change(function() {
+		keyAnswersInit();
+		keyPersonInit();
+	});
+
+	<%--------------------------------- セル色付け設定ボタンを押した時 ---------------------------------%>
+
+	//セルのいろ変えるポップアップを表示
+	function colorSetting(){
+		$('#settingPopup').offset({
+			top: $('#settingButton').offset().top + $('#settingButton').outerHeight(),
+			left: $('#settingButton').offset().left + $('#settingButton').outerWidth() - $('#settingPopup').outerWidth()
+		});
+		$('#settingPopup').css('visibility','visible');
+	}
+
+	// 全体のクリックイベントを取得して、settingPopup以外をクリックしたらsettingPopupを隠す
+	$(document).on('click touchend', function(event) {
+		  if (!$(event.target).closest('div#settingPopup').length && !$(event.target).closest("input#settingButton").length) {
+			  $('#settingPopup').css('visibility','hidden');
+		  } else if($(event.target).closest('input#settingButton').length){
+			  colorSetting();
+		  }
+	});
+
+	<%--------------------------------- 全体表示の表にマウスオーバーでポップアップ出す時 ---------------------------------%>
+
+	$("#table td").mouseover(function(e){
+		var col = $(this).index() - 1;
+		var row = $(this).closest('tr').index();
+
+		<% for(int i = 0; i < targetListLength; i++) { %>
+			// 未回答
+			<% if( request.getAttribute("isInput" + i).equals("0")){ %>
+				$(".popupTd").eq(<%= i %>).html("未回答");
+			// 回答済
+			<% } else { %>
+				// 時間割
+				<% if( dateType == 1 ) { %>
+					var targetAnswer<%= i %> = targetsAnswers[<%= i %>][row - 1][col];
+				// 時分
+				<% } else { %>
+					var targetAnswer<%= i %> = targetsAnswers[<%= i %>][row];
+				<% } %>
+
+				if ( targetAnswer<%= i %> == 0 ) {
+					$(".popupTd").eq(<%= i %>).html("×");
+				} else if ( targetAnswer<%= i %> == 1 ){
+					$(".popupTd").eq(<%= i %>).html("△");
+				} else {
+					$(".popupTd").eq(<%= i %>).html("○");
+				}
+			<% } %>
 		<% } %>
-	<% } %>
-  // セルの座標と幅を取得
-  var coordinates = this.getBoundingClientRect();
-  var width = this.clientWidth;
-  // 座標と現在のスクロール量と幅を使ってポップアップの位置を指定
-  // 15はcssの吹き出しの三角のleft-15pxから
-  popup.style.left = window.pageXOffset + coordinates.left + width + 15 + "px";
-  popup.style.top = window.pageYOffset + coordinates.top  + "px";
-  popup.style.display = "inline-block";
-}
 
-// ページを開いた時、多い順で色をあらかじめつけておく
-rankingCellColor();
+		$('#popup').offset({
+			top: $(this).offset().top,
+			left: $(this).offset().left + $(this).outerWidth() + 15
+		});
 
-// セルの色変える
-var keyCheck = false;
-function apply(){
-	$('input:checked').each(function(){
-		if( "key" == $(this).val()){
+		// 日時がないならポップアップを出さない
+		if( !(<%= dateType %> == 1 && sdTimes[row-1][col] == -1) ) {
+			$("#popup").css('visibility','visible');
+		}
+	}).mouseout(function(){
+		$("#popup").css('visibility','hidden');
+	});
+
+	<%--------------------------------- セルの色を変える ---------------------------------%>
+	// ページを開いた時、多い順で色をあらかじめつけておく
+	rankingCellColor();
+
+	// セルの色変える
+	var keyCheck = false;
+	function apply(){
+		if ($("[name=key]").prop("checked") ){
 			keyCheck = true;
 		}
-	});
-	var num = numText.value;
-	var radioCheck = radioNodeList.value;
-	if(radioCheck == "ranking"){
-		rankingCellColor();
-	} else if (radioCheck == "over") {
-		overCellColor(num);
-	} else {
-		conditionCellColor();
+		var num = $("#num").val();
+		var radioCheck = $('input[name=rank]:checked').val();
+		if(radioCheck == "ranking"){
+			rankingCellColor();
+		} else if (radioCheck == "over") {
+			overCellColor(num);
+		}
+		$('#settingPopup').css('visibility','hidden');
 	}
-	keyCheck = false;
-	settingPopup.style.visibility = "hidden";
-}
 
-// セルの色変えるやつの多い順のやつ
-function rankingCellColor(){
-	var tr = table.children;
-	for(var i = 0; i < tr.length; i++){
-	  var td = tr[i].children;
-	  for(var j = 1; j < td.length; j++){
-	    var cell = td[j].children;
-	    for(var k = 1; k < cell.length; k++){
-	    	if(!keyCheck){
-		    	if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-		    		cell[k].style.backgroundColor = "#FE9A2E";
-		    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
-		    		cell[k].style.backgroundColor = "#F4FA58";
-		    	} else {
-		    		cell[k].style.backgroundColor = "#ffffff";
-		    	}
-	    	} else {
-	    		if(keyAnswers[j-1][k-1] == 2) {
-		    		if(maxcount == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0 ){
-			    		cell[k].style.backgroundColor = "#FE9A2E";
-			    	} else if(maxcount_1 == circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0) {
-			    		cell[k].style.backgroundColor = "#F4FA58";
+	// セルの色変えるやつの多い順のやつ
+	function rankingCellColor(){
+		$('#table td').each(function(index , elm){
+			// 時間割
+			<% if( dateType == 1 ) {%>
+				var col = index % 5;
+				var row = Math.floor(index / 5);
+				if( keyCheck && keyAnswers[row][col] == 0 ){
+					$(elm).css('background-color',"#FFFFFF");
+				} else {
+					if( maxcount == circleCount[row][col] && circleCount[row][col] != 0 ){
+						$(elm).css('background-color', "#FE9A2E");
+			    	} else if( maxcount_1 == circleCount[row][col] && circleCount[row][col] != 0 ) {
+			    		$(elm).css('background-color', "#F4FA58");
 			    	} else {
-			    		cell[k].style.backgroundColor = "#ffffff";
+			    		$(elm).css('background-color',"#FFFFFF");
 			    	}
-	    		} else {
-		    		cell[k].style.backgroundColor = "#ffffff";
-		    	}
-	    	}
-	    }
-	  }
-	}
-}
-// セルの色変えるやつの〇〇以上のやつ
-// ただし0の場合は色をつけない
-function overCellColor(num){
-	var tr = table.children;
-	for(var i = 0; i < tr.length; i++){
-	  var td = tr[i].children;
-	  for(var j = 1; j < td.length; j++){
-	    var cell = td[j].children;
-	    for(var k = 1; k < cell.length; k++){
-	    	if(!keyCheck){
-		    	if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-		    		cell[k].style.backgroundColor = "#FE9A2E";
-		    	} else {
-		    		cell[k].style.backgroundColor = "#ffffff";
-		    	}
-	    	} else {
-	    		if(keyAnswers[j-1][k-1] == 2) {
-		    		if(num <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-			    		cell[k].style.backgroundColor = "#FE9A2E";
+				}
+			// 時分
+			<% } else { %>
+				if( keyCheck && keyAnswers[index] == 0 ){
+					$(elm).css('background-color',"#FFFFFF");
+				} else {
+					if( maxcount == circleCount[index] && circleCount[index] != 0 ){
+						$(elm).css('background-color', "#FE9A2E");
+			    	} else if( maxcount_1 == circleCount[index] && circleCount[index] != 0 ) {
+			    		$(elm).css('background-color', "#F4FA58");
 			    	} else {
-			    		cell[k].style.backgroundColor = "#ffffff";
+			    		$(elm).css('background-color',"#FFFFFF");
 			    	}
-	    		} else {
-		    		cell[k].style.backgroundColor = "#ffffff";
-		    	}
-	    	}
-	    }
-	  }
+				}
+			<% } %>
+        });
 	}
-}
 
-<% if ((boolean)request.getAttribute("isEventCondition")) { %>
-//セルの色変えるやつの開催条件のやつ
-//ただし0の場合は色をつけない
-// 分母
-var denom = ${ eventConditionDenom };
-// 分子
-var numer = ${ eventConditionNumer };
-var condition = Number(numer) / Number(denom);
-function conditionCellColor(){
-	var tr = table.children;
-	for(var i = 0; i < tr.length; i++){
-	  var td = tr[i].children;
-	  for(var j = 1; j < td.length; j++){
-	    var cell = td[j].children;
-	    for(var k = 1; k < cell.length; k++){
-	    	if(condition * Number(${ targetLength }) <= circleCount[j-1][k-1] && circleCount[j-1][k-1] != 0){
-	    		cell[k].style.backgroundColor = "#FE9A2E";
-	    	} else {
-	    		cell[k].style.backgroundColor = "#ffffff";
-	    	}
-	    }
-	  }
+	// セルの色変えるやつの〇〇以上のやつ
+	// ただし0の場合は色をつけない
+	function overCellColor(num){
+		$('#table td').each(function(index , elm){
+			// 時間割
+			<% if( dateType == 1 ) {%>
+				var col = index % 5;
+				var row = Math.floor(index / 5);
+				if( keyCheck && keyAnswers[row][col] == 0 ){
+					$(elm).css('background-color',"#FFFFFF");
+				} else {
+					if(num <= circleCount[row][col] && circleCount[row][col] != 0){
+						$(elm).css('background-color', "#FE9A2E");
+					} else {
+						$(elm).css('background-color',"#FFFFFF");
+					}
+				}
+			// 時分
+			<% } else { %>
+				if( keyCheck && keyAnswers[index] == 0 ){
+					$(elm).css('background-color',"#FFFFFF");
+				} else {
+					if(num <= circleCount[index] && circleCount[index] != 0){
+						$(elm).css('background-color', "#FE9A2E");
+					} else {
+						$(elm).css('background-color',"#FFFFFF");
+					}
+				}
+			<% } %>
+		});
 	}
-}
-<% } %>
 
+	<%--------------------------------- 日時決定ページにセルの色を送る用 ---------------------------------%>
+	// ここで色のデータをpostでdecidescheduleとかに送る
+	function decideSchedule(){
+		$('#table td').each(function(index , elm){
+			var color = $(elm).css('background-color');
+			// 白
+			if( color == "rgb(255, 255, 255)"){
+				$('#form').append('<input type="hidden" name="color" value="0">');
+			// 黄色
+			} else if( color == "rgb(244, 250, 88)"){
+				$('#form').append('<input type="hidden" name="color" value="1">');
+			// オレンジ
+			} else {
+				$('#form').append('<input type="hidden" name="color" value="2">');
+			}
+		});
+		$("#form").submit();
+	}
 
-// 全体表示の表にマウスオーバーでポップアップ出せるようにしたり
-// マウスアウトでポップアップしまったり
-// tr.lengthは1で、td.lengthは表の縦の数、cell.lengthは5限の5なので、最初のiはforである必要がない
-var tr = table.children;
-for(var i = 0; i < tr.length; i++){
-  var td = tr[i].children;
-  for(var j = 1; j < td.length; j++){
-    var cell = td[j].children;
-    for(var k = 1; k < cell.length; k++){
-    	if(sdTimes[j-1][k-1] != -1){
-    	      cell[k].onmouseover = cellMouseOver;
-    	      cell[k].onmouseout = cellMouseOut;
-    	}
-    }
-  }
-}
-
-<% } %>
-
-
-//ポップアップを最初は表示させない
-popup.style.display = "none";
-settingPopup.style.visibility = "hidden";
-
-//セルからマウスカーソルを離した時
-var cellMouseOut = function(){
-  popup.style.display = "none";
-}
-
-// セルのいろ変えるポップアップを表示
-function colorSetting(){
-	var buttonPoint = settingButton.getBoundingClientRect();
-	settingPopup.style.top = window.pageYOffset + buttonPoint.top + settingButton.clientHeight + "px";
-	settingPopup.style.left = window.pageXOffset + buttonPoint.left + settingButton.clientWidth - settingPopup.offsetWidth + "px";
-	settingPopup.style.visibility = "visible";
-}
-
-// 全体のクリックイベントを取得して、settingPopup以外をクリックしたらsettingPopupを隠す
-$(document).on('click touchend', function(event) {
-	  if (!$(event.target).closest('div#settingPopup').length && !$(event.target).closest("input#settingButton").length) {
-		  settingPopup.style.visibility = "hidden";
-	  } else if($(event.target).closest('input#settingButton').length){
-		  colorSetting();
-	  }
-});
 </script>
 
 </body>

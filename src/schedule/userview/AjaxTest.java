@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,18 +14,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 /**
- * Servlet implementation class TestAjax
+ * Servlet implementation class AjaxTest
  */
-@WebServlet("/TestAjax")
-public class TestAjax extends HttpServlet {
+@WebServlet("/AjaxTest")
+public class AjaxTest extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public TestAjax() {
+    public AjaxTest() {
         super();
+        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -34,14 +39,28 @@ public class TestAjax extends HttpServlet {
 		try {
 
 	        //パラメータ取得
-	        String param1 = request.getParameter("param1");
-	        String param2 = request.getParameter("param2");
+			String strJson = (String)request.getParameter("answers");
+			JSONObject jsonObject = JSONObject.fromObject(strJson);
 
-	        System.out.println(param1 + param2);
+	        int colSize = (int)jsonObject.get("colSize");
+	        int rowSize = (int)jsonObject.get("rowSize");
+
+	        /*
+	        if(Objects.isNull(colSize)) {
+
+	        }*/
+	        //配列の取得
+	        if (jsonObject.get("answer") != null) {
+	            JSONArray array = JSONArray.fromObject(jsonObject.get("answer"));
+	            for(int i = 0; i < array.size(); i++){
+	                //配列の表示
+	                System.out.println(array.get(i).toString());
+
+	            }
+	        }
 
 	        //処理（DB呼び出し等）
-	        String response1 = "hello";
-	        String response2 = "bye";
+	        String responseMsg = "成功";
 
 	        //出力(レスポンスをmapに格納してJSON化)
 
@@ -49,8 +68,7 @@ public class TestAjax extends HttpServlet {
 	        Map<String, String> mapMsg = new HashMap<String, String>();
 
 	        //追加
-	        mapMsg.put("response1", response1);
-	        mapMsg.put("response2", response2);
+	        mapMsg.put("responseMsg", responseMsg);
 
 	        //マッパ(JSON <-> Map, List)
 	        ObjectMapper mapper = new ObjectMapper();
@@ -75,11 +93,5 @@ public class TestAjax extends HttpServlet {
 	    }
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
 
 }

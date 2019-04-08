@@ -1,3 +1,4 @@
+
 package schedule.model;
 
 import java.util.ArrayList;
@@ -23,11 +24,9 @@ public class SessionConvert {
 				(String)session.getAttribute("eventContent"),
 				(String)session.getAttribute("eventDeadline"),
 				(String)session.getAttribute("email"),
-				(boolean)session.getAttribute("isEventCondition"),
-				(int)session.getAttribute("eventConditionNumer"),
-				(int)session.getAttribute("eventConditionDenom"),
 				(boolean)session.getAttribute("isInputInform"),
-				(int)session.getAttribute("dateType"));
+				(int)session.getAttribute("dateType"),
+				false);
 		return schedule;
 	}
 

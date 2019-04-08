@@ -128,18 +128,6 @@
 								<p class="help-block">※日数は0~30日、時間は0~23時で指定してください。</p>
 							</div>
 							<div class="form-group">
-								<label>開催条件</label>
-								<div class="form-check">
-									<input class="form-check-input" type="checkbox"
-										id="condition" name="isEventCondition" value="true"> <label
-										class="form-check-label" for="condition"> 対象人数の <input
-										type="number" min="1" id="denom" name="eventConditionDenom"
-										class="form-controll">分の <input type="number" min="1"
-										id="numer" name="eventConditionNumer" class="form-controll">以上
-									</label>
-								</div>
-							</div>
-							<div class="form-group">
 								<label for="file">添付ファイル（複数選択可）</label>
 								<div id="file" class="input-group">
 									<div class="custom-file">

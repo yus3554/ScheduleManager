@@ -103,10 +103,7 @@
 										class="tab-pane border-bottom border-left border-right">
 										<div id="date2" class="form-control"></div>
 										<button type="button" class="btn btn-outline-secondary" onclick="addDateTime();">追加</button>
-										<button type="button" class="btn btn-outline-secondary" onclick="deleteDateTime();">1行削除</button>
-									<textarea wrap="hard" maxlength="1000" rows="10" id="datetime" name="datetime"
-									class="form-control" form="newschedule"
-									></textarea>
+										<div id="datetimeDiv"></div>
 									</div>
 									<input type="hidden" id="dateType" value="1" name="dateType">
 							</div>
@@ -138,17 +135,10 @@
 								</div>
 								<div class="form-group">
 									<label>リマインダー設定</label>
-									<div class="input-group">
-										<input class="form-control" name="remindDateTime[]"
-											autocomplete="off" id="defaultRemind">
-										<div class="input-group-append">
-											<span class="input-group-text"> <i
-												class="fas fa-calendar-alt"></i>
-											</span>
-										</div>
-									</div>
+									<div id="remindDate"></div>
 									<button type="button" class="btn btn-outline-secondary"
 										id="addButton" onclick="addRemind();">+</button>
+										<div id="remindDiv"></div>
 									<div class="invalid-feedback">正しい値を入力してください</div>
 								</div>
 								<div class="form-group">
@@ -157,18 +147,6 @@
 											id="isRemindDeadline" name="isRemindDeadline" value="true">
 										<label class="form-check-label" for="isRemindDeadline">
 											締め切りを過ぎた際にリマインダーを送る </label>
-									</div>
-								</div>
-								<div class="form-group">
-									<label>開催条件</label>
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" id="condition"
-											name="isEventCondition" value="true"> <label
-											class="form-check-label" for="condition"> 対象人数の <input
-											type="number" min="1" id="denom" name="eventConditionDenom"
-											class="form-controll">分の <input type="number" min="1"
-											id="numer" name="eventConditionNumer" class="form-controll">以上
-										</label>
 									</div>
 								</div>
 								<div class="form-group">

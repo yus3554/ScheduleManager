@@ -44,7 +44,7 @@
 	display : none;
 	z-index : 1;
 }
-#notSend{
+#notSendAnswer, #notSendNote, #notSendFile{
 	display: none;
 	color: red;
 }
@@ -111,8 +111,8 @@
 		</table>
 		<hr>
 		<h3>回答</h3>
-		<div id="notSend">
-			回答・修正ボタンを押さないと、反映されません。
+		<div id="notSendAnswer">
+			送信ボタンを押すまで回答・修正は反映されません。
 		</div>
 		クリックするごとに、×→○→△の順で変わります。<br>
 
@@ -181,6 +181,9 @@
 				</table>
 			<% } %>
 			<h4>添付ファイル</h4>
+			<div id="notSendFile">
+				送信ボタンを押すまで回答・修正は反映されません。
+			</div>
 			<div id="uploadedFileNameList">
 				<%
 					for (Iterator<String> i = ((ArrayList<String>) request.getAttribute("uploadFileNameList")).iterator(); i
@@ -198,23 +201,26 @@
 			</div>
 			<br> <input type="file" name="files" id="files" multiple><br>
 			<h4>備考</h4>
+			<div id="notSendNote">
+				送信ボタンを押すまで回答・修正は反映されません。
+			</div>
 			<textarea wrap="hard" maxlength="200" rows="3" cols="60" name="note"
 				id="note">${ note }</textarea>
 			200字まで<br>
 
-			<div id="saveload"></div>
 			何度でも回答の修正が可能です<br>
+			<div id="saveText" style="display:none;"></div>
 			<%
 				if (request.getAttribute("isInput").equals("0")) {
 			%>
-			<input type="button" id="submitButton" value="送信"
-				onclick="answerSubmit();" /> <input type="button" value="一時保存"
-				onclick="save();" /> <input type="button" value="一時保存反映"
-				onclick="load();" />
+			<input type="button" id="submitButton" value="回答内容を送信"
+				onclick="answerSubmit();">
+				<input type="button" id="saveButton" value="一時保存"
+				onclick="save();">
 			<%
 				} else {
 			%>
-			<input type="button" id="submitButton" value="修正"
+			<input type="button" id="submitButton" value="修正内容を送信"
 				onclick="answerSubmit();" />
 			<%
 				}
@@ -238,64 +244,112 @@
 
 	<script><%@include file="../../js/jquery-3.3.1.min.js"%></script>
 	<script>
-	// 反映されてませんの表示
-	function notSend(){
-		$("#notSend").show();
-	}
+		// 備考が変更された時に反映されません的な
+		$('#note').change(function() {
+			$("#notSendNote").show();
+		});
+		// 添付ファイルが変更された時に反映されません的な
+		$(function() {
+			$('#files').on("change", function() {
+				var file = this.files[0];
+				if (file != null) {
+					$("#notSendFile").show();
+				}
+			});
+		});
 
-		$("#saveload").hide();
-		var table = document.getElementById("table");
-		var cellclick = function(){
-			notSend();
-			if(this.innerHTML.trim() == "×"){
-				this.innerHTML = "○";
-			} else if(this.innerHTML.trim() == "△"){
-				this.innerHTML = "×";
-			} else if(this.innerHTML.trim() == "○"){
-				this.innerHTML = "△";
+		$('#table td').on('click', function() {
+			$("#notSendAnswer").show();
+			if($(this).html() == "×"){
+				$(this).html("○");
+			} else if($(this).html() == "△"){
+				$(this).html("×");
+			} else if($(this).html() == "○"){
+				$(this).html("△");
 			}
+		});
+
+		// 一時保存 Ajaxを用いてサーバーに送る予定
+		function save(){
+			$("#saveText").show();
+			$("#saveText").html("保存中");
+			var answer = initAnswer();
+
+			//リクエストJSON
+			var request = {};
+
+			request["answers"] = { rowSize : answer.length };
+
+			console.log(request);
+
+			  //ajaxでservletにリクエストを送信
+			  $.ajax({
+			    type    : "GET",          //GET / POST
+			    url     : "/ScheduleManager/AjaxTest",  //送信先のServlet URL
+			    data    : JSON.stringify(request),        //リクエストJSON
+			    async   : true,           //true:非同期(デフォルト), false:同期
+			    success : function(data) {
+			      //通信が成功した場合に受け取るメッセージ
+			      responseMsg = data["responseMsg"];
+
+			      $("#saveText").html("保存完了しました");
+			    },
+			    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			      alert("リクエスト時になんらかのエラーが発生しました：" + textStatus +":\n" + errorThrown);
+			      $("#saveText").html("保存失敗しました");
+			    }
+			  });
 		}
 
-		var tr = table.children;
-		for(var i = 0; i < tr.length; i++){
-			var td = tr[i].children;
-			for(var j = 0; j < td.length; j++){
-				var cell = td[j].children;
-				for(var k = 0; k < cell.length; k++){
-					cell[k].onclick = cellclick;
-				}
-			}
+		function initAnswer(){
+			var answers = [];
+			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
+				<% if((int)session.getAttribute("dateType") == 1) { %>
+					var answer = [];
+					<% for(int j = 0; j < times.length; j++){ %>
+						var <%= times[j] %>tdText = $("#<%= times[j] %>Td<%= i %>").html();
+						if( <%= times[j] %>tdText.trim() == "×"){
+							answer.push(0);
+						} else if( <%= times[j] %>tdText.trim() == "△" ){
+							answer.push(1);
+						} else if( <%= times[j] %>tdText.trim() == "○" ){
+							answer.push(2);
+						} else {
+							answer.push(-1);
+						}
+					<% } %>
+					answers.push(answer);
+				<% } else { %>
+					var answerTdText = $("#answerTd<%= i %>").html();
+					if( answerTdText.trim() == "×"){
+						answers.push(0);
+					} else if( answerTdText.trim() == "△" ){
+						answers.push(1);
+					} else if( answerTdText.trim() == "○" ){
+						answers.push(2);
+					} else {
+						answers.push(-1);
+					}
+				<% } %>
+			<% } %>
+			return answers;
 		}
 
 		function answerSubmit(){
 			var form = document.getElementById("answerForm");
-			<% for(int i = 0; i < (int)session.getAttribute("answersLength"); i++) { %>
-				<% if((int)session.getAttribute("dateType") == 1) { %>
-					<% for(int j = 0; j < times.length; j++){ %>
-						var <%= times[j] %>tdText = document.getElementById("<%= times[j] %>Td<%= i %>").innerHTML;
-						if( <%= times[j] %>tdText.trim() == "×"){
-							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("0");
-						} else if( <%= times[j] %>tdText.trim() == "△" ){
-							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("1");
-						} else if( <%= times[j] %>tdText.trim() == "○" ){
-							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("2");
-						} else {
-							$('input[name="<%= times[j] %>[]"]').eq(<%= i %>).val("-1");
-						}
-					<% } %>
-				<% } else { %>
-					var answerTdText = document.getElementById("answerTd<%= i %>").innerHTML;
-					if( answerTdText.trim() == "×"){
-						$('input[name="answer[]"]').eq(<%= i %>).val("0");
-					} else if( answerTdText.trim() == "△" ){
-						$('input[name="answer[]"]').eq(<%= i %>).val("1");
-					} else if( answerTdText.trim() == "○" ){
-						$('input[name="answer[]"]').eq(<%= i %>).val("2");
-					} else {
-						$('input[name="answer[]"]').eq(<%= i %>).val("-1");
+			var answers = initAnswer();
+
+			var times = ["first", "second", "third", "fourth", "fifth"];
+
+			for(var i = 0; i < answers.length; i++){
+				if (answers[i].length == null){
+					$('input[name="answer[]"]').eq(i).val(answers[i]);
+				} else {
+					for(var j = 0; j < answers[i].length; j++){
+						$('input[name="' + times[j] + '[]"]').eq(i).val(answers[i][j]);
 					}
-				<% } %>
-			<% } %>
+				}
+			}
 			form.submit();
 		}
 
@@ -321,19 +375,6 @@
 			form.submit();
 		}
 
-		// 備考が変更された時に反映されません的な
-		$('#note').change(function() {
-		    notSend();
-		});
-		// 添付ファイルが変更された時に反映されません的な
-		$(function() {
-			$('#files').on("change", function() {
-				var file = this.files[0];
-				if (file != null) {
-					notSend();
-				}
-			});
-		});
 	</script>
 
 </body>

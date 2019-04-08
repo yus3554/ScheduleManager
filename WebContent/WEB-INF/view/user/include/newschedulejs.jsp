@@ -29,6 +29,18 @@
 							$("#date1").addClass("is-valid");
 							$("#date-feedback").removeClass("d-block");
 						}
+					} else {
+						if ($("#datetimeDiv").html() == "") {
+							$("#date2").removeClass("is-valid");
+							$("#date2").addClass("is-invalid");
+							$("#date-feedback").addClass("d-block");
+							event.preventDefault();
+							event.stopPropagation();
+						} else {
+							$("#datetimeDiv").removeClass("is-invalid");
+							$("#datetimeDiv").addClass("is-valid");
+							$("#date-feedback").removeClass("d-block");
+						}
 					}
 					form.classList.add('was-validated');
 					textAreaEmail();
@@ -79,11 +91,6 @@
 		});
 		$("#date2").on("dp.change", function(e) {
 			datetimeStr = e.date.format("YYYY/MM/DD HH:mm");
-			if(submitFlg){
-				$("#date2").removeClass("is-invalid");
-				$("#date2").addClass("is-valid");
-				$("#date-feedback").removeClass("d-block");
-			}
 		});
 		$("#eventDeadline").datetimepicker({
 			dayViewHeaderFormat : "YYYY MMMM",
@@ -96,20 +103,22 @@
 			var defaultRemind = new Date(deadline.setDate(deadline.getDate() - 1));
 			defaultRemind = new Date(deadline.setHours(12));
 			defaultRemind = new Date(deadline.setMinutes(0));
-			$("#defaultRemind").val(formatDate(defaultRemind, "yyyy/MM/dd HH:mm"));
+			remindStr = formatDate(defaultRemind, "yyyy/MM/dd HH:mm");
+			addRemind();
 		});
 	});
 
-	function remindDateTimePicker(){
-		$('input[name="remindDateTime[]"]').datetimepicker({
-			dayViewHeaderFormat : "YYYY MMMM",
-			useCurrent : false,
-			sideBySide : true,
-			minDate : new Date(),
-			maxDate : new Date(new Date().setDate(todayDate + 30))
-		});
-	}
-	remindDateTimePicker();
+	$('#remindDate').datetimepicker({
+		dayViewHeaderFormat : "YYYY MMMM",
+		useCurrent : false,
+		sideBySide : true,
+		inline : true,
+		minDate : new Date(),
+		maxDate : new Date(new Date().setDate(todayDate + 30))
+	});
+	$("#remindDate").on("dp.change", function(e) {
+		remindStr = e.date.format("YYYY/MM/DD HH:mm");
+	});
 
 	$('input[name="eventName"]').maxlength({
 		alwaysShow: true,
@@ -126,7 +135,8 @@
 		dateReset();
 	}
 	function dateReset() {
-		$("#dateDiv").html("");
+		$("#dateDiv1").html("");
+		$("#datetimeDiv").html("");
 	}
 
 	var target = document.getElementById("dateDiv");
@@ -140,10 +150,8 @@
 		  dateType = parseInt(activated_tab.href.slice(-1));
 		  if(dateType == 2){
 			  $("#dateDiv1").html("");
-			  $("#datetime").prop('required',true);
 		  } else {
-			  $("#datetime").val("");
-			  $("#datetime").prop('required',false);
+			  $("#datetimeDiv").html("");
 		  }
 		  $("#dateType").val(dateType);
 	});
@@ -152,41 +160,44 @@
 	function addDateTime(){
 		addDate(datetimeStr, 2);
 	}
-	// 時分の削除ボタン
-	function deleteDateTime(){
-		var text = $("#datetime").val().replace(/\r\n|\r/g, "\n");
-		if(text.lastIndexOf("\n") != -1){
-			$("#datetime").val(text.slice(0, text.lastIndexOf("\n")));
-		} else {
-			$("#datetime").val("");
-		}
-	}
 
 	// typeが1なら時間割, 2なら時分
 	function addDate(date, type) {
-		if(type == 1){
-			var dateId = date.replace(/\//g, "-");
-			dateId = dateId.replace(/\s+/g, "");
-			var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"date[]\" value=\"" + dateId + "\">"
-					+ date;
-			if(type == 1){
-				for (var i = 1; i <= 5; i++) {
-					html += " <input type=\"checkbox\" value=\"" + i + "\" name=\"" + "#" + dateId + "[]" + "\" checked>"
-							+ i + "限 ";
-				}
-			} else {
-				html += "〜 ";
-			}
-			html += "<input type=\"button\" value=\"削除\" onclick=\'deleteDiv(\""
-					+ dateId + "\");\'>";
+		var dateId = date.replace(/\//g, "-");
+		dateId = dateId.replace(/\s+/g, "");
 
-			$("#dateDiv1").html($("#dateDiv1").html() + html + "</div>");
-		} else {
-			var text = $("#datetime").val();
-			if(text != ""){
-				text += "\n";
+		if(type == 1){
+			// すでに同じ日があるかどうか
+			if (!$('#' + dateId).length) {
+				var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"date[]\" value=\"" + dateId + "\">"
+						+ date;
+				if (type == 1) {
+					for (var i = 1; i <= 5; i++) {
+						html += " <input type=\"checkbox\" value=\"" + i + "\" name=\"" + "#" + dateId + "[]" + "\" checked>"
+								+ i + "限 ";
+					}
+				} else {
+					html += "〜 ";
+				}
+				html += "<input type=\"button\" value=\"削除\" onclick=\'deleteDiv(\""
+						+ dateId + "\");\'>";
+
+				$('#dateDiv1').append(html + "</div>");
 			}
-			$("#datetime").val(text + date + "〜");
+		} else {
+			var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"datetime[]\" value=\"" + date + "\">"
+					+ date;
+			html += "〜 ";
+			html += "<input type=\"button\" value=\"削除\" onclick=\'document.getElementById(\""
+				+ dateId + "\").remove();\'>";
+
+			$('#datetimeDiv').append(html + "</div>");
+
+			if(submitFlg){
+				$("#date2").removeClass("is-invalid");
+				$("#date2").addClass("is-valid");
+				$("#date-feedback").removeClass("d-block");
+			}
 		}
 	}
 
@@ -238,14 +249,13 @@
 		$("#newschedule [name=eventName]").val("[デモ用]会議の開催日程について");
 		var sampleContent = "太田です。\n\n会議の日程を決めようと思いますので、ご都合の良い日時の回答をお願いします。\n\nよろしくお願いします。";
 		$("#newschedule [name=eventContent]").val(sampleContent);
-		$("#targetEmailTextarea").val("s152017@eecs.tottori-u.ac.jp\na@example.com\nb@example.com");
+		$("#targetEmailTextarea").val(
+				"s152017@eecs.tottori-u.ac.jp\na@example.com\nb@example.com");
 		$("#eventDeadline").val(
 				"" + deadline.getFullYear() + "/"
 						+ addZero(deadline.getMonth() + 1) + "/"
 						+ addZero(deadline.getDate()) + " " + "00:00");
-		$("#defaultRemind").val("" + remindDate.getFullYear() + "/"
-				+ addZero(remindDate.getMonth() + 1) + "/"
-				+ addZero(remindDate.getDate()) + " " + "00:00");
+		addRemind();
 	}
 
 	function AutoInputFuyukai() {
@@ -257,34 +267,27 @@
 		$("#targetEmailTextarea").val(emailStr);
 	}
 
+	// datetime用の変数
+	var remindStr = formatDate(new Date, "yyyy/MM/dd HH:mm");
+	// typeが1なら時間割, 2なら時分
 	function addRemind() {
-		var newDiv = document.createElement("div");
-		newDiv.innerHTML = "<input class=\"form-control\" name=\"remindDateTime[]\" autocomplete=\"off\">"
-					+ "<div class=\"input-group-append\"> <span class=\"input-group-text\"> <i class=\"fas fa-calendar-alt\"></i>"
-					+ "</span> </div>";
-		newDiv.setAttribute("class", "input-group");
-		$("#addButton").before(newDiv);
-		remindDateTimePicker();
-	}
+		var dateId = remindStr.replace(/\//g, "-");
+		dateId = dateId.replace(/\s+/g, "_");
 
-	// 開催条件のチェックを入れると数字を入れられるようになる
-	$('#condition').change(function() {
-		condition($(this).prop('checked'))
-	})
-	function condition(isCheck) {
-		if (isCheck == true) {
-			$("#denom").prop('disabled', false);
-			$("#numer").prop('disabled', false);
-			$("#denom").val("1");
-			$("#numer").val("1");
-		} else {
-			$("#denom").prop('disabled', true);
-			$("#numer").prop('disabled', true);
+		// すでに同じ日があるかどうか
+		if (!$('#' + dateId).length) {
+			var html = "<div id=\"" + dateId + "\"><input type=\"hidden\" name=\"remindDateTime[]\" value=\"" + remindStr + "\">"
+					+ remindStr;
+			html += "<input type=\"button\" value=\"削除\" onclick=\'document.getElementById(\""
+					+ dateId + "\").remove();\'>";
+
+			$('#remindDiv').append(html + "</div>");
 		}
 	}
-	condition($("#condition").prop("checked"));
 
-	function addFiles(){
-		    $('#addFileBefore').before('<input type="file" class="form-control-file" name="files[]" multiple>');
+	function addFiles() {
+		$('#addFileBefore')
+				.before(
+						'<input type="file" class="form-control-file" name="files[]" multiple>');
 	}
 </script>

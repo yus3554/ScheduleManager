@@ -2,6 +2,7 @@ package schedule.userview;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import schedule.model.AnswerTable;
 import schedule.model.DatetimeAnswerTable;
@@ -63,12 +66,6 @@ public class ScheduleDetail extends HttpServlet {
 			decideDate = decideDate.replace(",", "<br>");
 		request.setAttribute("decideDate", decideDate);
 		request.setAttribute("note", scheduleHM.get("note"));
-		String condition = scheduleHM.get("condition");
-		request.setAttribute("isEventCondition", condition == null ? false : true);
-		// 分子
-		request.setAttribute("eventConditionNumer", condition == null ? null : condition.split("/")[0]);
-		// 分母
-		request.setAttribute("eventConditionDenom", condition == null ? null : condition.split("/")[1]);
 		// 時間割か時分か
 		int dateType = Integer.parseInt(scheduleHM.get("dateType"));
 		request.setAttribute("dateType", dateType);
@@ -129,7 +126,7 @@ public class ScheduleDetail extends HttpServlet {
 					sdTimes[i][j] = sdList.get(i).getTime(j);
 				}
 			}
-			request.setAttribute("sdTimes", sdTimes);
+			session.setAttribute("sdTimes", sdTimes);
 
 			// 全体回答状況表のため
 			String[] timeStr = {"first", "second", "third", "fourth", "fifth"};
@@ -139,6 +136,7 @@ public class ScheduleDetail extends HttpServlet {
 			// 1限から5弦を配列に入れる
 			// 配列の理由として、セルの色付けが楽そうだったから
 			int[][] counts = new int[countLength][5];
+			ArrayList<Integer> countsList = new ArrayList<>();
 			// セルの色付けに使う、最大値と最大値引く1
 			int max = 0;
 			int max_1 = 0;
@@ -146,21 +144,15 @@ public class ScheduleDetail extends HttpServlet {
 				request.setAttribute("date" + i, count.get(i).get("date"));
 				for(int j = 0; j < 5; j++) {
 					counts[i][j] = Integer.parseInt(count.get(i).get(timeStr[j]));
+					countsList.add(counts[i][j]);
 				}
 			}
 			// 最大値と最大値引く1の取得
-			for(int i = 0; i < countLength; i++) {
-				for(int j = 0; j < 5; j++) {
-					if(max <= counts[i][j]) {
-						max = counts[i][j];
-					}else if(max_1 <= counts[i][j]) {
-						max_1 = counts[i][j];
-					}
-				}
-			}
-			request.setAttribute("counts", counts);
-			request.setAttribute("max", max);
-			request.setAttribute("max_1", max_1);
+			Collections.sort(countsList);
+
+			session.setAttribute("counts", counts);
+			request.setAttribute("max", countsList.get(countsList.size() - 1));
+			request.setAttribute("max_1", countsList.get(countsList.size() - 2));
 
 			// 全体回答のポップアップに使う
 			// randomURLの順番で配列に入れる
@@ -193,24 +185,21 @@ public class ScheduleDetail extends HttpServlet {
 			int countLength = count.size();
 			request.setAttribute("countLength", countLength);
 			int[] counts = new int[countLength];
+			ArrayList<Integer> countsList = new ArrayList<>();
 
 			// セルの色付けに使う、最大値と最大値引く1
 			int max = 0;
 			int max_1 = 0;
 			for(int i = 0; i < countLength; i++) {
 				counts[i] = Integer.parseInt(count.get(i).get("answer"));
+				countsList.add(counts[i]);
 			}
 			// 最大値と最大値引く1の取得
-			for(int i = 0; i < countLength; i++) {
-				if(max <= counts[i]) {
-					max = counts[i];
-				}else if(max_1 <= counts[i]) {
-					max_1 = counts[i];
-				}
-			}
-			request.setAttribute("counts", counts);
-			request.setAttribute("max", max);
-			request.setAttribute("max_1", max_1);
+			Collections.sort(countsList);
+
+			session.setAttribute("counts", counts);
+			request.setAttribute("max", countsList.get(countLength - 1));
+			request.setAttribute("max_1", countsList.get(countLength - 2));
 
 			// 全体回答のポップアップに使う
 			// randomURLの順番で配列に入れる
@@ -218,7 +207,7 @@ public class ScheduleDetail extends HttpServlet {
 			// getEmailAnswersから取得したものを格納しておく変数
 			ArrayList<HashMap<String, String>> gotAnswers = new ArrayList<>();
 			for(int i = 0; i < randomURLs.size(); i++) {
-				gotAnswers = new AnswerTable().getEmailAnswers(randomURLs.get(i));
+				gotAnswers = new DatetimeAnswerTable().getEmailAnswers(randomURLs.get(i));
 				// 一人分のanswerを入れる変数
 				ArrayList<Integer> answers = new ArrayList<>();
 				HashMap<String, String> hm = new HashMap<>();

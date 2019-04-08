@@ -51,7 +51,6 @@ public class RequestSchedules extends HttpServlet {
     		hm = scheduleList.get(i);
     		request.setAttribute("id" + i, hm.get("id"));
     		request.setAttribute("eventName" + i, hm.get("eventName"));
-    		request.setAttribute("eventContent" + i, hm.get("eventContent"));
     		request.setAttribute("eventDeadline" + i, hm.get("eventDeadline"));
     		request.setAttribute("decideDate" + i, hm.get("decideDate"));
 

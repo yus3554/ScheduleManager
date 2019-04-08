@@ -82,7 +82,7 @@ public class SignUpSubmit extends HttpServlet {
 		String view = "";
 		if (new UserTable().isEmailSame(email)) {
 			new UserTable().insert(userName, email, pass);
-			new SendMail().send(subject, content, email);
+			//new SendMail().send(subject, content, email);
 			// jspを指定
 			view = "/WEB-INF/view/auth/signupsubmit.jsp";
 		}else {

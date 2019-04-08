@@ -33,7 +33,6 @@
 		<thead class="thead-light">
 		<tr>
 			<th>イベント名</th>
-			<th>イベント内容</th>
 			<th>回答締切日</th>
 			<th>回答人数</th>
 			<th>削除</th>
@@ -51,14 +50,6 @@
 				<a href="./RequestSchedules/<%= request.getAttribute("id" + i) %>">
 					<%= request.getAttribute("eventName" + i) %>
 				</a>
-			</td>
-			<td>
-				<% String eventContent = ((String)request.getAttribute("eventContent" + i)).replace("<br>", "  "); %>
-				<% if( eventContent.length() <= 15 ) { %>
-				<%= eventContent %>
-				<% } else { %>
-				<%= eventContent.substring(0, 15) %> ...
-				<% } %>
 			</td>
 			<td><%= request.getAttribute("eventDeadline" + i) %></td>
 			<td><%= request.getAttribute("isInputNum" + i) %> / <%= request.getAttribute("targetNum" + i) %>人</td>

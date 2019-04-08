@@ -59,7 +59,7 @@
 	  		$('#password-confirmation-input').prop('pattern', $(this).val())
 		});
 
-		// bootstrapのvaridation
+		// bootstrapのvalidation
 		(function() {
 			'use strict';
 			window.addEventListener('load',

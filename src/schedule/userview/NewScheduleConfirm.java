@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -63,7 +64,7 @@ public class NewScheduleConfirm extends HttpServlet {
 		String eventContent = "";
 		String eventDeadline = "";
 		ArrayList<ScheduleDate> eventDates = new ArrayList<>();
-		String datetimeTemp = "";
+		ArrayList<String> datetimeTemp = new ArrayList<>();
 		ArrayList<String> datetime = new ArrayList<>();
 		int dateType = 1;
 		ArrayList<String> temp1Keys = new ArrayList<>();
@@ -74,9 +75,6 @@ public class NewScheduleConfirm extends HttpServlet {
 		ArrayList<String> remindDateTimesTemp = new ArrayList<>();
 		ArrayList<String> remindDateTimes = new ArrayList<>();
 		boolean isRemindDeadline = false;
-		boolean isEventCondition = false;
-		int eventConditionNumer = 1;
-		int eventConditionDenom = 1;
 		boolean isInputInform = false;
 
 		// 念の為セッション内を削除
@@ -94,9 +92,6 @@ public class NewScheduleConfirm extends HttpServlet {
 			}
 			session.removeAttribute("fileNum");
 		}
-		session.removeAttribute("isEventCondition");
-		session.removeAttribute("eventConditionNumer");
-		session.removeAttribute("eventConditionDenom");
 		session.removeAttribute("isInputInform");
 
 		int fileNum = -1;
@@ -150,8 +145,11 @@ public class NewScheduleConfirm extends HttpServlet {
 							if( b )
 								eventDates.add(new ScheduleDate(value));
 							break;
-						case "datetime":
-							datetimeTemp = value;
+						case "datetime[]":
+							String temp = value;
+							temp = temp.replace("\r", "\n");
+							temp = temp.replace("\r\n", "\n");
+							datetimeTemp.add(temp);
 							break;
 						case "dateType":
 							dateType = Integer.parseInt(value);
@@ -172,19 +170,7 @@ public class NewScheduleConfirm extends HttpServlet {
 						case "eventDeadline":
 							eventDeadline = value;
 							break;
-							// イベントの開催条件のチェック
-						case "isEventCondition":
-							isEventCondition = Boolean.valueOf(value);
-							break;
-							// イベントの開催条件の分子
-						case "eventConditionNumer":
-							eventConditionNumer = (int)Double.parseDouble(value);
-							break;
-							// イベントの開催条件の分母
-						case "eventConditionDenom":
-							eventConditionDenom = (int)Double.parseDouble(value);
-							break;
-							// 回答者に現在の回答状況を伝えるかどうかのチェック
+						// 回答者に現在の回答状況を伝えるかどうかのチェック
 						case "isInputInform":
 							isInputInform = Boolean.valueOf(value);
 							break;
@@ -227,29 +213,18 @@ public class NewScheduleConfirm extends HttpServlet {
 			}
 		}
 
-		// 条件の修正（分母が0、分数が1より大きくなる場合）
-		eventConditionDenom = eventConditionDenom <= 0 ? 1 : eventConditionDenom;
-		if (eventConditionNumer / eventConditionDenom > 1) {
-			eventConditionDenom = 1;
-			eventConditionNumer = 1;
-		}
-
 		// リマインダーの被りがあったらいれない
 		remindDateTimes = new ArrayList<>(new HashSet<>(remindDateTimesTemp));
+		Collections.sort(remindDateTimes);
 
 		// datetimeを配列に
-		datetimeTemp = datetimeTemp.replace("\r", "\n");
-		datetimeTemp = datetimeTemp.replace("\r\n", "\n");
 		// 重複なくす
-		ArrayList<String> dtTemp1 = new ArrayList<>(new HashSet<>(Arrays.asList(datetimeTemp.split("\n", 0))));
-		// ""があったら消す
-		dtTemp1.removeIf(a->{ return a.equals("");});
+		ArrayList<String> dtTemp1 = new ArrayList<>(new HashSet<>(datetimeTemp));
 		ArrayList<LocalDateTime> dtTemp2 = new ArrayList<>();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 		for(String s : dtTemp1) {
-			String temp = s.substring(0, s.length() - 1);
 			try {
-				dtTemp2.add(LocalDateTime.parse(temp, dtf));
+				dtTemp2.add(LocalDateTime.parse(s, dtf));
 			} catch (DateTimeParseException e) {}
 		}
 		Collections.sort(dtTemp2);
@@ -269,9 +244,6 @@ public class NewScheduleConfirm extends HttpServlet {
 		session.setAttribute("remindDateTimes", remindDateTimes);
 		session.setAttribute("isRemindDeadline", isRemindDeadline);
 		session.setAttribute("eventDeadline", eventDeadline);
-		session.setAttribute("isEventCondition", isEventCondition);
-		session.setAttribute("eventConditionNumer", eventConditionNumer);
-		session.setAttribute("eventConditionDenom", eventConditionDenom);
 		session.setAttribute("isInputInform", isInputInform);
 
 		// jspを指定

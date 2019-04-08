@@ -19,9 +19,11 @@ import javax.servlet.http.HttpSession;
 @WebFilter(
 		urlPatterns = {
 				"/TopPage",
-				"/Login",
 				"/SignUp",
-				"/SignUpSubmit"
+				"/SignUpConfirm",
+				"/SignUpSubmit",
+				"/LoginFailed",
+				"/LoginCheck"
 				})
 public class LoginFilter implements Filter {
 

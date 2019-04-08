@@ -28,17 +28,16 @@ public class ScheduleTable {
 
 			// 新規スケジュールをschedulesテーブルにインサート
 			String sql = "insert into schedules (id, eventName, eventContent,"
-					+ " eventDeadline, senderEmail, `condition`, isInputInform, dateType)"
-					+ " values (?, ?, ?, ?, ?, ?, ?, ?);";
+					+ " eventDeadline, senderEmail, isInputInform, dateType, isDecideFirst)"
+					+ " values (?, ?, ?, ?, ?, ?, ?, 0);";
 			PreparedStatement patmt = conn.prepareStatement(sql);
 			patmt.setString(1, schedule.getId());
 			patmt.setString(2, schedule.getEventName());
 			patmt.setString(3, schedule.getEventContent());
 			patmt.setString(4, schedule.getEventDeadline());
 			patmt.setString(5, schedule.getSenderEmail());
-			patmt.setString(6, schedule.getCondition());
-			patmt.setBoolean(7, schedule.getIsInputInform());
-			patmt.setInt(8, schedule.getDateType());
+			patmt.setBoolean(6, schedule.getIsInputInform());
+			patmt.setInt(7, schedule.getDateType());
 
 			patmt.executeUpdate();
 
@@ -135,7 +134,6 @@ public class ScheduleTable {
 				hm.put("eventDeadline", rs.getString("eventDeadline"));
 				hm.put("decideDate", rs.getString("decideDate"));
 				hm.put("note", rs.getString("note"));
-				hm.put("condition", rs.getString("condition"));
 				hm.put("isInputInform", rs.getString("isInputInform"));
 				hm.put("dateType", rs.getString("dateType"));
 			}
@@ -208,7 +206,8 @@ public class ScheduleTable {
 				conn = dataSource.getConnection();
 
 				// senderEmailで検索
-				String sql = "update schedules set decideDate = ?, note = ? where id = ? and senderEmail = ?;";
+				String sql = "update schedules set decideDate = ?, note = ?"
+						+ " where id = ? and senderEmail = ?;";
 				PreparedStatement patmt = conn.prepareStatement(sql);
 
 				// 決定日時が複数の時は、カンマで区切って全部繋げて一つの文字列にする

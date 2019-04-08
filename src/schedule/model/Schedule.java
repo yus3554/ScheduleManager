@@ -6,24 +6,20 @@ public class Schedule {
 	private String eventContent;
 	private String eventDeadline;
 	private String senderEmail;
-	private boolean isEventCondition;
-	private int eventConditionNumer;
-	private int eventConditionDenom;
 	private boolean isInputInform;
 	private int dateType;
+	private boolean isDecideFirst;
 
 	public Schedule(String id, String eventName, String eventContent, String eventDeadline, String senderEmail,
-			boolean isEventCondition, int eventConditionNumer, int eventConditionDenom, boolean isInputInform, int dateType) {
+			boolean isInputInform, int dateType, boolean isDecideFirst) {
 		this.id = id;
 		this.eventName = eventName;
 		this.eventContent = eventContent;
 		this.eventDeadline = eventDeadline;
 		this.senderEmail = senderEmail;
-		this.isEventCondition = isEventCondition;
-		this.eventConditionNumer = eventConditionNumer;
-		this.eventConditionDenom = eventConditionDenom;
 		this.isInputInform = isInputInform;
 		this.dateType = dateType;
+		this.isDecideFirst = isDecideFirst;
 	}
 
 	public String getId() {
@@ -46,15 +42,15 @@ public class Schedule {
 		return senderEmail;
 	}
 
-	public String getCondition() {
-		return (isEventCondition) ? eventConditionNumer + "/" + eventConditionDenom : null;
-	}
-
 	public boolean getIsInputInform() {
 		return isInputInform;
 	}
 
 	public int getDateType() {
 		return dateType;
+	}
+
+	public boolean getIsDecideFirst() {
+		return isDecideFirst;
 	}
 }

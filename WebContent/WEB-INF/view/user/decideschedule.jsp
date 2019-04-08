@@ -38,8 +38,49 @@
 
 	<p><a href="../${ id }">スケジュール詳細に戻る</a></p>
 
-	<form action="../DecideScheduleConfirm/${ id }" method="post">
+	<form id="decideForm" action="../DecideScheduleConfirm/${ id }" method="post">
 		<table>
+			<tr>
+				<th>回答状況 : </th>
+				<td>
+					<table id="table" border="2" cellpadding="10">
+					<% if ((int)session.getAttribute("dateType") == 1) { %>
+						<tr>
+							<th>日付</th>
+							<th>1限</th>
+							<th>2限</th>
+							<th>3限</th>
+							<th>4限</th>
+							<th>5限</th>
+						</tr>
+						<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
+						<% int[][] sdTimes = (int[][])session.getAttribute("sdTimes"); %>
+						<% int[][] dateCounts = (int[][])session.getAttribute("counts"); %>
+						<% for(int i = 0; i < sdList.size(); i++) { %>
+						<tr>
+							<th>
+								<%= sdList.get(i).getDate() %>
+							</th>
+							<% for(int j = 0; j < 5; j++) { %>
+								<td align="center" valign="top"><% if( sdTimes[i][j] != -1 ){ %><%= dateCounts[i][j] %><% } %></td>
+							<% } %>
+						</tr>
+						<% } %>
+					<% } else { %>
+						<% ArrayList<String> datetime = (ArrayList<String>)session.getAttribute("datetime"); %>
+						<% int[] datetimeCounts = (int[])session.getAttribute("counts"); %>
+						<% for(int i = 0; i < datetime.size(); i++) { %>
+						<tr>
+							<th>
+								<%= datetime.get(i) %>
+							</th>
+							<td align="center" valign="top"><%= datetimeCounts[i] %></td>
+						</tr>
+						<% } %>
+					<% } %>
+					</table>
+				</td>
+			</tr>
 			<tr>
 				<th>開催日時 : </th>
 				<td>
@@ -54,26 +95,45 @@
 								<th>5限</th>
 							</tr>
 							<% ArrayList<ScheduleDate> sdList = (ArrayList<ScheduleDate>)session.getAttribute("eventDates"); %>
+							<% ArrayList<Integer> dateDecideIndex = new ArrayList<>(); %>
+							<% ArrayList<Integer> timeDecideIndex = new ArrayList<>(); %>
+							<% if((boolean)request.getAttribute("isDecideDate")){ %>
+								<% dateDecideIndex = (ArrayList<Integer>)request.getAttribute("dateDecideIndex"); %>
+								<% timeDecideIndex = (ArrayList<Integer>)request.getAttribute("timeDecideIndex"); %>
+							<% } %>
 							<% for(int i = 0; i < sdList.size(); i++) { %>
 							<tr>
 								<th>
 									<%= sdList.get(i).getDate() %>
 								</th>
 								<% for(int j = 0; j < 5; j++) { %>
-								<td><% if(sdList.get(i).getTime(j) != -1) {
-								%><input type="checkbox" name="date" value="<%= i %>,<%= j %>"><%
-										} %></td>
+								<td>
+									<% if(sdList.get(i).getTime(j) != -1) { %>
+										<input type="checkbox" name="date" value="<%= i %>,<%= j %>"
+										<% if((boolean)request.getAttribute("isDecideDate")){ %>
+										<% if( dateDecideIndex.contains(i) && timeDecideIndex.contains(j) ) { %>
+											checked
+										<% } %><% } %>>
+									<% } %>
+								</td>
 								<% } %>
 							</tr>
 							<% } %>
 						<% } else { %>
 							<% ArrayList<String> datetime = (ArrayList<String>)session.getAttribute("datetime"); %>
+							<% ArrayList<Integer> dateDecideIndex = new ArrayList<>(); %>
+							<% if((boolean)request.getAttribute("isDecideDate")){ %>
+								<% dateDecideIndex = (ArrayList<Integer>)request.getAttribute("dateDecideIndex"); %>
+							<% } %>
 							<% for(int i = 0; i < datetime.size(); i++) { %>
 							<tr>
 								<th>
 									<%= datetime.get(i) %>
 								</th>
-								<td><input type="checkbox" name="date" value="<%= i %>"></td>
+								<td><input type="checkbox" name="date" value="<%= i %>"
+								<% if( dateDecideIndex.contains(i) ) { %>
+									checked
+								<% } %>></td>
 							</tr>
 							<% } %>
 						<% } %>
@@ -86,7 +146,8 @@
 				<td>200字まで<td>
 			</tr>
 		</table>
-		<input type="submit" value="確認"><input type="reset" value="リセット">
+		<div id="validationDiv" style="display: none;"><font color="red">決定日時が入力されていません。</font></div>
+		<input type="submit" value="確認" onclick="submitConfirm();"><input type="reset" value="リセット">
 	</form>
 
 	</div>
@@ -95,6 +156,34 @@
 <script>
 <%@include file="../../js/jquery-3.3.1.min.js" %>
 <%@include file="./include/logoutpopupjs.jsp" %>
+
+	// 色付けの変数に格納
+	var colors = [];
+	<% ArrayList<Integer> colors = (ArrayList<Integer>)request.getAttribute("colors"); %>
+	<% for( int n : colors){ %>
+		colors.push(<%= n %>);
+	<% } %>
+
+	// この辺で色付け どうやって前のページの色付けを持ってくるか
+	$('#table td').each(function(index , elm){
+			if( colors[index] == 2 ){
+				$(elm).css('background-color', "#FE9A2E");
+		    } else if( colors[index] == 1 ) {
+		    	$(elm).css('background-color', "#F4FA58");
+		    } else {
+		    	$(elm).css('background-color',"#FFFFFF");
+		    }
+    });
+
+function submitConfirm(){
+	if($('#table :checked').length > 0){
+		$('#decideForm').submit();
+	} else {
+		$('#validationDiv').show();
+		event.preventDefault();
+		event.stopPropagation();
+	}
+}
 </script>
 
 </body>

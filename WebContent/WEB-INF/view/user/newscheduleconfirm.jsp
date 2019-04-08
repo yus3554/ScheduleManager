@@ -78,7 +78,9 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 		<tr>
 			<th rowspan="<%= remindDateTimesSize %>">リマインダー日時</th>
 			<td>
+				<% if (((ArrayList<int[]>)session.getAttribute("remindDateTimes")).size() > 0){ %>
 				<%= ((ArrayList<int[]>)session.getAttribute("remindDateTimes")).get(0) %>
+				<% } %>
 			</td>
 		</tr>
 		<% for(int i = 1; i < remindDateTimesSize ; i++) { %>
@@ -88,16 +90,6 @@ border-radius: 5px 5px 0 0 / 5px 5px 0 0;
 			</td>
 		</tr>
 		<% } %>
-		<tr>
-			<th>開催条件</th>
-			<td>
-			<% if ((boolean)session.getAttribute("isEventCondition")) { %>
-				${ eventConditionDenom }分の${ eventConditionNumer }以上
-			<% } else { %>
-				なし
-			<% } %>
-			</td>
-		</tr>
 		<% if((int)session.getAttribute("fileNum") != -1) { %>
 			<tr>
 				<th rowspan="<%= (int)session.getAttribute("fileNum") + 1 %>">添付ファイル</th>
